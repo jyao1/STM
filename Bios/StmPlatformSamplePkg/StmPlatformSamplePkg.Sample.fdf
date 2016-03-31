@@ -1,0 +1,39 @@
+## @file StmPlatformSamplePkg.Sample.fdf
+# 
+#  Copyright (c) 2015 - 2016, Intel Corporation. All rights reserved.<BR>
+#
+#  This program and the accompanying materials
+#  are licensed and made available under the terms and conditions of the BSD License
+#  which accompanies this distribution. The full text of the license may be found at
+#  http://opensource.org/licenses/bsd-license.php
+#  THE PROGRAM IS DISTRIBUTED UNDER THE BSD LICENSE ON AN "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
+#
+##
+
+[FV.FVRECOVERY]
+
+!if $(STM_ENABLE) == TRUE
+INF  StmPlatformSamplePkg/MsegSmramPei/MsegSmramPei.inf
+!endif
+
+[FV.FVMAIN]
+
+!if $(STM_ENABLE) == TRUE
+INF StmCpuPkg/PiSmmCpuDxeSmm/PiSmmCpuDxeSmm.inf
+!else
+# original PiSmmCpuDxeSmm.inf
+!endif
+
+!if $(STM_ENABLE) == TRUE
+INF StmPlatformSamplePkg/StmPlatformSmm/StmPlatformSmm.inf
+INF StmPlatformSamplePkg/Compatibility/EndOfDxeOnExitPmAuthThunk/EndOfDxeOnExitPmAuthThunk.inf
+INF StmPlatformSamplePkg/Compatibility/SmmCpuSaveStateProtocolOnSmst2/SmmCpuSaveStateProtocolOnSmst2.inf
+
+FILE FREEFORM = PCD(gStmPlatformTokenSpaceGuid.PcdStmBinFile) {
+    SECTION RAW = StmPlatformSamplePkg/StmBin/X64$(TARGET)/Stm.bin
+}
+INF USE=X64 StmPlatformSamplePkg/TestBin/X64$(TARGET)/Frm.inf
+INF USE=X64 StmPlatformSamplePkg/TestBin/X64$(TARGET)/StmService.inf
+INF USE=X64 StmPlatformSamplePkg/TestBin/X64$(TARGET)/FrmLoader.inf
+!endif

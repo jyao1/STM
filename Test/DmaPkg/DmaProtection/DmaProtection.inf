@@ -1,0 +1,62 @@
+## @file
+#
+# Copyright (c) 2014, Intel Corporation. All rights reserved.<BR>
+# This program and the accompanying materials
+# are licensed and made available under the terms and conditions of the BSD License
+# which accompanies this distribution.  The full text of the license may be found at
+# http://opensource.org/licenses/bsd-license.php.
+#
+# THE PROGRAM IS DISTRIBUTED UNDER THE BSD LICENSE ON AN "AS IS" BASIS,
+# WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
+#
+##
+
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = DmaProtection
+  FILE_GUID                      = 68BF932A-FBA5-402D-AB6F-0C5868AC2B35
+  MODULE_TYPE                    = DXE_DRIVER
+  VERSION_STRING                 = 1.0
+  ENTRY_POINT                    = DmaProtectionEntrypoint
+
+[Sources]
+  DmaProtection.c
+  DmarAcpiTable.c
+  PciInfo.c
+  TranslationTable.c
+  TranslationTableEx.c
+  VtdReg.c
+  PciHook.c
+  CsmSupport.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+  IntelFrameworkPkg/IntelFrameworkPkg.dec
+  DmaPkg/DmaPkg.dec
+
+[LibraryClasses]
+  UefiDriverEntryPoint
+  BaseLib
+  BaseMemoryLib
+  MemoryAllocationLib
+  DebugLib
+  UefiBootServicesTableLib
+  IoLib
+  PciLib
+  UefiLib
+
+[Guids]
+  gEfiEndOfDxeEventGroupGuid         ## CONSUMES ## Event
+  gEfiEventExitBootServicesGuid      ## CONSUMES ## Event
+  gEfiAcpi20TableGuid                ## CONSUMES ## SystemTable
+  gEfiAcpiTableGuid                  ## CONSUMES ## SystemTable
+
+[Protocols]
+  gEfiDxeSmmReadyToLockProtocolGuid       ## CONSUMES
+  gEfiPciRootBridgeIoProtocolGuid         ## CONSUMES
+  gEfiPciIoProtocolGuid                   ## CONSUMES
+  gEfiPciEnumerationCompleteProtocolGuid  ## CONSUMES
+  gEfiLegacyBiosProtocolGuid              ## CONSUMES
+
+[Depex]
+  gEfiPciRootBridgeIoProtocolGuid

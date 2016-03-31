@@ -1,0 +1,57 @@
+## @file
+#
+# Copyright (c) 2015, Intel Corporation. All rights reserved.<BR>
+# This program and the accompanying materials
+# are licensed and made available under the terms and conditions of the BSD License
+# which accompanies this distribution.  The full text of the license may be found at
+# http://opensource.org/licenses/bsd-license.php.
+#
+# THE PROGRAM IS DISTRIBUTED UNDER THE BSD LICENSE ON AN "AS IS" BASIS,
+# WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
+#
+##
+
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = StmService
+  FILE_GUID                      = 04E95A7C-07ED-48A7-9462-0E5B1C3B049F
+  MODULE_TYPE                    = DXE_DRIVER
+  VERSION_STRING                 = 1.0
+  ENTRY_POINT                    = StmServiceEntrypoint
+
+[Sources]
+  StmService.c
+  StmService.h
+  LoadToReserved.c
+  
+[Sources.Ia32]
+  Ia32\StmLaunch.asm
+  Ia32\StmLaunch.s
+
+[Sources.x64]
+  x64\StmLaunch.asm
+  x64\StmLaunch.s
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  IntelFrameworkPkg/IntelFrameworkPkg.dec
+  FrmPkg/FrmPkg.dec
+
+[LibraryClasses]
+  BaseLib
+  UefiBootServicesTableLib
+  UefiDriverEntryPoint
+  BaseMemoryLib
+  MemoryAllocationLib
+  DebugLib
+  PeCoffLib
+  CacheMaintenanceLib
+  DxeServicesLib
+
+[Protocols]
+  gEfiSmMonitorServiceProtocolGuid   ## PRODUCES
+  gEfiLoadedImageProtocolGuid        ## CONSUMES
+
+[Depex]
+  TRUE

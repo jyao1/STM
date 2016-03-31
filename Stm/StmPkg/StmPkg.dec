@@ -1,0 +1,58 @@
+## @file  StmPkg.dec
+#
+# Copyright (c) 2015, Intel Corporation. All rights reserved.<BR>
+# This program and the accompanying materials
+# are licensed and made available under the terms and conditions of the BSD License
+# which accompanies this distribution.  The full text of the license may be found at
+# http://opensource.org/licenses/bsd-license.php.
+#
+# THE PROGRAM IS DISTRIBUTED UNDER THE BSD LICENSE ON AN "AS IS" BASIS,
+# WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
+#
+##
+
+[Defines]
+  DEC_SPECIFICATION              = 0x00010005
+  PACKAGE_NAME                   = StmPkg
+  PACKAGE_GUID                   = 24497DD8-DD1C-4910-9F86-40C942C2234C
+  PACKAGE_VERSION                = 0.1
+
+[Includes.common]
+  Include
+  EdkII/MdePkg/Include
+
+[Includes.IA32]
+  Include/Ia32
+  EdkII/MdePkg/Include/Ia32
+
+[Includes.X64]
+  Include/x64
+  EdkII/MdePkg/Include/X64
+
+[Guids]
+  gEfiStmPkgTokenSpaceGuid       = { 0xf55f1eae, 0xd2d9, 0x4809, { 0x98, 0xf4, 0x68, 0xd1, 0xad, 0xd7, 0x64, 0xc8 }}
+
+[PcdsFixedAtBuild,PcdsPatchableInModule]
+  ## This flag is used to control the printout of DebugLib
+  gEfiStmPkgTokenSpaceGuid.PcdDebugPrintErrorLevel|0x80000040|UINT32|0x00000006
+
+[PcdsFixedAtBuild]
+  ## The mask is used to control DebugLib behavior
+  gEfiStmPkgTokenSpaceGuid.PcdDebugPropertyMask|0|UINT8|0x00000005
+
+  ## This value is used to fill a segment of memory
+  gEfiStmPkgTokenSpaceGuid.PcdDebugClearMemoryValue|0xAF|UINT8|0x00000008
+
+  ## The mask is used to control PerformanceLib behavior
+  gEfiStmPkgTokenSpaceGuid.PcdPerformanceLibraryPropertyMask|0|UINT8|0x00000009
+
+  ## Indicates the maximum length of unicode string
+  gEfiStmPkgTokenSpaceGuid.PcdMaximumUnicodeStringLength|1000000|UINT32|0x00000001
+
+  ## Indicates the maximum length of ascii string
+  gEfiStmPkgTokenSpaceGuid.PcdMaximumAsciiStringLength|1000000|UINT32|0x00000002
+
+[PcdsPatchableInModule]
+  ## This value is used to set the base address of pci express hierarchy
+  gEfiStmPkgTokenSpaceGuid.PcdPciExpressBaseAddress|0x00000000|UINT64|0x0000000a
+

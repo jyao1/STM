@@ -1,0 +1,26 @@
+## @file  StmPlatformSamplePkg.dec
+#
+#  Copyright (c) 2015, Intel Corporation. All rights reserved.<BR>
+#
+#  This program and the accompanying materials
+#  are licensed and made available under the terms and conditions of the BSD License
+#  which accompanies this distribution. The full text of the license may be found at
+#  http://opensource.org/licenses/bsd-license.php
+#  THE PROGRAM IS DISTRIBUTED UNDER THE BSD LICENSE ON AN "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
+#
+##
+
+[Defines]
+  DEC_SPECIFICATION              = 0x00010005
+  PACKAGE_NAME                   = StmPlatformSamplePkg
+  PACKAGE_GUID                   = C6EEF1B6-499F-4eea-BAF0-4E7C211389DF
+  PACKAGE_VERSION                = 0.1
+
+[Includes.common]
+
+[Guids]
+  gStmPlatformTokenSpaceGuid = { 0x49a5d4e2, 0x5279, 0x402e, { 0x9a, 0xb1, 0x8d, 0x80, 0xb7, 0xe8, 0x8c, 0xf7 }}
+
+[PcdsFixedAtBuild]
+  gStmPlatformTokenSpaceGuid.PcdStmBinFile|{ 0x06, 0x3E, 0xCA, 0xAC, 0x64, 0x3C, 0x09, 0x45, 0xA6, 0x87, 0xDD, 0xC7, 0x6F, 0x71, 0xB5, 0x61 }|VOID*|0x20000001

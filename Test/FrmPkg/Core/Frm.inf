@@ -1,0 +1,95 @@
+## @file
+# Component description file for Frm module.
+#
+# Copyright (c) 2015, Intel Corporation. All rights reserved.<BR>
+# This program and the accompanying materials
+# are licensed and made available under the terms and conditions of the BSD License
+# which accompanies this distribution.  The full text of the license may be found at
+# http://opensource.org/licenses/bsd-license.php.
+#
+# THE PROGRAM IS DISTRIBUTED UNDER THE BSD LICENSE ON AN "AS IS" BASIS,
+# WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
+#
+##
+
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = Frm
+  FILE_GUID                      = 0F50B4B1-C62F-4902-B3AF-E79DBED20109
+  MODULE_TYPE                    = USER_DEFINED
+  VERSION_STRING                 = 1.0
+  ENTRY_POINT                    = FrmEntrypoint
+
+[Sources]
+  Init\FrmInit.c
+  Init\ApInit.c
+  Init\Memory.c
+  Init\Paging.c
+  Init\EptInit.c
+  Init\IoInit.c
+  Init\VmxTimerInit.c
+  Init\VmcsInit.c
+  Init\SrmInit.c
+  Runtime\FrmHandler.c
+  Runtime\ExceptionHandler.c
+  Runtime\CrHandler.c
+  Runtime\EptHandler.c
+  Runtime\IoHandler.c
+  Runtime\IoResetHandler.c
+  Runtime\IoAcpiHandler.c
+  Runtime\CpuidHandler.c
+  Runtime\MsrHandler.c
+  Runtime\ApHandler.c
+  Runtime\CacheHandler.c
+  Runtime\TaskSwitchHandler.c
+  Runtime\VmxTimerHandler.c
+  Runtime\InterruptHandler.c
+  Runtime\XsetbvHandler.c
+  Runtime\SrmDeactivate.c
+  Runtime\FrmTeardown.c
+  Runtime\VmcallHandler.c
+  Dump.c
+  Acpi.c
+  Cpu.c
+
+[Sources.Ia32]
+  Init\Ia32\ApWakeup.asm
+  Init\Ia32\ApWakeup.s
+  Runtime\Ia32\VmExit.asm
+  Runtime\Ia32\VmExit.s
+  Runtime\Ia32\Exception.asm
+  Runtime\Ia32\Exception.s
+
+[Sources.X64]
+  Init\x64\ApWakeup.asm
+  Init\x64\ApWakeup.s
+  Runtime\x64\VmExit.asm
+  Runtime\x64\VmExit.s
+  Runtime\x64\Exception.asm
+  Runtime\x64\Exception.s
+
+[Packages]
+  MdePkg/MdePkg.dec
+  FrmPkg/FrmPkg.dec
+
+[LibraryClasses]
+  BaseLib
+  BaseMemoryLib
+  IoLib
+  PciLib
+  SynchronizationLib
+  DebugLib
+  FrmLib
+  TimerLib
+
+[Pcd]
+  gEfiMdePkgTokenSpaceGuid.PcdPciExpressBaseAddress      ## PRODUCES
+  gEfiFrmTokenSpaceGuid.PcdAcpiTimerIoPortBaseAddress    ## PRODUCES
+  gEfiFrmTokenSpaceGuid.PcdAcpiTimerWidth                ## PRODUCES
+
+[BuildOptions]
+  MSFT:*_*_*_CC_FLAGS  = /Od /GL-
+  MSFT:*_*_*_DLINK_FLAGS  = /BASE:0x0 /ALIGN:32 /FILEALIGN:32 /OUT:$(BIN_DIR)\Frm.efi 
+  
+  GCC:*_*_X64_DLINK_FLAGS  == -o $(DEBUG_DIR)/Frm.dll -nostdlib -n -q --gc-sections -z common-page-size=0x40 --entry _ModuleEntryPoint -u _ModuleEntryPoint -Map $(DEST_DIR_DEBUG)/$(BASE_NAME).map -m elf_x86_64 --oformat=elf64-x86-64 --defsym=PECOFF_HEADER_SIZE=0x228
+  GCC:*_*_IA32_DLINK_FLAGS == -o $(DEBUG_DIR)/Frm.dll -nostdlib -n -q --gc-sections -z common-page-size=0x40 --entry _ModuleEntryPoint -u _ModuleEntryPoint -Map $(DEST_DIR_DEBUG)/$(BASE_NAME).map -m elf_i386   --oformat=elf32-i386   --defsym=PECOFF_HEADER_SIZE=0x220

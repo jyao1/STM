@@ -1,0 +1,55 @@
+## @file
+#
+# Copyright (c) 2015, Intel Corporation. All rights reserved.<BR>
+# This program and the accompanying materials
+# are licensed and made available under the terms and conditions of the BSD License
+# which accompanies this distribution.  The full text of the license may be found at
+# http://opensource.org/licenses/bsd-license.php.
+#
+# THE PROGRAM IS DISTRIBUTED UNDER THE BSD LICENSE ON AN "AS IS" BASIS,
+# WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
+#
+##
+
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = FrmLoader
+  FILE_GUID                      = BBA4C424-A903-4c2d-BF4A-C54F4A814CB3
+  MODULE_TYPE                    = DXE_DRIVER
+  VERSION_STRING                 = 1.0
+  ENTRY_POINT                    = LoaderEntrypoint
+
+[Sources]
+  Loader.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  IntelFrameworkPkg/IntelFrameworkPkg.dec
+  FrmPkg/FrmPkg.dec
+
+[LibraryClasses]
+  BaseLib
+  UefiBootServicesTableLib
+  UefiDriverEntryPoint
+  PeCoffLib
+  UefiRuntimeServicesTableLib
+  DebugLib
+  UefiLib
+  DxeServicesLib
+
+[Guids]
+  gEfiAcpi20TableGuid    ## CONSUMES ## SystemTable
+  gEfiAcpi10TableGuid    ## CONSUMES ## SystemTable
+
+[Protocols]
+  gEfiMpServiceProtocolGuid            ## CONSUMES
+  gEfiCpuArchProtocolGuid              ## CONSUMES
+  gEfiFirmwareVolume2ProtocolGuid      ## CONSUMES
+  gEfiDxeSmmReadyToLockProtocolGuid    ## CONSUMES
+  gEfiSmMonitorServiceProtocolGuid     ## CONSUMES
+
+[Depex]
+  gEfiCpuArchProtocolGuid AND
+  gEfiMpServiceProtocolGuid
+

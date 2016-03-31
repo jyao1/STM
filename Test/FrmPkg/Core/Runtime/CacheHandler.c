@@ -1,0 +1,51 @@
+/** @file
+
+  Copyright (c) 2015, Intel Corporation. All rights reserved.<BR>
+  This program and the accompanying materials
+  are licensed and made available under the terms and conditions of the BSD License
+  which accompanies this distribution.  The full text of the license may be found at
+  http://opensource.org/licenses/bsd-license.php.
+
+  THE PROGRAM IS DISTRIBUTED UNDER THE BSD LICENSE ON AN "AS IS" BASIS,
+  WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
+
+**/
+
+#include <Base.h>
+#include "FrmHandler.h"
+
+/**
+
+  This function is INVD handler.
+
+  @param Index CPU index
+
+**/
+VOID
+InvdHandler (
+  IN UINT32 Index
+  )
+{
+  DEBUG ((EFI_D_INFO, "(FRM) !!!InvdHandler!!! - %d \n", (UINTN)Index));
+  AsmWbinvd ();
+  VmWriteN (VMCS_N_GUEST_RIP_INDEX, VmReadN(VMCS_N_GUEST_RIP_INDEX) + VmRead32(VMCS_32_RO_VMEXIT_INSTRUCTION_LENGTH_INDEX));
+  return ;
+}
+
+/**
+
+  This function is WBINVD handler.
+
+  @param Index CPU index
+
+**/
+VOID
+WbinvdHandler (
+  IN UINT32 Index
+  )
+{
+  DEBUG ((EFI_D_INFO, "(FRM) !!!WbinvdHandler!!! - %d \n", (UINTN)Index));
+  AsmWbinvd ();
+  VmWriteN (VMCS_N_GUEST_RIP_INDEX, VmReadN(VMCS_N_GUEST_RIP_INDEX) + VmRead32(VMCS_32_RO_VMEXIT_INSTRUCTION_LENGTH_INDEX));
+  return ;
+}

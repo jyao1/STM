@@ -1,0 +1,120 @@
+## @file
+# Component description file for Stm module.
+#
+# Copyright (c) 2015 - 2016, Intel Corporation. All rights reserved.<BR>
+# This program and the accompanying materials
+# are licensed and made available under the terms and conditions of the BSD License
+# which accompanies this distribution.  The full text of the license may be found at
+# http://opensource.org/licenses/bsd-license.php.
+#
+# THE PROGRAM IS DISTRIBUTED UNDER THE BSD LICENSE ON AN "AS IS" BASIS,
+# WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
+#
+##
+
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = Stm
+  FILE_GUID                      = 829ACE7E-B715-43ef-B7C8-5375C101AEA1
+  MODULE_TYPE                    = USER_DEFINED
+  VERSION_STRING                 = 1.0
+  ENTRY_POINT                    = AsmInitializeSmmMonitorNew
+
+#
+# The following information is for reference only and not required by the build tools.
+#
+#  VALID_ARCHITECTURES           = IA32 X64
+#
+
+[Sources]
+  Init/StmInit.c
+  Init/Paging.c
+  Init/Memory.c
+  Init/VmcsInit.c
+  Init/EptInit.c
+  Init/IoInit.c
+  Init/MsrInit.c
+  Init/Relocate.c
+  Runtime/SmmMp.c
+  Runtime/SmmHandler.c
+  Runtime/SmmStateSync.c
+  Runtime/SmmSetup.c
+  Runtime/SmmTearDown.c
+  Runtime/SmmRsmHandler.c
+  Runtime/SmmVmcallHandler.c
+  Runtime/SmmExceptionHandler.c
+  Runtime/SmmCacheHandler.c
+  Runtime/SmmCpuidHandler.c
+  Runtime/SmmCrHandler.c
+  Runtime/SmmEptHandler.c
+  Runtime/SmmIoHandler.c
+  Runtime/SmmMsrHandler.c
+  Runtime/SmmTaskSwitchHandler.c
+  Runtime/SmiHandler.c
+  Runtime/SmiEventHandler.c
+  Runtime/SmiVmcallHandler.c
+  Runtime/StmTearDown.c
+  Runtime/StmExceptionHandler.c
+  Runtime/PageTable.c
+  Stm.h
+  CpuDef.h
+  Cpu.c
+  Dump.c
+  EventLog.c
+  StmResource.c
+  VmcsRecord.c
+  StmPerformance.c
+
+[Sources.Ia32]
+  Init/Ia32/AsmStmInit.asm
+  Init/Ia32/AsmStmInit.s
+  Runtime/Ia32/VmExit.asm
+  Runtime/Ia32/VmExit.s
+  Runtime/Ia32/Exception.asm
+  Runtime/Ia32/Exception.s
+  Runtime/Ia32/SmmException.c
+  Runtime/Ia32/SmmStateSyncIa32eGpr.c
+
+[Sources.X64]
+  Init/x64/AsmStmInit.asm
+  Init/x64/AsmStmInit.s
+  Runtime/x64/VmExit.asm
+  Runtime/x64/VmExit.s
+  Runtime/x64/Exception.asm
+  Runtime/x64/Exception.s
+  Runtime/x64/SmmException.c
+  Runtime/x64/SmmStateSyncIa32eGpr.c
+
+[Packages]
+  StmPkg/StmPkg.dec
+
+[LibraryClasses]
+  BaseLib
+  BaseMemoryLib
+  IoLib
+  PciLib
+  SynchronizationLib
+  DebugLib
+  StmLib
+  PcdLib
+
+[Pcd]
+  gEfiStmPkgTokenSpaceGuid.PcdPerformanceLibraryPropertyMask  ## CONSUMES
+  gEfiStmPkgTokenSpaceGuid.PcdPciExpressBaseAddress           ## PRODUCES
+
+[BuildOptions]
+#  MSFT:*_*_X64_CC_FLAGS  = /Od  /GL-
+#  MSFT:*_*_IA32_CC_FLAGS = /Od  /GL-
+
+# Jump-table MUST be disabled, or self-relocation will fail.
+  INTEL:*_*_X64_CC_FLAGS  = /Qopt-jump-tables-
+  INTEL:*_*_IA32_CC_FLAGS = /Qopt-jump-tables-
+
+  MSFT:*_*_X64_DLINK_FLAGS  = /BASE:0x0 /ALIGN:32 /FILEALIGN:32 /STACK:0x8000,0x8000 /HEAP:0x140000,0x140000 /OUT:$(DEBUG_DIR)\Stm.dll 
+  MSFT:*_*_IA32_DLINK_FLAGS = /BASE:0x0 /ALIGN:32 /FILEALIGN:32 /STACK:0x8000,0x8000 /HEAP:0x140000,0x140000 /OUT:$(DEBUG_DIR)\Stm.dll
+
+  INTEL:*_*_X64_DLINK_FLAGS  = /BASE:0x0 /ALIGN:32 /FILEALIGN:32 /STACK:0x8000,0x8000 /HEAP:0x140000,0x140000 /OUT:$(DEBUG_DIR)\Stm.dll 
+  INTEL:*_*_IA32_DLINK_FLAGS = /BASE:0x0 /ALIGN:32 /FILEALIGN:32 /STACK:0x8000,0x8000 /HEAP:0x140000,0x140000 /OUT:$(DEBUG_DIR)\Stm.dll
+
+  GCC:*_*_X64_DLINK_FLAGS  == -o $(DEBUG_DIR)/Stm.dll -nostdlib -n -q --gc-sections -z common-page-size=0x40 --entry _ModuleEntryPoint -u _ModuleEntryPoint -Map $(DEST_DIR_DEBUG)/$(BASE_NAME).map -m elf_x86_64 --oformat=elf64-x86-64 --defsym=PECOFF_HEADER_SIZE=0x228 #--script=$(MODULE_DIR)/Stm.lds
+  GCC:*_*_IA32_DLINK_FLAGS == -o $(DEBUG_DIR)/Stm.dll -nostdlib -n -q --gc-sections -z common-page-size=0x40 --entry _ModuleEntryPoint -u _ModuleEntryPoint -Map $(DEST_DIR_DEBUG)/$(BASE_NAME).map -m elf_i386   --oformat=elf32-i386   --defsym=PECOFF_HEADER_SIZE=0x220 #--script=$(MODULE_DIR)/Stm.lds
