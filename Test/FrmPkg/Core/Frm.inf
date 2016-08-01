@@ -30,6 +30,9 @@
   Init\VmxTimerInit.c
   Init\VmcsInit.c
   Init\SrmInit.c
+  Init\DlEntry.c
+  Init\DlEntryWakeupAp.c
+  Init\DlEntryCacheInit.c
   Runtime\FrmHandler.c
   Runtime\ExceptionHandler.c
   Runtime\CrHandler.c
@@ -47,14 +50,21 @@
   Runtime\XsetbvHandler.c
   Runtime\SrmDeactivate.c
   Runtime\FrmTeardown.c
+  Runtime\DlmeExit.c
   Runtime\VmcallHandler.c
   Dump.c
   Acpi.c
   Cpu.c
+  DlEntryDump.c
+  Tpm.c
 
 [Sources.Ia32]
   Init\Ia32\ApWakeup.asm
   Init\Ia32\ApWakeup.s
+  Init\Ia32\RlpWake.asm
+  Init\Ia32\RlpWake.s
+  Init\Ia32\MleEntrypoint.asm
+  Init\Ia32\MleEntrypoint.s
   Runtime\Ia32\VmExit.asm
   Runtime\Ia32\VmExit.s
   Runtime\Ia32\Exception.asm
@@ -63,6 +73,10 @@
 [Sources.X64]
   Init\x64\ApWakeup.asm
   Init\x64\ApWakeup.s
+  Init\x64\RlpWake.asm
+  Init\x64\RlpWake.s
+  Init\x64\MleEntrypoint.asm
+  Init\x64\MleEntrypoint.s
   Runtime\x64\VmExit.asm
   Runtime\x64\VmExit.s
   Runtime\x64\Exception.asm
@@ -81,11 +95,18 @@
   DebugLib
   FrmLib
   TimerLib
+  Tpm12DeviceLib
+  Tpm2DeviceLib
+  Tpm12CommandLib
+  Tpm2CommandLib
+  Tpm12HashLib
+  HashLib
 
 [Pcd]
   gEfiMdePkgTokenSpaceGuid.PcdPciExpressBaseAddress      ## PRODUCES
   gEfiFrmTokenSpaceGuid.PcdAcpiTimerIoPortBaseAddress    ## PRODUCES
   gEfiFrmTokenSpaceGuid.PcdAcpiTimerWidth                ## PRODUCES
+  gEfiSecurityPkgTokenSpaceGuid.PcdTpmBaseAddress        ## PRODUCES
 
 [BuildOptions]
   MSFT:*_*_*_CC_FLAGS  = /Od /GL-

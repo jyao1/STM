@@ -388,10 +388,13 @@ FrmTeardownAp (
   This function teardown BSP.
 
   @param Index               CPU index
+  @param SystemPowerState    An integer representing the system power state that the software will be transitioning in to.
+
 **/
 VOID
 FrmTeardownBsp (
-  IN UINT32 Index
+  IN UINT32 Index,
+  IN UINT32 SystemPowerState
   );
 
 #endif

@@ -134,6 +134,7 @@ typedef struct {
 #define MEMORY_TYPE_WP  5
 #define MEMORY_TYPE_WB  6
 
+#define IA32_PLATFORM_ID_MSR_INDEX          0x17
 #define IA32_APIC_BASE_MSR_INDEX            0x1B
 #define   IA32_APIC_BSP                     (1u << 8)
 #define   IA32_APIC_X2_MODE                 (1u << 10)
@@ -183,6 +184,9 @@ typedef struct {
 #define EFI_MSR_COREI7_SMRR_PHYS_BASE          0x1F2
 #define EFI_MSR_COREI7_SMRR_PHYS_MASK          0x1F3
 #define  EFI_MSR_SMRR_PHYS_MASK_VALID          (1u << 11)
+
+#define IA32_MCG_CAP                        0x179
+#define IA32_MC0_STATUS                     0x401
 
 #define IA32_EFER_MSR_INDEX                 0xC0000080
 #define   IA32_EFER_MSR_SCE                 1u

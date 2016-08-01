@@ -70,6 +70,18 @@
   Ia32/AsmTestAndReset.asm
   Ia32/AsmTestAndSet.s
   Ia32/AsmTestAndReset.s
+  Ia32/AsmGetSecCapabilities.asm
+  Ia32/AsmGetSecParameters.asm
+  Ia32/AsmGetSecSenter.asm
+  Ia32/AsmGetSecSexit.asm
+  Ia32/AsmGetSecSmctrl.asm
+  Ia32/AsmGetSecWakeup.asm
+  Ia32/AsmGetSecCapabilities.s
+  Ia32/AsmGetSecParameters.s
+  Ia32/AsmGetSecSenter.s
+  Ia32/AsmGetSecSexit.s
+  Ia32/AsmGetSecSmctrl.s
+  Ia32/AsmGetSecWakeup.s
 
 [Sources.x64]
   x64/AsmInvEpt.asm
@@ -109,6 +121,18 @@
   x64/AsmTestAndReset.asm
   x64/AsmTestAndSet.s
   x64/AsmTestAndReset.s
+  x64/AsmGetSecCapabilities.asm
+  x64/AsmGetSecParameters.asm
+  x64/AsmGetSecSenter.asm
+  x64/AsmGetSecSexit.asm
+  x64/AsmGetSecSmctrl.asm
+  x64/AsmGetSecWakeup.asm
+  x64/AsmGetSecCapabilities.s
+  x64/AsmGetSecParameters.s
+  x64/AsmGetSecSenter.s
+  x64/AsmGetSecSexit.s
+  x64/AsmGetSecSmctrl.s
+  x64/AsmGetSecWakeup.s
 
 [Packages]
   MdePkg/MdePkg.dec

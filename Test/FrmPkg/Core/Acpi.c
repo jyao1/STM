@@ -22,6 +22,21 @@
 extern FRM_COMMUNICATION_DATA    mCommunicationData;
 
 /**
+
+  This function find ACPI RSDPTR.
+
+  @return ACPI RSDPTR
+
+**/
+VOID *
+FindAcpiRsdPtr(
+  VOID
+  )
+{
+  return (VOID *)(UINTN)mCommunicationData.AcpiRsdp;
+}
+
+/**
   Get ACPI table via signature.
 
   @param Signature ACPI Table signature.

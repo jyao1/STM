@@ -24,6 +24,8 @@ EXTERNDEF      mApGdtBase:DWORD
 EXTERNDEF      mLongModeEntryOffset:DWORD
 EXTERNDEF      mLongModeEntry:DWORD
 EXTERNDEF      mPageTableOffset:DWORD
+EXTERNDEF      mCodeSel:DWORD
+EXTERNDEF      mApGdtrOffset:DWORD
 
 EXTERNDEF      mCpuNum:NEAR
 EXTERNDEF      mApStack:NEAR
@@ -40,6 +42,8 @@ mApGdtBase                   DD NullSeg - AsmApWakeup
 mLongModeEntryOffset         DD LongModeEntryOffset - AsmApWakeup32
 mLongModeEntry               DD LongModeEntry - AsmApWakeup32
 mPageTableOffset             DD PageTableOffset - AsmApWakeup32
+mCodeSel                     DD CODE_SEL
+mApGdtrOffset                DD GDTR_OFFSET
 
 CODE_SEL    = offset CodeSeg32 - offset NullSeg
 DATA_SEL    = offset DataSeg32 - offset NullSeg
@@ -67,7 +71,7 @@ ProtectedModeEntryOffset::
 
   dd 0 ; dummy
 GdtrOffset::
-  dw GDT_SIZE
+  dw GDT_SIZE - 1
 GdtBaseOffset::
   dd 0h ; TO BE FIXED
   dw 0 ; dummy

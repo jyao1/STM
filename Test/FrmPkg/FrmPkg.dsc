@@ -47,12 +47,20 @@
 !endif
   TimerLib|FrmPkg/Library/AcpiTimerLib/AcpiTimerLib.inf
   DebugPrintErrorLevelLib|MdePkg/Library/BaseDebugPrintErrorLevelLib/BaseDebugPrintErrorLevelLib.inf
+  Tpm12DeviceLib|FrmPkg/Library/Tpm12DeviceLibDTpm/Tpm12DeviceLibDTpm.inf
+  Tpm2DeviceLib|FrmPkg/Library/Tpm2DeviceLibDTpm/Tpm2DeviceLibDTpm.inf
+  Tpm12CommandLib|FrmPkg/Library/Tpm12CommandLib/Tpm12CommandLib.inf
+  Tpm2CommandLib|FrmPkg/Library/Tpm2CommandLib/Tpm2CommandLib.inf
+  Tpm12HashLib|FrmPkg/Library/Tpm12HashLibTpm/Tpm12HashLibTpm.inf
+  HashLib|FrmPkg/Library/HashLibTpm2/HashLibTpm2.inf
 
 [LibraryClasses.common.DXE_DRIVER]
   UefiDriverEntryPoint|MdePkg/Library/UefiDriverEntryPoint/UefiDriverEntryPoint.inf
+  FrmLib|FrmPkg/Library/FrmLib/FrmLib.inf
 
 [LibraryClasses.common.UEFI_APPLICATION]
   UefiApplicationEntryPoint|MdePkg/Library/UefiApplicationEntryPoint/UefiApplicationEntryPoint.inf
+  FrmLib|FrmPkg/Library/FrmLib/FrmLib.inf
 
 [LibraryClasses.common.USER_DEFINED]
 !if $(TARGET) == RELEASE
@@ -84,6 +92,7 @@
   gEfiMdePkgTokenSpaceGuid.PcdPciExpressBaseAddress|0x00000000
   gEfiFrmTokenSpaceGuid.PcdAcpiTimerIoPortBaseAddress|0x0000
   gEfiFrmTokenSpaceGuid.PcdAcpiTimerWidth|0x00
+  gEfiSecurityPkgTokenSpaceGuid.PcdTpmBaseAddress|0
 
 [Components]
   FrmPkg/Core/Frm.inf

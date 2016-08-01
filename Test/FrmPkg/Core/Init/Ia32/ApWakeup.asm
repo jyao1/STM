@@ -25,6 +25,8 @@ EXTERNDEF   C   mApWakeupSegmentOffset:DWORD
 EXTERNDEF   C   mApProtectedModeEntryOffset:DWORD
 EXTERNDEF   C   mApGdtBaseOffset:DWORD
 EXTERNDEF   C   mApGdtBase:DWORD
+EXTERNDEF   C   mCodeSel:DWORD
+EXTERNDEF   C   mApGdtrOffset:DWORD
 
 EXTERNDEF   C   mCpuNum:NEAR
 EXTERNDEF   C   mApStack:NEAR
@@ -38,6 +40,8 @@ mApWakeupSegmentOffset       DD WakeupSegmentOffset - AsmApWakeup
 mApProtectedModeEntryOffset  DD ProtectedModeEntryOffset - AsmApWakeup
 mApGdtBaseOffset             DD GdtBaseOffset - AsmApWakeup
 mApGdtBase                   DD NullSeg - AsmApWakeup
+mCodeSel                     DD CODE_SEL
+mApGdtrOffset                DD GDTR_OFFSET
 
 CODE_SEL    = offset CodeSeg32 - offset NullSeg
 DATA_SEL    = offset DataSeg32 - offset NullSeg
@@ -63,7 +67,7 @@ ProtectedModeEntryOffset::
 
   dd 0 ; dummy
 GdtrOffset::
-  dw GDT_SIZE
+  dw GDT_SIZE - 1
 GdtBaseOffset::
   dd 0h ; TO BE FIXED
   dw 0 ; dummy

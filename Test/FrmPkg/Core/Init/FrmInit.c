@@ -13,6 +13,7 @@
 
 #include <Base.h>
 #include "FrmInit.h"
+#include "Dce.h"
 #include <Library\PcdLib.h>
 
 FRM_COMMUNICATION_DATA    mCommunicationData;
@@ -30,6 +31,68 @@ UINT32 mBspIndex;
 
 extern UINT32 mExceptionHandlerLength;
 extern UINTN    mApicIdList;
+
+BASE_LIBRARY_JUMP_BUFFER           mDlmeJumpBuffer;
+
+/**
+
+  This is AP wakeup 32bit entrypoint.
+
+**/
+VOID
+AsmApWakeup32 (
+  VOID
+  );
+
+#ifdef MDE_CPU_X64
+extern UINT32 mLongModeEntry;
+#endif
+
+/**
+
+  This function is main function and it will jump back accrording to DLME argument.
+
+  @param DlmeArgs          A pointer to the Args of DLME
+**/
+VOID
+DlmeMain (
+  IN VOID         *DlmeArgs
+  )
+{
+  LongJump (DlmeArgs, (UINTN)-1);
+  CpuDeadLoop ();
+}
+
+/**
+
+  This function run DRTM DL_Entry.
+
+**/
+VOID
+DlEntry (
+  VOID
+  )
+{
+  UINTN       Flag;
+  VOID        *StackBase;
+  VOID        *StackTop;
+  UINT32      Ret;
+
+  StackBase = AllocatePages (1);
+  StackTop = (UINT8 *)StackBase + EFI_PAGES_TO_SIZE(1);
+
+  Flag = SetJump (&mDlmeJumpBuffer);
+  if (Flag != 0) {
+    DEBUG ((EFI_D_INFO, "(TXT) !!!Great! Entre DLME!!!\n"));
+    return ;
+  }
+
+  Ret = DL_Entry ((UINTN)DlmeMain, &mDlmeJumpBuffer, StackTop);
+
+  DEBUG ((EFI_D_INFO, "(TXT) !!!DlEntry fail - 0x%x!!!\n", Ret));
+
+  return ;
+}
 
 /**
 
@@ -51,6 +114,24 @@ InitHeap (
 
 /**
 
+  This function initialize timer for FRM.
+
+**/
+VOID
+InitializeTimer (
+  VOID
+  )
+{
+  mHostContextCommon.AcpiTimerIoPortBaseAddress = GetAcpiTimerPort(&mHostContextCommon.AcpiTimerWidth);
+  PcdSet16(PcdAcpiTimerIoPortBaseAddress, mHostContextCommon.AcpiTimerIoPortBaseAddress);
+  PcdSet8(PcdAcpiTimerWidth, mHostContextCommon.AcpiTimerWidth);
+  if (mHostContextCommon.AcpiTimerIoPortBaseAddress == 0) {
+    CpuDeadLoop();
+  }
+}
+
+/**
+
   This function initialize basic context for FRM.
 
 **/
@@ -66,13 +147,6 @@ InitBasicContext (
   GetPciExpressInfoFromAcpi (&mHostContextCommon.PciExpressBaseAddress, &mHostContextCommon.PciExpressLength);
   PcdSet64 (PcdPciExpressBaseAddress, mHostContextCommon.PciExpressBaseAddress);
   if (mHostContextCommon.PciExpressBaseAddress == 0) {
-    CpuDeadLoop ();
-  }
-
-  mHostContextCommon.AcpiTimerIoPortBaseAddress = GetAcpiTimerPort (&mHostContextCommon.AcpiTimerWidth);
-  PcdSet16 (PcdAcpiTimerIoPortBaseAddress, mHostContextCommon.AcpiTimerIoPortBaseAddress);
-  PcdSet8 (PcdAcpiTimerWidth, mHostContextCommon.AcpiTimerWidth);
-  if (mHostContextCommon.AcpiTimerIoPortBaseAddress == 0) {
     CpuDeadLoop ();
   }
 
@@ -264,7 +338,18 @@ InitHostContext (
   mApFinished = AllocatePages (FRM_SIZE_TO_PAGES (mHostContextCommon.CpuNum));
   mApFinished[mBspIndex] = TRUE;
   InitAllAps ();
-  WakeupAllAps ();
+
+  if (IsMleLaunched()) {
+    DEBUG((EFI_D_INFO, "(TXT) TxtWakeUpRlps ...\n"));
+#ifdef MDE_CPU_X64
+    TxtWakeUpRlps((UINT32)((UINTN)AsmApWakeup32 + mLongModeEntry));
+#else
+    TxtWakeUpRlps((UINT32)((UINTN)AsmApWakeup32));
+#endif
+  } else {
+    DEBUG((EFI_D_INFO, "(FRM) WakeupAllAps ...\n"));
+    WakeupAllAps();
+  }
 
   // Wait
   for (Index = 0; Index < mHostContextCommon.CpuNum; Index++) {
@@ -272,6 +357,7 @@ InitHostContext (
       ; // WAIT
     }
   }
+  DEBUG((EFI_D_INFO, "(FRM) mApFinished\n"));
 
   // OK All AP finished
 
@@ -602,7 +688,8 @@ _ModuleEntryPoint (
   IN FRM_COMMUNICATION_DATA    *CommunicationData
   )
 {
-  BOOLEAN InterruptEnabled;
+  BOOLEAN        InterruptEnabled;
+  RETURN_STATUS  Status;
 
   if ((AsmReadMsr64 (IA32_FEATURE_CONTROL_MSR_INDEX) & IA32_FEATURE_CONTROL_VMX) == 0) {
     DEBUG ((EFI_D_ERROR, "(FRM) !!!VMX not enabled!\n"));
@@ -637,7 +724,22 @@ _ModuleEntryPoint (
   DEBUG ((EFI_D_INFO, "(FRM) SmMonitorService  - %016lx\n", mCommunicationData.SmMonitorServiceProtocol));
   DEBUG ((EFI_D_INFO, "(FRM) SmMonitorBase     - %016lx\n", mCommunicationData.SmMonitorServiceImageBase));
   DEBUG ((EFI_D_INFO, "(FRM) SmMonitorSize     - %016lx\n", mCommunicationData.SmMonitorServiceImageSize));
-
+  DEBUG ((EFI_D_INFO, "(TXT) MeasuredImageSize - %016lx\n", mCommunicationData.MeasuredImageSize));
+  DEBUG ((EFI_D_INFO, "(TXT) SinitAcmBase      - %016lx\n", mCommunicationData.SinitAcmBase));
+  DEBUG ((EFI_D_INFO, "(TXT) SinitAcmSize      - %016lx\n", mCommunicationData.SinitAcmSize));
+  DEBUG ((EFI_D_INFO, "(TXT) LcpPoBase         - %016lx\n", mCommunicationData.LcpPoBase));
+  DEBUG ((EFI_D_INFO, "(TXT) LcpPoSize         - %016lx\n", mCommunicationData.LcpPoSize));
+  DEBUG ((EFI_D_INFO, "(TXT) EventLogBase      - %016lx\n", mCommunicationData.EventLogBase));
+  DEBUG ((EFI_D_INFO, "(TXT) EventLogSize      - %016lx\n", mCommunicationData.EventLogSize));
+  DEBUG ((EFI_D_INFO, "(TXT) DprBase           - %016lx\n", mCommunicationData.DprBase));
+  DEBUG ((EFI_D_INFO, "(TXT) DprSize           - %016lx\n", mCommunicationData.DprSize));
+  DEBUG ((EFI_D_INFO, "(TXT) PmrLowBase        - %016lx\n", mCommunicationData.PmrLowBase));
+  DEBUG ((EFI_D_INFO, "(TXT) PmrLowSize        - %016lx\n", mCommunicationData.PmrLowSize));
+  DEBUG ((EFI_D_INFO, "(TXT) PmrHighBase       - %016lx\n", mCommunicationData.PmrLowBase));
+  DEBUG ((EFI_D_INFO, "(TXT) PmrHighSize       - %016lx\n", mCommunicationData.PmrLowSize));
+  DEBUG ((EFI_D_INFO, "(TXT) TpmType           - %08x\n", mCommunicationData.TpmType));
+  DEBUG ((EFI_D_INFO, "(TXT) ActivePcrBanks    - %08x\n", mCommunicationData.TpmType));
+  
   mHostContextCommon.ImageBase = mCommunicationData.ImageBase;
   mHostContextCommon.ImageSize = mCommunicationData.ImageSize;
 
@@ -652,6 +754,14 @@ _ModuleEntryPoint (
 
   InitializeSpinLock (&mHostContextCommon.MemoryLock);
   // after that we can use MemoryServices
+
+  InitializeTimer();
+  // after that we can use MicroSecondDelay()
+
+  Status = DceLoaderEntrypoint();
+  if (!EFI_ERROR(Status)) {
+    DlEntry();
+  }
 
   InitBasicContext ();
 

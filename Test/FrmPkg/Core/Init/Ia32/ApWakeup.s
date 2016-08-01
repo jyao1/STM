@@ -21,6 +21,8 @@ ASM_GLOBAL ASM_PFX(mApWakeupSegmentOffset)
 ASM_GLOBAL ASM_PFX(mApProtectedModeEntryOffset)
 ASM_GLOBAL ASM_PFX(mApGdtBaseOffset)
 ASM_GLOBAL ASM_PFX(mApGdtBase)
+ASM_GLOBAL ASM_PFX(mCodeSel)
+ASM_GLOBAL ASM_PFX(mApGdtrOffset)
 
 ASM_GLOBAL ASM_PFX(mCpuNum)
 ASM_GLOBAL ASM_PFX(mApStack)
@@ -34,6 +36,8 @@ ASM_PFX(mApWakeupSegmentOffset):       .long WakeupSegmentOffset - ASM_PFX(AsmAp
 ASM_PFX(mApProtectedModeEntryOffset):  .long ProtectedModeEntryOffset - ASM_PFX(AsmApWakeup)
 ASM_PFX(mApGdtBaseOffset):             .long GdtBaseOffset - ASM_PFX(AsmApWakeup)
 ASM_PFX(mApGdtBase):                   .long NullSeg - ASM_PFX(AsmApWakeup)
+ASM_PFX(mCodeSel):                     .long CODE_SEL
+ASM_PFX(mApGdtrOffset):                .long GDTR_OFFSET
 
 .equ CODE_SEL,    CodeSeg32 - NullSeg
 .equ DATA_SEL,    DataSeg32 - NullSeg
@@ -60,7 +64,7 @@ ProtectedModeEntryOffset:
 
   .long 0 # dummy
 GdtrOffset:
-  .word GDT_SIZE
+  .word GDT_SIZE - 1
 GdtBaseOffset:
   .long 0 # TO BE FIXED
   .word 0 # dummy

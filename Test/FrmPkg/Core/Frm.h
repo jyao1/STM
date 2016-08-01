@@ -203,6 +203,19 @@ ReadLocalApicId (
   );
 
 /**
+
+  This function return if it is BSP.
+
+  @retval TRUE  It is BSP
+  @retval FALSE It is AP
+
+**/
+BOOLEAN
+IsBsp (
+  VOID
+  );
+
+/**
   Send SIPI to APs.
 
   @param Vector  The AP startup vector
@@ -223,6 +236,30 @@ SendSipi (
 BOOLEAN
 IsXStateSupoprted (
   VOID
+  );
+
+/**
+
+  This function find ACPI RSDPTR.
+
+  @return ACPI RSDPTR
+
+**/
+VOID *
+FindAcpiRsdPtr(
+  VOID
+  );
+
+/**
+  Get ACPI table via signature.
+
+  @param Signature ACPI Table signature.
+
+  @return ACPI table pointer.
+**/
+VOID *
+GetAcpiTableViaSignature(
+  IN UINT32 Signature
   );
 
 /**

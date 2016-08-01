@@ -45,13 +45,13 @@ IoAcpiHandler (
     break;
   case SLEEP_S3:
     // S3
-    FrmTeardownBsp (Index);
+    FrmTeardownBsp (Index, 3);
     // Pass throuth
     break;
   case SLEEP_S4:
   case SLEEP_S5:
     // S4/S5
-    FrmTeardownBsp (Index);
+    FrmTeardownBsp (Index, 5);
     break;
   default:
     // S0: Passthrough
@@ -93,13 +93,13 @@ IoAcpiWriteHandler (
     break;
   case SLEEP_S3:
     // S3
-    FrmTeardownBsp (Index);
+    FrmTeardownBsp (Index, 3);
     // Pass throuth
     break;
   case SLEEP_S4:
   case SLEEP_S5:
     // S4/S5
-    FrmTeardownBsp (Index);
+    FrmTeardownBsp (Index, 5);
     break;
   default:
     // S0: Passthrough

@@ -1,0 +1,44 @@
+## @file
+#  Provides hash service using TPM12 device
+#
+#  This library uses TPM12 device to calculate hash.
+#
+# Copyright (c) 2016, Intel Corporation. All rights reserved.<BR>
+# This program and the accompanying materials
+# are licensed and made available under the terms and conditions of the BSD License
+# which accompanies this distribution. The full text of the license may be found at
+# http://opensource.org/licenses/bsd-license.php
+# THE PROGRAM IS DISTRIBUTED UNDER THE BSD LICENSE ON AN "AS IS" BASIS,
+# WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
+#
+##
+
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = Tpm12HashLibTpm
+  MODULE_UNI_FILE                = Tpm12HashLibTpm.uni
+  FILE_GUID                      = E7CF7C3A-F708-4ACD-AFC4-A555127E3F51
+  MODULE_TYPE                    = BASE
+  VERSION_STRING                 = 1.0
+  LIBRARY_CLASS                  = Tpm12HashLib
+
+#
+# The following information is for reference only and not required by the build tools.
+#
+#  VALID_ARCHITECTURES           = IA32 X64 IPF
+#
+
+[Sources]
+  Tpm12HashLibTpm.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+  FrmPkg/FrmPkg.dec
+
+[LibraryClasses]
+  BaseLib
+  BaseMemoryLib
+  DebugLib
+  Tpm12CommandLib
+  MemoryAllocationLib
+  PcdLib

@@ -24,6 +24,8 @@ ASM_GLOBAL ASM_PFX(mApGdtBase)
 ASM_GLOBAL ASM_PFX(mLongModeEntryOffset)
 ASM_GLOBAL ASM_PFX(mLongModeEntry)
 ASM_GLOBAL ASM_PFX(mPageTableOffset)
+ASM_GLOBAL ASM_PFX(mCodeSel)
+ASM_GLOBAL ASM_PFX(mApGdtrOffset)
 
 ASM_GLOBAL ASM_PFX(mCpuNum)
 ASM_GLOBAL ASM_PFX(mApStack)
@@ -40,6 +42,8 @@ ASM_PFX(mApGdtBase):                   .long NullSeg - ASM_PFX(AsmApWakeup)
 ASM_PFX(mLongModeEntryOffset):         .long LongModeEntryOffset - ASM_PFX(AsmApWakeup32)
 ASM_PFX(mLongModeEntry):               .long LongModeEntry - ASM_PFX(AsmApWakeup32)
 ASM_PFX(mPageTableOffset):             .long PageTableOffset - ASM_PFX(AsmApWakeup32)
+ASM_PFX(mCodeSel):                     .long CODE_SEL
+ASM_PFX(mApGdtrOffset):                .long GDTR_OFFSET
 
 .equ CODE_SEL,    CodeSeg32 - NullSeg
 .equ DATA_SEL,    DataSeg32 - NullSeg
@@ -68,7 +72,7 @@ ProtectedModeEntryOffset:
 
   .long 0 # dummy
 GdtrOffset:
-  .word GDT_SIZE
+  .word GDT_SIZE - 1
 GdtBaseOffset:
   .long 0 # TO BE FIXED
   .word 0 # dummy

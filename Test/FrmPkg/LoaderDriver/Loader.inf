@@ -37,6 +37,7 @@
   DebugLib
   UefiLib
   DxeServicesLib
+  FrmLib
 
 [Guids]
   gEfiAcpi20TableGuid    ## CONSUMES ## SystemTable
@@ -48,6 +49,8 @@
   gEfiFirmwareVolume2ProtocolGuid      ## CONSUMES
   gEfiDxeSmmReadyToLockProtocolGuid    ## CONSUMES
   gEfiSmMonitorServiceProtocolGuid     ## CONSUMES
+  gEfiTcgProtocolGuid                  ## CONSUMES
+  gEfiTcg2ProtocolGuid                 ## CONSUMES
 
 [Depex]
   gEfiCpuArchProtocolGuid AND

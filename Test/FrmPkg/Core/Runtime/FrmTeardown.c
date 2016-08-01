@@ -13,22 +13,27 @@
 
 #include <Base.h>
 #include "FrmHandler.h"
+#include "Dce.h"
 
 volatile BOOLEAN    mReadyForTeardown;
+volatile UINT32     mTeardownSystemPowerState;
 volatile BOOLEAN    *mTeardownFinished;
 
 /**
   This function teardown BSP.
 
   @param Index               CPU index
+  @param SystemPowerState    An integer representing the system power state that the software will be transitioning in to.
 **/
 VOID
 FrmTeardownBsp (
-  IN UINT32 Index
+  IN UINT32 Index,
+  IN UINT32 SystemPowerState
   )
 {
   DEBUG ((EFI_D_INFO, "(FRM) !!!ReadyForTeardown - %d\n", (UINTN)Index));
 
+  mTeardownSystemPowerState = SystemPowerState;
   mReadyForTeardown = TRUE;
 
   TeardownStm (Index);
@@ -47,9 +52,13 @@ FrmTeardownBsp (
     }
   }
 
+  if (IsBsp()) {
+    DLME_Exit(SystemPowerState);
+  }
 
   // re-init
   mReadyForTeardown = FALSE;
+  mTeardownSystemPowerState = 0;
   for (Index = 0; Index < mHostContextCommon.CpuNum; Index++) {
     mTeardownFinished[Index] = FALSE;
   }
@@ -77,6 +86,11 @@ FrmTeardownAp (
     AsmWbinvd ();
     AsmVmxOff ();
     AsmWbinvd ();
+
+    if (IsBsp()) {
+      DLME_Exit(mTeardownSystemPowerState);
+    }
+
     mTeardownFinished[Index] = TRUE;
     while (TRUE);
   }

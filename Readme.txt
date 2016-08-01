@@ -24,6 +24,8 @@ A. STM feature
 B. STM TEST Module feature
 1. FRM binary is a tiny VMM to launch STM in UEFI environment for test purpose.
    It shows the concept on how VMM interacts with STM.
+   1). FRM can also do TXT launch, if TXT is enabled and SINIT_ACM is provided by BIOS.
+
 2. StmService provides the API between VMM and STM.
 3. FrmLoader is the UEFI driver to load FRM binary.
    More detail for FRM is described in:
@@ -108,6 +110,15 @@ C. How to build STM BIOS.
       To be specific, if a platform overrides StmPlatformLib to access some special MSR, these MSR
       must be in the resource list.
    
+D. How to build STM BIOS with TXT capability.
+   NOTE: MinnowMax does not have TXT support. Below steps are for a platform which has TXT support.
+   1) Make sure the platform BIOS has TXT support.
+   2) Follow "C" to add required STM components.
+   3) Update Platform.fdf:
+      Add "FILE FREEFORM = 2CB32E6A-B0DB-496D-BD8D-2C890D5A73B8 {
+             SECTION RAW = PlatformPkg/Bin/SINIT_ACM.bin
+          }" to "[FV.MAIN]" section.
+   4) Build platform BIOS.
 
 ================================================================================
                                   KNOWN LIMITATION
@@ -116,5 +127,8 @@ C. How to build STM BIOS.
    The purpose of StmPkg is to show the STM concept.
    Please do not include it in the production without full validation.
 2. GCC build is not fully supported.
+3. The FRM does not support S3, and FRM TXT support does not have a complete trusted boot chain.
+   The purpose of FrmPkg is to validate STM with or without TXT support.
+   Please do not include it in the production without full validation.
 
 [END OF RELEASE NOTES]

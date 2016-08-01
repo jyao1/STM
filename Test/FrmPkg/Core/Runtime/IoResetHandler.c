@@ -37,7 +37,7 @@ IoResetHandler (
 {
   DEBUG ((EFI_D_INFO, "(FRM) !!!IoResetHandler!!!\n"));
 
-  FrmTeardownBsp (Index);
+  FrmTeardownBsp (Index, 0);
   AsmWbinvd ();
 
   //
@@ -75,7 +75,7 @@ IoResetWriteHandler (
 
   DEBUG ((EFI_D_INFO, "(FRM) !!!IoResetHandler!!!\n"));
 
-  FrmTeardownBsp (Index);
+  FrmTeardownBsp (Index, 0);
   AsmWbinvd ();
   
   //
@@ -122,7 +122,7 @@ KbcResetWriteHandler (
   }
 
   // Reset
-  FrmTeardownBsp (Index);
+  FrmTeardownBsp (Index, 0);
   AsmWbinvd ();
   *Action = IO_ACTION_PASSTHROUGH;
 

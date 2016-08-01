@@ -36,6 +36,7 @@
   UefiRuntimeServicesTableLib
   DebugLib
   UefiLib
+  FrmLib
 
 [Guids]
   gEfiFileInfoGuid       ## CONSUMES ## GUID
@@ -49,4 +50,6 @@
   gEfiSimpleFileSystemProtocolGuid   ## CONSUMES
   gEfiLoadedImageProtocolGuid        ## CONSUMES
   gEfiSmMonitorServiceProtocolGuid   ## CONSUMES
+  gEfiTcgProtocolGuid                ## CONSUMES
+  gEfiTcg2ProtocolGuid               ## CONSUMES
 

@@ -116,6 +116,17 @@ WakeupAllAps (
 
 /**
 
+  This function is AP wakeup C function.
+
+**/
+VOID
+EFIAPI
+ApWakeupC (
+  IN UINT32  Index
+  );
+
+/**
+
   This function allocate pages for host.
 
   @param Pages the requested pages number
