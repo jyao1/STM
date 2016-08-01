@@ -22,6 +22,7 @@
 #include <Library/PciLib.h>
 #include <Library/SynchronizationLib.h>
 #include <Library/DebugLib.h>
+#include <Library/StmPlatformLib.h>
 #include <IndustryStandard/Acpi.h>
 #include <IndustryStandard/MemoryMappedConfigurationSpaceAccessTable.h>
 #include <IndustryStandard/Pci.h>

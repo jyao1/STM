@@ -75,6 +75,7 @@ SetMsrBitmapEx (
 
 **/
 VOID
+EFIAPI
 SetMsrBitmap (
   IN UINT32  MsrIndex,
   IN BOOLEAN MsrWrite
@@ -200,4 +201,6 @@ MsrInit (
   mGuestContextCommonSmm.MsrBitmap = (UINT64)(UINTN)AllocatePages (1);
 
   SetAllMsrBitmaps ();
+
+  StmPlatformLibSetMsrBitmaps ();
 }

@@ -35,6 +35,7 @@
 
 [LibraryClasses.common.USER_DEFINED]
   StmLib|StmPkg/Library/StmLib/StmLib.inf
+  StmPlatformLib|StmPkg/Library/StmPlatformLibNull/StmPlatformLibNull.inf
   DebugLib|StmPkg/Library/MpSafeDebugLibSerialPort/MpSafeDebugLibSerialPort.inf
   SynchronizationLib|StmPkg/Library/SimpleSynchronizationLib/SimpleSynchronizationLib.inf
   SerialPortLib|StmPkg/EdkII/PcAtChipsetPkg/Library/SerialIoLib/SerialIoLib.inf

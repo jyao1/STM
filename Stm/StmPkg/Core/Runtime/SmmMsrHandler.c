@@ -31,6 +31,7 @@ SmmReadMsrHandler (
   X86_REGISTER      *Reg;
   STM_RSC_MSR_DESC  *MsrDesc;
   STM_RSC_MSR_DESC  LocalMsrDesc;
+  BOOLEAN           Result;
 
   Reg = &mGuestContextCommonSmm.GuestContextPerCpu[Index].Register;
   MsrIndex = ReadUnaligned32 ((UINT32 *)&Reg->Rcx);
@@ -79,6 +80,10 @@ SmmReadMsrHandler (
     break;
 
   default:
+    Result = StmPlatformLibMsrRead (MsrIndex, &Data64);
+    if (Result) {
+      break;
+    }
     //
     // For rest one, we need pass back to BIOS
     //
@@ -120,6 +125,7 @@ SmmWriteMsrHandler (
   X86_REGISTER      *Reg;
   STM_RSC_MSR_DESC  *MsrDesc;
   STM_RSC_MSR_DESC  LocalMsrDesc;
+  BOOLEAN           Result;
 
   Reg = &mGuestContextCommonSmm.GuestContextPerCpu[Index].Register;
   MsrIndex = ReadUnaligned32 ((UINT32 *)&Reg->Rcx);
@@ -231,6 +237,10 @@ SmmWriteMsrHandler (
     break;
 
   default:
+    Result = StmPlatformLibMsrWrite (MsrIndex, Data64);
+    if (Result) {
+      break;
+    }
     //
     // For rest one, we need pass back to BIOS
     //

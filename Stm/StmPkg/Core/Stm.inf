@@ -97,6 +97,7 @@
   DebugLib
   StmLib
   PcdLib
+  StmPlatformLib
 
 [Pcd]
   gEfiStmPkgTokenSpaceGuid.PcdPerformanceLibraryPropertyMask  ## CONSUMES

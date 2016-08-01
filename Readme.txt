@@ -49,6 +49,10 @@ A. How to build STM.
    4) Type "buildstm.bat" to build STM image.
       1) If user want debug build, please use "buildstm.bat" or "buildstm.bat DEBUG".
       2) If user want release build, please use "buildstm.bat RELEASE".
+   5) NOTE: The default STM build uses a NULL instance StmPlatformLib.
+      A platform BIOS may need override StmPlatformLib to handle some special MSR access,
+      which must happen in VMX Root Mode if STM is enabled.
+      If so, this platform owner need override the StmPlatformLib in StmPkg.dsc.
 2. Build STM tool (optional)
    1) Same as above
    2) Same as above
@@ -98,12 +102,19 @@ C. How to build STM BIOS.
         Add "INF USE=X64 StmPlatformSamplePkg/TestBin/X64$(TARGET)/StmService.inf" to "[FV.MAIN]" section.
         Add "INF USE=X64 StmPlatformSamplePkg/TestBin/X64$(TARGET)/FrmLoader.inf" to "[FV.MAIN]" section.
    5) Build MinnowMax BIOS accroding to MinnowMax release notes.
+   6) NOTE:
+      A platform BIOS may need override StmPlatformSamplePkg/StmPlatformSmm/StmPlatformResource.c
+      to include the resource needed by platform SMI handlers.
+      To be specific, if a platform overrides StmPlatformLib to access some special MSR, these MSR
+      must be in the resource list.
    
 
 ================================================================================
                                   KNOWN LIMITATION
 ================================================================================
 1. STM Domain type is NOT fully implemented.
+   The purpose of StmPkg is to show the STM concept.
+   Please do not include it in the production without full validation.
 2. GCC build is not fully supported.
 
 [END OF RELEASE NOTES]
