@@ -2764,6 +2764,9 @@ GLOBAL_REMOVE_IF_UNREFERENCED CHAR16  *mTxtEventTypeName[] = {
   L"OSSINITDATA_CAP_HASH",
   L"SINIT_PUBKEY_HASH",
   L"LCP_HASH",
+  L"LCP_DETAILS_HASH",
+  L"LCP_AUTHORITIES_HASH",
+  L"NV_INFO_HASH",
 };
 
 /**
@@ -2783,6 +2786,8 @@ EventTypeToString(
   if ((EventType >= TXT_EVTYPE_BASE) &&
       (EventType < TXT_EVTYPE_BASE + sizeof(mTxtEventTypeName)/sizeof(mTxtEventTypeName[0]))) {
     return mTxtEventTypeName[EventType - TXT_EVTYPE_BASE];
+  } else if (EventType == TXT_EVTYPE_CAP_VALUE) {
+    return L"CAP_VALUE";
   } else {
     if (EventType < sizeof(mEventTypeName) / sizeof(mEventTypeName[0])) {
       return mEventTypeName[EventType];

@@ -374,12 +374,12 @@ CapPcr (
   case FRM_TPM_TYPE_TPM12:
     Tpm12GetRandom(sizeof(NonceData), (UINT8 *)&NonceData);
     Tpm12HashAndExtend(PcrIndex, (UINT8 *)&NonceData, sizeof(NonceData), &DigestToEntend);
-    Tpm12LogEvent(PcrIndex, EV_EVENT_TAG, &DigestToEntend, 0, NULL);
+    Tpm12LogEvent(PcrIndex, TXT_EVTYPE_CAP_VALUE, &DigestToEntend, 0, NULL);
     break;
   case FRM_TPM_TYPE_TPM2:
     Tpm2GetRandom(sizeof(RandomBytes.buffer), &RandomBytes);
     HashAndExtend (PcrIndex, (UINT8 *)&RandomBytes.buffer, sizeof(RandomBytes.buffer), &DigestList);
-    Tpm2LogEvent(PcrIndex, EV_EVENT_TAG, &DigestList, 0, NULL);
+    Tpm2LogEvent(PcrIndex, TXT_EVTYPE_CAP_VALUE, &DigestList, 0, NULL);
     break;
   }
 
