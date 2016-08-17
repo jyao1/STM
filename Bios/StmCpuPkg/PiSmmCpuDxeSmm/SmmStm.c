@@ -20,10 +20,15 @@
 #include "PiSmmCpuDxeSmm.h"
 #include "SmmStm.h"
 
+#define TXT_EVTYPE_BASE                  0x400
+#define TXT_EVTYPE_STM_HASH              (TXT_EVTYPE_BASE + 14)
+
 #define RDWR_ACCS             3
 #define FULL_ACCS             7
 
 extern EFI_HANDLE  mSmmCpuHandle;
+
+BOOLEAN mLockLoadMonitor = FALSE;
 
 //
 // Template of STM_RSC_END structure for copying.
@@ -911,6 +916,9 @@ LoadMonitor (
   IN UINTN                StmImageSize
   )
 {
+  if (mLockLoadMonitor) {
+    return EFI_ACCESS_DENIED;
+  }
   if ((AsmReadMsr64 (IA32_SMM_MONITOR_CTL_MSR_INDEX) & 0xFFFFF000) == 0) {
     return EFI_UNSUPPORTED;
   }
@@ -922,6 +930,16 @@ LoadMonitor (
   if (!StmCheckStmImage (StmImage, StmImageSize)) {
     return EFI_BUFFER_TOO_SMALL;
   }
+
+  // Record STM_HASH to PCR 0, just in case it is NOT TXT launch, we still need provide the evidence.
+  TpmMeasureAndLogData(
+    0,                        // PcrIndex
+    TXT_EVTYPE_STM_HASH,      // EventType
+    NULL,                     // EventLog
+    0,                        // LogLen
+    (VOID *)(UINTN)StmImage,  // HashData
+    StmImageSize              // HashDataLen
+    );
 
   StmLoadStmImage (StmImage, StmImageSize);
 

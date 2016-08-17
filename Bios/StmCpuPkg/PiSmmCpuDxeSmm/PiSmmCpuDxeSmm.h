@@ -51,6 +51,7 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 #include <Library/ReportStatusCodeLib.h>
 #include <Library/SmmCpuFeaturesLib.h>
 #include <Library/PeCoffGetEntryPointLib.h>
+#include <Library/TpmMeasurementLib.h>
 
 #include <AcpiCpuData.h>
 #include <CpuHotPlugData.h>

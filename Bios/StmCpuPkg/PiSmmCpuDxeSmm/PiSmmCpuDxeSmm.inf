@@ -122,6 +122,7 @@
   ReportStatusCodeLib
   SmmCpuFeaturesLib
   PeCoffGetEntryPointLib
+  TpmMeasurementLib
 
 [Protocols]
   gEfiSmmAccess2ProtocolGuid               ## CONSUMES

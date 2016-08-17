@@ -93,6 +93,8 @@ SMM_S3_RESUME_STATE *mSmmS3ResumeState = NULL;
 UINTN mMaxNumberOfCpus = 1;
 UINTN mNumberOfCpus = 1;
 
+extern BOOLEAN mLockLoadMonitor;
+
 //
 // SMM ready to lock flag
 //
@@ -832,6 +834,8 @@ SmmEndOfDxeEventNotify (
       Psd = (TXT_PROCESSOR_SMM_DESCRIPTOR*)(VOID*)(UINTN)(mCpuHotPlugData.SmBase[Index] + SMM_PSD_OFFSET);
       Psd->AcpiRsdp = (UINT64)(UINTN)Rsdp;
     }
+
+    mLockLoadMonitor = FALSE;
   }
 
   return EFI_SUCCESS;
