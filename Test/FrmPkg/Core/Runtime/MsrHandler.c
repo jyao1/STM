@@ -168,6 +168,14 @@ WriteMsrHandler (
     AsmWriteMsr (MsrIndex, Data64); // VMM does not use this
     break;
 #endif
+  case IA32_BIOS_UPDT_TRIG_MSR_INDEX:
+    DEBUG((EFI_D_INFO, "(FRM) !!!WriteMsrHandler (Microcode) - !!! %08x<-%016lx\n", (UINTN)MsrIndex, Data64));
+    Data64 = GuestVirtualToHostPhysical(Index, (UINTN)Data64);
+    if (Data64 != 0) {
+      DEBUG((EFI_D_INFO, "(FRM) !!! Microcode %016lx\n", Data64));
+      AsmWriteMsr64(MsrIndex, Data64);
+    }
+    break;
   default:
 #if 0
     DEBUG ((EFI_D_INFO, "(FRM) !!!WriteMsrHandler - Other!!! %08x<-%016lx\n", (UINTN)MsrIndex, Data64));
