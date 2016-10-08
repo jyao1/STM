@@ -16,6 +16,63 @@
 
 /**
 
+  This function create >4G paging for X64 mode.
+
+  @param PageTable Page table pointer
+
+**/
+VOID
+CreateAbove4GPaging (
+  IN UINTN                             PageTable
+  )
+{
+  UINTN                             Index;
+  UINTN                             SubIndex;
+  UINTN                             Pml4Index;
+  UINT64                            *Pde;
+  UINT64                            *Pte;
+  UINT64                            *Pml4;
+  UINT64                            BaseAddress;
+  UINTN                             NumberOfPml4EntriesNeeded;
+  UINTN                             NumberOfPdpEntriesNeeded;
+
+  if (sizeof(UINTN) == sizeof(UINT64)) {
+    Pml4 = (UINT64 *)PageTable;
+
+    if (mHostContextCommon.PhysicalAddressBits <= 39) {
+      NumberOfPml4EntriesNeeded = 1;
+      NumberOfPdpEntriesNeeded = (UINTN)LShiftU64 (1, mHostContextCommon.PhysicalAddressBits - 30);
+    } else {
+      NumberOfPml4EntriesNeeded = (UINTN)LShiftU64 (1, mHostContextCommon.PhysicalAddressBits - 39);
+      NumberOfPdpEntriesNeeded = 512;
+    }
+
+    BaseAddress = BASE_4GB;
+    for (Pml4Index = 0; Pml4Index < NumberOfPml4EntriesNeeded; Pml4Index++) {
+      if (Pml4Index > 0) {
+        Pde = (UINT64 *)(UINTN)AllocatePages (1);
+        Pml4[Pml4Index] = (UINT64)(UINTN)Pde | IA32_PG_P;
+        Index = 0;
+      } else {
+        // Start from 4G - Pml4[0] already allocated.
+        Pde = (UINT64 *)(UINTN)(Pml4[0] & 0xFFFFF000);
+        Index = 4;
+      }
+      for (; Index < NumberOfPdpEntriesNeeded; Index++) {
+        Pte = (UINT64 *)AllocatePages (1);
+        Pde[Index] = (UINT64)(UINTN)Pte | IA32_PG_P;
+
+        for (SubIndex = 0; SubIndex < SIZE_4KB / sizeof(*Pte); SubIndex++) {
+          Pte[SubIndex] = BaseAddress | IA32_PG_PS | IA32_PG_RW | IA32_PG_P;
+          BaseAddress += SIZE_2MB;
+        }
+      }
+    }
+  }
+}
+
+/**
+
   This function create 4G page table for Host.
 
   @return Page table pointer
@@ -70,6 +127,7 @@ CreatePageTable (
   //
   if (sizeof(UINTN) == sizeof(UINT64)) {
     PageTable = (UINTN)Pml4;
+    CreateAbove4GPaging(PageTable);
   }
   return PageTable;
 }
