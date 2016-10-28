@@ -52,6 +52,8 @@ FRM_COMMUNICATION_DATA    mCommunicationData = {
 EFI_GUID gFrmFileName = FRM_FILE_GUID_NAME;
 EFI_GUID gStmServiceFileName = STM_SERVICE_FILE_GUID_NAME;
 
+EFI_MP_SERVICES_PROTOCOL  *mMpService;
+
 UINTN Argc = 0;
 CHAR16 *Argv[10];
 CHAR16 *ArgBuffer;
@@ -677,6 +679,93 @@ LoadImageFromFile (
 }
 
 /**
+  This service lets the caller enable or disable all APs from this point onward.
+  This service may only be called from the BSP.
+
+  @param[in] EnableAP          Specifies the new state for the processor for
+                               enabled, FALSE for disabled.
+**/
+VOID
+EnableDisableAllAps(
+  IN  BOOLEAN                   EnableAP
+  )
+{
+  EFI_STATUS  Status;
+  UINTN       Index;
+  UINTN       BspIndex;
+  UINTN       NumberOfCPUs;
+  UINTN       NumberOfEnabledCPUs;
+
+  Status = mMpService->GetNumberOfProcessors(
+                         mMpService,
+                         &NumberOfCPUs,
+                         &NumberOfEnabledCPUs
+                         );
+  ASSERT_EFI_ERROR(Status);
+
+  Status = mMpService->WhoAmI(
+                         mMpService,
+                         &BspIndex
+                         );
+  ASSERT_EFI_ERROR(Status);
+
+  for (Index = 0; Index < NumberOfCPUs; Index++) {
+    if (Index == BspIndex) {
+      continue;
+    }
+    Status = mMpService->EnableDisableAP(
+                           mMpService,
+                           Index,
+                           EnableAP,
+                           NULL
+                           );
+    ASSERT_EFI_ERROR(Status);
+  }
+}
+
+/**
+
+  This function launch FRM.
+
+**/
+VOID
+LaunchFrm (
+  VOID
+  )
+{
+  FRM_ENTRYPOINT            FrmEntryPoint;
+  EFI_TPL                   OldTpl;
+
+  //
+  // Because FRM will wake up AP, we need notify MP_CPU driver.
+  // E.g. if MP_CPU driver puts APs to MONITOR state (not of HLT),
+  // the MONITOR_WAKE does not work after FRM returns.
+  //
+  // So we disable all APs here, then enable all APs after FRM return.
+  //
+  EnableDisableAllAps(FALSE);
+
+  //
+  // RaiseTPL to disable interrupt
+  //
+  OldTpl = gBS->RaiseTPL(TPL_HIGH_LEVEL);
+
+  //
+  // Run FRM entrypoint
+  //
+  FrmEntryPoint = (FRM_ENTRYPOINT)(UINTN)mCommunicationData.ImageEntrypoint;
+  FrmEntryPoint (&mCommunicationData);
+
+  gBS->RestoreTPL(OldTpl);
+
+  //
+  // Re-enable all APs to notify MP_CPU that AP's state is changed.
+  //
+  EnableDisableAllAps(TRUE);
+  return;
+}
+
+/**
   Get RSDP ACPI table by Guid.
 
   @param AcpiTableGuid  ACPI table GUID.
@@ -776,7 +865,6 @@ LoaderEntrypoint (
 {
   EFI_STATUS                Status;
   EFI_PHYSICAL_ADDRESS      Address;
-  EFI_MP_SERVICES_PROTOCOL  *MpService;
   EFI_CPU_ARCH_PROTOCOL     *CpuArch;
   UINTN                     NumberOfCPUs;
   UINTN                     NumberOfEnabledCPUs;
@@ -784,7 +872,6 @@ LoaderEntrypoint (
   UINT64                    TimerPeriod;
   VOID                      *SmMonitorServiceProtocol;
   EFI_LOADED_IMAGE_PROTOCOL *LoadedImage;
-  FRM_ENTRYPOINT            Entry;
   EFI_TCG2_PROTOCOL                *Tcg2;
   EFI_TCG_PROTOCOL                 *Tcg;
   EFI_TCG2_BOOT_SERVICE_CAPABILITY Tcg2ProtocolCapability;
@@ -853,13 +940,13 @@ LoaderEntrypoint (
   //
   // Get CPU Number
   //
-  Status = gBS->LocateProtocol (&gEfiMpServiceProtocolGuid, NULL, (VOID **)&MpService);
+  Status = gBS->LocateProtocol (&gEfiMpServiceProtocolGuid, NULL, (VOID **)&mMpService);
   ASSERT_EFI_ERROR (Status);
-  Status = MpService->GetNumberOfProcessors (
-                        MpService,
-                        &NumberOfCPUs,
-                        &NumberOfEnabledCPUs
-                        );
+  Status = mMpService->GetNumberOfProcessors (
+                         mMpService,
+                         &NumberOfCPUs,
+                         &NumberOfEnabledCPUs
+                         );
   ASSERT_EFI_ERROR (Status);
 
   //
@@ -964,7 +1051,6 @@ LoaderEntrypoint (
              );
   ASSERT_EFI_ERROR (Status);
 
-  Entry = (FRM_ENTRYPOINT)(UINTN)mCommunicationData.ImageEntrypoint;
-  Entry(&mCommunicationData);
+  LaunchFrm ();
   return Status;
 }

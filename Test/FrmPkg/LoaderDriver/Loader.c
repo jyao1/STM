@@ -59,6 +59,8 @@ BOOLEAN gEntered = FALSE;
 
 EFI_EVENT mFrmLaunchEvent;
 
+EFI_MP_SERVICES_PROTOCOL  *mMpService;
+
 /**
 
   This function returns measured image size.
@@ -585,6 +587,51 @@ LoadImageFromFv (
 }
 
 /**
+  This service lets the caller enable or disable all APs from this point onward.
+  This service may only be called from the BSP.
+
+  @param[in] EnableAP          Specifies the new state for the processor for
+                               enabled, FALSE for disabled.
+**/
+VOID
+EnableDisableAllAps(
+  IN  BOOLEAN                   EnableAP
+  )
+{
+  EFI_STATUS  Status;
+  UINTN       Index;
+  UINTN       BspIndex;
+  UINTN       NumberOfCPUs;
+  UINTN       NumberOfEnabledCPUs;
+
+  Status = mMpService->GetNumberOfProcessors(
+                         mMpService,
+                         &NumberOfCPUs,
+                         &NumberOfEnabledCPUs
+                         );
+  ASSERT_EFI_ERROR(Status);
+
+  Status = mMpService->WhoAmI(
+                         mMpService,
+                         &BspIndex
+                         );
+  ASSERT_EFI_ERROR(Status);
+
+  for (Index = 0; Index < NumberOfCPUs; Index++) {
+    if (Index == BspIndex) {
+      continue;
+    }
+    Status = mMpService->EnableDisableAP(
+                           mMpService,
+                           Index,
+                           EnableAP,
+                           NULL
+                           );
+    ASSERT_EFI_ERROR(Status);
+  }
+}
+
+/**
 
   This function launch FRM.
 
@@ -595,12 +642,34 @@ LaunchFrm (
   )
 {
   FRM_ENTRYPOINT            FrmEntryPoint;
+  EFI_TPL                   OldTpl;
+
+  //
+  // Because FRM will wake up AP, we need notify MP_CPU driver.
+  // E.g. if MP_CPU driver puts APs to MONITOR state (not of HLT),
+  // the MONITOR_WAKE does not work after FRM returns.
+  //
+  // So we disable all APs here, then enable all APs after FRM return.
+  //
+  EnableDisableAllAps(FALSE);
+
+  //
+  // RaiseTPL to disable interrupt
+  //
+  OldTpl = gBS->RaiseTPL(TPL_HIGH_LEVEL);
 
   //
   // Run FRM entrypoint
   //
   FrmEntryPoint = (FRM_ENTRYPOINT)(UINTN)mCommunicationData.ImageEntrypoint;
   FrmEntryPoint (&mCommunicationData);
+
+  gBS->RestoreTPL(OldTpl);
+
+  //
+  // Re-enable all APs to notify MP_CPU that AP's state is changed.
+  //
+  EnableDisableAllAps(TRUE);
   return;
 }
 
@@ -753,7 +822,6 @@ LoaderEntrypoint (
 {
   EFI_STATUS                Status;
   EFI_PHYSICAL_ADDRESS      Address;
-  EFI_MP_SERVICES_PROTOCOL  *MpService;
   EFI_CPU_ARCH_PROTOCOL     *CpuArch;
   UINTN                     NumberOfCPUs;
   UINTN                     NumberOfEnabledCPUs;
@@ -837,13 +905,13 @@ LoaderEntrypoint (
   //
   // Get CPU Number
   //
-  Status = gBS->LocateProtocol (&gEfiMpServiceProtocolGuid, NULL, (VOID **)&MpService);
+  Status = gBS->LocateProtocol (&gEfiMpServiceProtocolGuid, NULL, (VOID **)&mMpService);
   ASSERT_EFI_ERROR (Status);
-  Status = MpService->GetNumberOfProcessors (
-                        MpService,
-                        &NumberOfCPUs,
-                        &NumberOfEnabledCPUs
-                        );
+  Status = mMpService->GetNumberOfProcessors (
+                         mMpService,
+                         &NumberOfCPUs,
+                         &NumberOfEnabledCPUs
+                         );
   ASSERT_EFI_ERROR (Status);
 
   //
