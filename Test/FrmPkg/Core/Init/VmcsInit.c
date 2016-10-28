@@ -234,5 +234,10 @@ SetVmcsGuestField (
   VmWrite64 (VMCS_64_GUEST_IA32_DEBUGCTL_INDEX,          AsmReadMsr64 (IA32_DBG_CTL_MSR_INDEX));
   VmWrite64 (VMCS_64_GUEST_VMCS_LINK_PTR_INDEX,          0xffffffffffffffff);
 
+  if ((mGuestContextCommon.GuestContextPerCpu[mBspIndex].Cr0 & CR0_PG) == 0) {
+    ASSERT(mGuestContextCommon.GuestContextPerCpu[Index].UnrestrictedGuest);
+    VmWriteN(VMCS_N_GUEST_CR0_INDEX, VmReadN(VMCS_N_GUEST_CR0_INDEX) & (~CR0_PG));
+  }
+
   return ;
 }
