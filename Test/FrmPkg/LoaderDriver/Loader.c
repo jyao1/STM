@@ -792,14 +792,19 @@ GetLoadedImageBaseAndSize (
                   NULL,
                   (VOID **)&LoadedImage
                   );
-  ASSERT_EFI_ERROR (Status);
-    
-  DEBUG ((EFI_D_INFO, "LoadedImage - [0x%x - 0x%x]\n", (UINTN)LoadedImage->ImageBase, (UINTN)LoadedImage->ImageBase + LoadedImage->ImageSize));
+  if (!EFI_ERROR (Status)) {    
+    DEBUG ((EFI_D_INFO, "LoadedImage - [0x%x - 0x%x]\n", (UINTN)LoadedImage->ImageBase, (UINTN)LoadedImage->ImageBase + LoadedImage->ImageSize));
+    if (Address != 0) {
+      ASSERT ((EFI_PHYSICAL_ADDRESS)(UINTN)LoadedImage->ImageBase <= Address);
+      ASSERT (Address < ((EFI_PHYSICAL_ADDRESS)(UINTN)LoadedImage->ImageBase + LoadedImage->ImageSize));
+    }
+    *ImageBase = (EFI_PHYSICAL_ADDRESS)(UINTN)LoadedImage->ImageBase;
+    *ImageSize = LoadedImage->ImageSize;
+  } else {
+    *ImageBase = 0;
+    *ImageSize = 0;
+  }
 
-  ASSERT ((EFI_PHYSICAL_ADDRESS)(UINTN)LoadedImage->ImageBase <= Address);
-  ASSERT (Address < ((EFI_PHYSICAL_ADDRESS)(UINTN)LoadedImage->ImageBase + LoadedImage->ImageSize));
-  *ImageBase = (EFI_PHYSICAL_ADDRESS)(UINTN)LoadedImage->ImageBase;
-  *ImageSize = LoadedImage->ImageSize;
   return EFI_SUCCESS;
 }
 
@@ -1002,9 +1007,11 @@ LoaderEntrypoint (
                   NULL,
                   &SmMonitorServiceProtocol
                   );
-  ASSERT_EFI_ERROR (Status);
-
-  mCommunicationData.SmMonitorServiceProtocol = (EFI_PHYSICAL_ADDRESS)(UINTN)SmMonitorServiceProtocol;
+  if (!EFI_ERROR (Status)) {
+    mCommunicationData.SmMonitorServiceProtocol = (EFI_PHYSICAL_ADDRESS)(UINTN)SmMonitorServiceProtocol;
+  } else {
+    mCommunicationData.SmMonitorServiceProtocol = 0;
+  }
 
   Status = GetLoadedImageBaseAndSize (
              mCommunicationData.SmMonitorServiceProtocol,

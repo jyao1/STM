@@ -891,7 +891,7 @@ LoaderEntrypoint (
   
   Print(L"LoaderEntrypoint: LoadOptions - %s\n", LoadedImage->LoadOptions);
   GetArg(LoadedImage->LoadOptions, LoadedImage->LoadOptionsSize);
-  if (Argc <= 2) {
+  if (Argc < 2) {
     return EFI_INVALID_PARAMETER;
   }
   
