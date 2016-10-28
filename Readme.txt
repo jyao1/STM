@@ -55,6 +55,10 @@ A. How to build STM.
       A platform BIOS may need override StmPlatformLib to handle some special MSR access,
       which must happen in VMX Root Mode if STM is enabled.
       If so, this platform owner need override the StmPlatformLib in StmPkg.dsc.
+   6) NOTE: There might be a case that a user need enlarge STM heap size. If so, the user
+      can modify StmPkg\Core\Stm.inf
+         /STACK:0x8000,0x8000 /HEAP:0x140000,0x140000
+
 2. Build STM tool (optional)
    1) Same as above
    2) Same as above
@@ -114,7 +118,9 @@ C. How to build STM BIOS.
       This assumption is wrong, because FRM need wait up APs. FrmLoader uses mMpService->EnableDisableAP()
       to disable/enable AP.
       The CPU driver need use INIT-SIPI-SIPI to wake up AP, after the AP is disabled/enabled.
-   
+   8) NOTE:
+      If STM need more MSEG size, the user need adjust PcdCpuMsegSize in platform.dsc.
+
 D. How to build STM BIOS with TXT capability.
    NOTE: MinnowMax does not have TXT support. Below steps are for a platform which has TXT support.
    1) Make sure the platform BIOS has TXT support.
