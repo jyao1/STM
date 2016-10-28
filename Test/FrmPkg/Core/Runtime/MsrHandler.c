@@ -53,6 +53,11 @@ ReadMsrHandler (
     break;
 
   default:
+    if (MsrIndex >= 0x40000000 && MsrIndex <= 0x400000FF) {
+      Data64 = 0;
+      DEBUG ((EFI_D_INFO, "(FRM) !!!ReadMsrHandler - Other!!! %08x<-%016lx\n", (UINTN)MsrIndex, Data64));
+      break;
+    }
     Data64 = AsmReadMsr64 (MsrIndex);
 #if 0
     DEBUG ((EFI_D_INFO, "(FRM) !!!ReadMsrHandler - Other!!! %08x<-%016lx\n", (UINTN)MsrIndex, Data64));
@@ -180,6 +185,10 @@ WriteMsrHandler (
 #if 0
     DEBUG ((EFI_D_INFO, "(FRM) !!!WriteMsrHandler - Other!!! %08x<-%016lx\n", (UINTN)MsrIndex, Data64));
 #endif
+    if (MsrIndex >=0x40000000 && MsrIndex <=0x400000FF) {
+      DEBUG ((EFI_D_INFO, "(FRM) !!!WriteMsrHandler - Other!!! %08x<-%016lx\n", (UINTN)MsrIndex, Data64));
+      break;
+    }
     AsmWriteMsr64 (MsrIndex, Data64);
     break;
   }
