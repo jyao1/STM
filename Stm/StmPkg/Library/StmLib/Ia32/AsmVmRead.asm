@@ -26,7 +26,8 @@ AsmVmRead PROC PUBLIC
     DB  0fh, 078h, 0c1h          ; VMREAD rcx, rax
     pushfd
     pop   eax
-    mov   [esp + 8], ecx
+    mov   edx, [esp + 8]
+    mov   [edx], ecx
     ret
 AsmVmRead  ENDP
 

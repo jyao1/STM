@@ -22,6 +22,7 @@ ASM_PFX(AsmVmRead):
     .byte  0x0f, 0x78, 0xc1          # VMREAD rcx, rax
     pushfl
     pop    %eax
-    movl   %ecx, 8(%esp)
+    movl   8(%esp), %edx
+    movl   %ecx, (%edx)
     ret
 
