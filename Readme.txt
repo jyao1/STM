@@ -109,6 +109,11 @@ C. How to build STM BIOS.
       to include the resource needed by platform SMI handlers.
       To be specific, if a platform overrides StmPlatformLib to access some special MSR, these MSR
       must be in the resource list.
+   7) NOTE:
+      A platform BIOS CPU driver may put APs to MWAIT state and assume no one touch this APs.
+      This assumption is wrong, because FRM need wait up APs. FrmLoader uses mMpService->EnableDisableAP()
+      to disable/enable AP.
+      The CPU driver need use INIT-SIPI-SIPI to wake up AP, after the AP is disabled/enabled.
    
 D. How to build STM BIOS with TXT capability.
    NOTE: MinnowMax does not have TXT support. Below steps are for a platform which has TXT support.
