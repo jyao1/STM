@@ -180,7 +180,9 @@ LaunchStm (
   }
 
   SmMonitorServiceProtocol = (EFI_SM_MONITOR_SERVICE_PROTOCOL *)(UINTN)mCommunicationData.SmMonitorServiceProtocol;
-  ASSERT (SmMonitorServiceProtocol != NULL);
+  if (SmMonitorServiceProtocol == NULL) {
+    return ;
+  }
 
   //
   // VMCS size
