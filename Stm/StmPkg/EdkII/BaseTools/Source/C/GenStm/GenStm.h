@@ -27,15 +27,6 @@
 #include <Common/PiFirmwareFile.h>
 
 //
-// BUGBUG: define it here because it is NOT defined in PiFirmwareFile.h
-//
-typedef struct {
-  UINT8             Size[3];
-  EFI_SECTION_TYPE  Type;
-  UINT32            ExtendedSize;
-} EFI_COMMON_SECTION_HEADER2;
-
-//
 // Data structure needed to pass build
 //
 #include <IndustryStandard/PeImage.h>

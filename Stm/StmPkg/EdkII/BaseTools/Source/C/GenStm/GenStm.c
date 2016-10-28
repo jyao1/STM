@@ -182,8 +182,8 @@ DumpStmImage (
   printf ("  EspOffset                   - %08x\n", StmHeader->HwStmHdr.EspOffset);
   printf ("  Cr3Offset                   - %08x\n", StmHeader->HwStmHdr.Cr3Offset);
   printf ("Software field:\n");
-  printf ("  StmSpecVerMajor             - %08x\n", StmHeader->SwStmHdr.StmSpecVerMajor);
-  printf ("  StmSpecVerMinor             - %08x\n", StmHeader->SwStmHdr.StmSpecVerMinor);
+  printf ("  StmSpecVerMajor             - %02x\n", StmHeader->SwStmHdr.StmSpecVerMajor);
+  printf ("  StmSpecVerMinor             - %02x\n", StmHeader->SwStmHdr.StmSpecVerMinor);
   printf ("  StaticImageSize             - %08x\n", StmHeader->SwStmHdr.StaticImageSize);
   printf ("  PerProcDynamicMemorySize    - %08x\n", StmHeader->SwStmHdr.PerProcDynamicMemorySize);
   printf ("  AdditionalDynamicMemorySize - %08x\n", StmHeader->SwStmHdr.AdditionalDynamicMemorySize);
