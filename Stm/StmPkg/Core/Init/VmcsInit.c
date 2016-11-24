@@ -179,6 +179,8 @@ InitializeSmmVmcs (
   // Upon receiving control due to an SMI, the STM shall save the contents of the IA32_PERF_GLOBAL_CTRL MSR, disable any
   // enabled bits in the IA32_PERF_GLOBAL_CTRL MSR
   VmEntryCtrls.Bits.LoadIA32_PERF_GLOBAL_CTRL = 0;
+  // Need load EFER to support guest enable XD
+  VmEntryCtrls.Bits.LoadIA32_EFER = 1;
 
   Data64 = AsmReadMsr64 (IA32_VMX_EXIT_CTLS_MSR_INDEX);
   VmExitCtrls.Uint32 = (UINT32)Data64 & (UINT32)RShiftU64 (Data64, 32);
@@ -186,6 +188,8 @@ InitializeSmmVmcs (
   // Upon receiving control due to an SMI, the STM shall save the contents of the IA32_PERF_GLOBAL_CTRL MSR, disable any
   // enabled bits in the IA32_PERF_GLOBAL_CTRL MSR
   VmExitCtrls.Bits.LoadIA32_PERF_GLOBAL_CTRL = 0;
+  // Need load EFER to support guest enable XD
+  VmExitCtrls.Bits.SaveIA32_EFER = 1;
 
   GuestInterruptibilityState.Uint32 = 0;
   GuestInterruptibilityState.Bits.BlockingBySmi = 1;

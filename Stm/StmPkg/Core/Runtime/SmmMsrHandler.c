@@ -59,7 +59,7 @@ SmmReadMsrHandler (
 
   switch (MsrIndex) {
   case IA32_EFER_MSR_INDEX:
-    Data64 = mGuestContextCommonSmm.GuestContextPerCpu[Index].Efer;
+    Data64 = VmRead64 (VMCS_64_GUEST_IA32_EFER_INDEX);
     break;
 
   case IA32_SYSENTER_CS_MSR_INDEX:
