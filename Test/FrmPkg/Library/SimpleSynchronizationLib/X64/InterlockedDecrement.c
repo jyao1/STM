@@ -38,9 +38,9 @@ long _InterlockedDecrement(
 UINT32
 EFIAPI
 InternalSyncDecrement (
-  IN      UINT32                    *Value
+  IN      volatile UINT32           *Value
   )
 {
-  return _InterlockedDecrement (Value);
+  return _InterlockedDecrement ((long *)(UINTN)(Value));
 }
 

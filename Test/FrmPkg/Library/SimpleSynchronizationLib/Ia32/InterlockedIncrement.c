@@ -31,7 +31,7 @@
 UINT32
 EFIAPI
 InternalSyncIncrement (
-  IN      UINT32                    *Value
+  IN      volatile UINT32           *Value
   )
 {
   _asm {

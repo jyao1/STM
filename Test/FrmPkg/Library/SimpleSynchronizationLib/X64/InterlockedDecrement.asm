@@ -26,8 +26,8 @@
 ;------------------------------------------------------------------------------
 ; UINT32
 ; EFIAPI
-; InterlockedDecrement (
-;   IN      UINT32                    *Value
+; InternalSyncDecrement (
+;   IN      volatile UINT32           *Value
 ;   );
 ;------------------------------------------------------------------------------
 InternalSyncDecrement   PROC
