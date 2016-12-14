@@ -44,6 +44,7 @@ InitializeSmiVmcs (
   // Upon receiving control due to an SMI, the STM shall save the contents of the IA32_PERF_GLOBAL_CTRL MSR, disable any
   // enabled bits in the IA32_PERF_GLOBAL_CTRL MSR
   VmEntryCtrls.Bits.LoadIA32_PERF_GLOBAL_CTRL = 0;
+  VmEntryCtrls.Bits.LoadIA32_EFER = 1;
 
   Data64 = AsmReadMsr64 (IA32_VMX_EXIT_CTLS_MSR_INDEX);
   VmExitCtrls.Uint32 = (UINT32)Data64 & (UINT32)RShiftU64 (Data64, 32);
@@ -52,6 +53,7 @@ InitializeSmiVmcs (
   // Upon receiving control due to an SMI, the STM shall save the contents of the IA32_PERF_GLOBAL_CTRL MSR, disable any
   // enabled bits in the IA32_PERF_GLOBAL_CTRL MSR
   VmExitCtrls.Bits.LoadIA32_PERF_GLOBAL_CTRL = 0;
+  VmExitCtrls.Bits.SaveIA32_EFER = 1;
 
   GuestInterruptibilityState.Uint32 = VmRead32 (VMCS_32_GUEST_INTERRUPTIBILITY_STATE_INDEX);
   GuestInterruptibilityState.Bits.BlockingBySmi = 0;
@@ -112,6 +114,8 @@ InitializeSmiVmcs (
   VmWrite32 (VMCS_32_GUEST_INTERRUPTIBILITY_STATE_INDEX, GuestInterruptibilityState.Uint32);
 
   VmWrite64 (VMCS_64_GUEST_IA32_PERF_GLOBAL_CTRL_INDEX,  AsmReadMsr64(IA32_PERF_GLOBAL_CTRL_MSR_INDEX));
+
+  VmWrite64 (VMCS_64_GUEST_IA32_EFER_INDEX,              mGuestContextCommonSmi.GuestContextPerCpu[Index].Efer);
 
   return ;
 }
@@ -335,5 +339,6 @@ InitializeSmmVmcs (
 
   VmWrite64 (VMCS_64_GUEST_IA32_PERF_GLOBAL_CTRL_INDEX,  AsmReadMsr64(IA32_PERF_GLOBAL_CTRL_MSR_INDEX));
 
+  VmWrite64 (VMCS_64_GUEST_IA32_EFER_INDEX,              mGuestContextCommonSmm.GuestContextPerCpu[Index].Efer);
   return ;
 }
