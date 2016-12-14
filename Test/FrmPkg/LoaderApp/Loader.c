@@ -1040,16 +1040,19 @@ LoaderEntrypoint (
                   NULL,
                   &SmMonitorServiceProtocol
                   );
-  ASSERT_EFI_ERROR (Status);
-
-  mCommunicationData.SmMonitorServiceProtocol = (EFI_PHYSICAL_ADDRESS)(UINTN)SmMonitorServiceProtocol;
-
-  Status = GetLoadedImageBaseAndSize (
-             mCommunicationData.SmMonitorServiceProtocol,
-             &mCommunicationData.SmMonitorServiceImageBase,
-             &mCommunicationData.SmMonitorServiceImageSize
-             );
-  ASSERT_EFI_ERROR (Status);
+  if (!EFI_ERROR (Status)) {
+    mCommunicationData.SmMonitorServiceProtocol = (EFI_PHYSICAL_ADDRESS)(UINTN)SmMonitorServiceProtocol;
+    Status = GetLoadedImageBaseAndSize (
+               mCommunicationData.SmMonitorServiceProtocol,
+               &mCommunicationData.SmMonitorServiceImageBase,
+               &mCommunicationData.SmMonitorServiceImageSize
+               );
+    ASSERT_EFI_ERROR (Status);
+  } else {
+    mCommunicationData.SmMonitorServiceProtocol = 0;
+    mCommunicationData.SmMonitorServiceImageBase = 0;
+    mCommunicationData.SmMonitorServiceImageSize = 0;
+  }
 
   LaunchFrm ();
   return Status;
