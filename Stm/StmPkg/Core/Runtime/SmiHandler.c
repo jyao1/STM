@@ -128,7 +128,7 @@ StmHandlerSmi (
   // Dispatch
   //
   if (InfoBasic.Bits.Reason >= VmExitReasonMax) {
-    DEBUG ((EFI_D_ERROR, "!!!UnknownReason!!!\n"));
+    DEBUG ((EFI_D_ERROR, "!!!UnknownReason!!! (0x%x)\n", InfoBasic.Bits.Reason));
     DumpVmcsAllField ();
 
     CpuDeadLoop ();
