@@ -407,8 +407,9 @@ FreePages (
   @param Xa                       Execute access
   @param EptPageAttributeSetting  EPT page attribute setting
 
+  @return RETURN_SUCCESS If page attribute is set successfully.
 **/
-VOID
+RETURN_STATUS
 EPTSetPageAttributeRange (
   IN UINT64                     Base,
   IN UINT64                     Length,

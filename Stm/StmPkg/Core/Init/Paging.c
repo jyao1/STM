@@ -15,6 +15,31 @@
 #include "StmInit.h"
 
 /**
+  Check if 1-GByte pages is supported by processor or not.
+
+  @retval TRUE   1-GByte pages is supported.
+  @retval FALSE  1-GByte pages is not supported.
+
+**/
+BOOLEAN
+Is1GPageSupport (
+  VOID
+  )
+{
+  UINT32         RegEax;
+  UINT32         RegEdx;
+
+  AsmCpuid (0x80000000, &RegEax, NULL, NULL, NULL);
+  if (RegEax >= 0x80000001) {
+    AsmCpuid (0x80000001, NULL, NULL, NULL, &RegEdx);
+    if ((RegEdx & BIT26) != 0) {
+      return TRUE;
+    }
+  }
+  return FALSE;
+}
+
+/**
 
   This function create Ia32e page table for SMM guest.
 
@@ -172,13 +197,21 @@ CreateHostPaging (
         Pde = (UINT64 *)(UINTN)(Pml4[0] & 0xFFFFF000);
         Index = 4;
       }
-      for (; Index < NumberOfPdpEntriesNeeded; Index++) {
-        Pte = (UINT64 *)AllocatePages (1);
-        Pde[Index] = (UINT64)(UINTN)Pte | IA32_PG_P;
 
-        for (SubIndex = 0; SubIndex < SIZE_4KB / sizeof(*Pte); SubIndex++) {
-          Pte[SubIndex] = BaseAddress | IA32_PG_PS | IA32_PG_RW | IA32_PG_P;
-          BaseAddress += SIZE_2MB;
+      if (Is1GPageSupport()) {
+        for (; Index < NumberOfPdpEntriesNeeded; Index++) {
+          Pde[Index] = (UINT64)(UINTN)BaseAddress | IA32_PG_PS | IA32_PG_RW | IA32_PG_P;
+          BaseAddress += SIZE_1GB;
+        }
+      } else {
+        for (; Index < NumberOfPdpEntriesNeeded; Index++) {
+          Pte = (UINT64 *)AllocatePages (1);
+          Pde[Index] = (UINT64)(UINTN)Pte | IA32_PG_P;
+
+          for (SubIndex = 0; SubIndex < SIZE_4KB / sizeof(*Pte); SubIndex++) {
+            Pte[SubIndex] = BaseAddress | IA32_PG_PS | IA32_PG_RW | IA32_PG_P;
+            BaseAddress += SIZE_2MB;
+          }
         }
       }
     }

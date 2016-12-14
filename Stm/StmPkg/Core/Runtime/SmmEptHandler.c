@@ -19,11 +19,306 @@
 #define FUNCTION_FROM_PCIE_ADDRESS(PcieAddress)  (UINT8)(((UINTN)(PcieAddress) & 0x00007000) >> 12)
 #define REGISTER_FROM_PCIE_ADDRESS(PcieAddress)  (UINT16)((UINTN)(PcieAddress) & 0x00000FFF)
 
+#define PAGE_PROGATE_BITS           (BIT0 | BIT1 | BIT2 | BIT3 | BIT4 | BIT5)
+
+#define PAGING_4K_MASK  0xFFF
+#define PAGING_2M_MASK  0x1FFFFF
+#define PAGING_1G_MASK  0x3FFFFFFF
+
+#define PAGING_PAE_INDEX_MASK  0x1FF
+
+#define PAGING_4K_ADDRESS_MASK_64 0x000FFFFFFFFFF000ull
+#define PAGING_2M_ADDRESS_MASK_64 0x000FFFFFFFE00000ull
+#define PAGING_1G_ADDRESS_MASK_64 0x000FFFFFC0000000ull
+
+typedef enum {
+  PageNone,
+  Page4K,
+  Page2M,
+  Page1G,
+} PAGE_ATTRIBUTE;
+
+typedef struct {
+  PAGE_ATTRIBUTE   Attribute;
+  UINT64           Length;
+  UINT64           AddressMask;
+} PAGE_ATTRIBUTE_TABLE;
+
+PAGE_ATTRIBUTE_TABLE mPageAttributeTable[] = {
+  {Page4K,  SIZE_4KB, PAGING_4K_ADDRESS_MASK_64},
+  {Page2M,  SIZE_2MB, PAGING_2M_ADDRESS_MASK_64},
+  {Page1G,  SIZE_1GB, PAGING_1G_ADDRESS_MASK_64},
+};
+
+/**
+  Return length according to page attributes.
+
+  @param[in]  PageAttributes   The page attribute of the page entry.
+
+  @return The length of page entry.
+**/
+UINTN
+PageAttributeToLength (
+  IN PAGE_ATTRIBUTE  PageAttribute
+  )
+{
+  UINTN  Index;
+  for (Index = 0; Index < sizeof(mPageAttributeTable)/sizeof(mPageAttributeTable[0]); Index++) {
+    if (PageAttribute == mPageAttributeTable[Index].Attribute) {
+      return (UINTN)mPageAttributeTable[Index].Length;
+    }
+  }
+  return 0;
+}
+
+/**
+  Return address mask according to page attributes.
+
+  @param[in]  PageAttributes   The page attribute of the page entry.
+
+  @return The address mask of page entry.
+**/
+UINTN
+PageAttributeToMask (
+  IN PAGE_ATTRIBUTE  PageAttribute
+  )
+{
+  UINTN  Index;
+  for (Index = 0; Index < sizeof(mPageAttributeTable)/sizeof(mPageAttributeTable[0]); Index++) {
+    if (PageAttribute == mPageAttributeTable[Index].Attribute) {
+      return (UINTN)mPageAttributeTable[Index].AddressMask;
+    }
+  }
+  return 0;
+}
+
+/**
+  Return page table entry to match the address.
+
+  @param[in]   Address          The address to be checked.
+  @param[out]  PageAttributes   The page attribute of the page entry.
+
+  @return The page entry.
+**/
+EPT_ENTRY *
+GetPageTableEntry (
+  IN  PHYSICAL_ADDRESS                  Address,
+  OUT PAGE_ATTRIBUTE                    *PageAttribute
+  )
+{
+  UINTN                 Index1;
+  UINTN                 Index2;
+  UINTN                 Index3;
+  UINTN                 Index4;
+  EPT_ENTRY             *L1PageTable;
+  EPT_ENTRY             *L2PageTable;
+  EPT_ENTRY             *L3PageTable;
+  EPT_ENTRY             *L4PageTable;
+
+//  DEBUG ((EFI_D_INFO, "GetPageTableEntry: %x\n", (UINTN)Address));
+
+  Index4 = ((UINTN)RShiftU64 (Address, 39)) & PAGING_PAE_INDEX_MASK;
+  Index3 = ((UINTN)Address >> 30) & PAGING_PAE_INDEX_MASK;
+  Index2 = ((UINTN)Address >> 21) & PAGING_PAE_INDEX_MASK;
+  Index1 = ((UINTN)Address >> 12) & PAGING_PAE_INDEX_MASK;
+//  DEBUG ((EFI_D_INFO, "Index: %x %x %x %x\n", Index4, Index3, Index2, Index1));
+
+  L4PageTable = (EPT_ENTRY *)(UINTN)(mGuestContextCommonSmm.EptPointer.Uint64 & PAGING_4K_ADDRESS_MASK_64);
+  if (L4PageTable[Index4].Uint64 == 0) {
+    *PageAttribute = PageNone;
+    return NULL;
+  }
+
+  L3PageTable = (EPT_ENTRY *)(UINTN)(L4PageTable[Index4].Uint64 & PAGING_4K_ADDRESS_MASK_64);
+  if (L3PageTable[Index3].Uint64 == 0) {
+    *PageAttribute = PageNone;
+    return NULL;
+  }
+  if (L3PageTable[Index3].Bits32.Sp != 0) {
+    // 1G
+    *PageAttribute = Page1G;
+    return &L3PageTable[Index3];
+  }
+
+  L2PageTable = (EPT_ENTRY *)(UINTN)(L3PageTable[Index3].Uint64 & PAGING_4K_ADDRESS_MASK_64);
+  if (L2PageTable[Index2].Uint64 == 0) {
+    *PageAttribute = PageNone;
+    return NULL;
+  }
+  if (L2PageTable[Index2].Bits32.Sp != 0) {
+    // 2M
+    *PageAttribute = Page2M;
+    return &L2PageTable[Index2];
+  }
+
+  // 4k
+  L1PageTable = (EPT_ENTRY *)(UINTN)(L2PageTable[Index2].Uint64 & PAGING_4K_ADDRESS_MASK_64);
+  if ((L1PageTable[Index1].Uint64 == 0) && (Address != 0)) {
+    *PageAttribute = PageNone;
+    return NULL;
+  }
+  *PageAttribute = Page4K;
+  return &L1PageTable[Index1];
+}
+
+/**
+  Modify memory attributes of page entry.
+
+  @param[in]   PageEntry        The page entry.
+  @param[in]   Attributes       The bit mask of attributes to modify for the memory region.
+  @param[in]   IsSet            TRUE means to set attributes. FALSE means to clear attributes.
+  @param[out]  IsModified       TRUE means page table modified. FALSE means page table not modified.
+**/
+VOID
+ConvertPageEntryAttribute (
+  IN EPT_ENTRY                          *PageEntry,
+  IN UINT32                             Ra,
+  IN UINT32                             Wa,
+  IN UINT32                             Xa,
+  IN EPT_PAGE_ATTRIBUTE_SETTING         EptPageAttributeSetting
+  )
+{
+  UINT64  CurrentPageEntry;
+
+  CurrentPageEntry = PageEntry->Uint64;
+  switch (EptPageAttributeSetting) {
+  case EptPageAttributeSet:
+    PageEntry->Bits32.Ra = (UINT32)Ra;
+    PageEntry->Bits32.Wa = (UINT32)Wa;
+    PageEntry->Bits32.Xa = (UINT32)Xa;
+    break;
+  case EptPageAttributeAnd:
+    PageEntry->Bits32.Ra &= (UINT32)Ra;
+    PageEntry->Bits32.Wa &= (UINT32)Wa;
+    PageEntry->Bits32.Xa &= (UINT32)Xa;
+    break;
+  case EptPageAttributeOr:
+    PageEntry->Bits32.Ra |= (UINT32)Ra;
+    PageEntry->Bits32.Wa |= (UINT32)Wa;
+    PageEntry->Bits32.Xa |= (UINT32)Xa;
+    break;
+  default:
+    CpuDeadLoop ();
+    break;
+  }
+  if (CurrentPageEntry != PageEntry->Uint64) {
+    DEBUG ((EFI_D_INFO, "ConvertPageEntryAttribute 0x%lx", CurrentPageEntry));
+    DEBUG ((EFI_D_INFO, "->0x%lx\n", PageEntry->Uint64));
+  }
+}
+
+/**
+  This function returns if there is need to split page entry.
+
+  @param[in]  BaseAddress      The base address to be checked.
+  @param[in]  Length           The length to be checked.
+  @param[in]  PageAttribute    The page attribute of the page entry.
+
+  @retval SplitAttributes on if there is need to split page entry.
+**/
+PAGE_ATTRIBUTE
+NeedSplitPage (
+  IN  PHYSICAL_ADDRESS                  BaseAddress,
+  IN  UINT64                            Length,
+  IN  PAGE_ATTRIBUTE                    PageAttribute
+  )
+{
+  UINT64                PageEntryLength;
+
+  PageEntryLength = PageAttributeToLength (PageAttribute);
+
+  if (((BaseAddress & (PageEntryLength - 1)) == 0) && (Length >= PageEntryLength)) {
+    return PageNone;
+  }
+
+  if (((BaseAddress & PAGING_2M_MASK) != 0) || (Length < SIZE_2MB)) {
+    return Page4K;
+  }
+
+  return Page2M;
+}
+
+/**
+  This function splits one page entry to small page entries.
+
+  @param[in]  PageEntry        The page entry to be splitted.
+  @param[in]  PageAttribute    The page attribute of the page entry.
+  @param[in]  SplitAttribute   How to split the page entry.
+
+  @retval RETURN_SUCCESS            The page entry is splitted.
+  @retval RETURN_UNSUPPORTED        The page entry does not support to be splitted.
+  @retval RETURN_OUT_OF_RESOURCES   No resource to split page entry.
+**/
+RETURN_STATUS
+SplitPage (
+  IN  EPT_ENTRY                         *PageEntry,
+  IN  PAGE_ATTRIBUTE                    PageAttribute,
+  IN  PAGE_ATTRIBUTE                    SplitAttribute
+  )
+{
+  UINT64      BaseAddress;
+  EPT_ENTRY   *NewPageEntry;
+  UINTN       Index;
+
+  ASSERT (PageAttribute == Page2M || PageAttribute == Page1G);
+
+  if (PageAttribute == Page2M) {
+    //
+    // Split 2M to 4K
+    //
+    ASSERT (SplitAttribute == Page4K);
+    if (SplitAttribute == Page4K) {
+      NewPageEntry = (EPT_ENTRY *)AllocatePages (1);
+      DEBUG ((EFI_D_INFO, "Split - 0x%x\n", NewPageEntry));
+      if (NewPageEntry == NULL) {
+        return RETURN_OUT_OF_RESOURCES;
+      }
+      BaseAddress = PageEntry->Uint64 & PAGING_2M_ADDRESS_MASK_64;
+      for (Index = 0; Index < SIZE_4KB / sizeof(UINT64); Index++) {
+        NewPageEntry[Index].Uint64 = BaseAddress + SIZE_4KB * Index + (PageEntry->Uint64 & PAGE_PROGATE_BITS);
+      }
+      PageEntry->Uint64 = (UINT64)(UINTN)NewPageEntry;
+      PageEntry->Bits32.Ra = 1;
+      PageEntry->Bits32.Wa = 1;
+      PageEntry->Bits32.Xa = 1;
+      return RETURN_SUCCESS;
+    } else {
+      return RETURN_UNSUPPORTED;
+    }
+  } else if (PageAttribute == Page1G) {
+    //
+    // Split 1G to 2M
+    // No need support 1G->4K directly, we should use 1G->2M, then 2M->4K to get more compact page table.
+    //
+    ASSERT (SplitAttribute == Page2M || SplitAttribute == Page4K);
+    if ((SplitAttribute == Page2M || SplitAttribute == Page4K)) {
+      NewPageEntry = (EPT_ENTRY *)AllocatePages (1);
+      DEBUG ((EFI_D_INFO, "Split - 0x%x\n", NewPageEntry));
+      if (NewPageEntry == NULL) {
+        return RETURN_OUT_OF_RESOURCES;
+      }
+      BaseAddress = PageEntry->Uint64 & PAGING_1G_ADDRESS_MASK_64;
+      for (Index = 0; Index < SIZE_4KB / sizeof(UINT64); Index++) {
+        NewPageEntry[Index].Uint64    = BaseAddress + SIZE_2MB * Index + (PageEntry->Uint64 & PAGE_PROGATE_BITS);
+        NewPageEntry[Index].Bits32.Sp = 1;
+      }
+      PageEntry->Uint64 = (UINT64)(UINTN)NewPageEntry;
+      PageEntry->Bits32.Ra = 1;
+      PageEntry->Bits32.Wa = 1;
+      PageEntry->Bits32.Xa = 1;
+      return RETURN_SUCCESS;
+    } else {
+      return RETURN_UNSUPPORTED;
+    }
+  } else {
+    return RETURN_UNSUPPORTED;
+  }
+}
+
 /**
 
   This function translate guest physical address to host address.
 
-  @param EptPointer     EPT pointer
   @param Addr           Guest physical address
   @param EntryPtr       EPT entry pointer
                         NULL on output means Entry not found.
@@ -32,7 +327,6 @@
 **/
 UINTN
 TranslateEPTGuestToHost (
-  IN UINT64      EptPointer,
   IN UINTN       Addr,
   OUT EPT_ENTRY  **EntryPtr  OPTIONAL
   );
@@ -58,7 +352,7 @@ LookupSmiGuestPhysicalToHostPhysical (
   EPT_ENTRY  *EptEntry;
 
   EptEntry = NULL;
-  *HostPhysicalAddress = TranslateEPTGuestToHost (EptPointer, GuestPhysicalAddress, &EptEntry);
+  *HostPhysicalAddress = TranslateEPTGuestToHost (GuestPhysicalAddress, &EptEntry);
   if (EptEntry == NULL) {
     return FALSE;
   } else {
@@ -84,14 +378,13 @@ GuestLinearToHostPhysical (
   UINTN   GuestPhysicalAddress;
 
   GuestPhysicalAddress = (UINTN)GuestLinearToGuestPhysical (CpuIndex, GuestLinearAddress);
-  return TranslateEPTGuestToHost (mGuestContextCommonSmm.EptPointer.Uint64, GuestPhysicalAddress, NULL);
+  return TranslateEPTGuestToHost (GuestPhysicalAddress, NULL);
 }
 
 /**
 
   This function translate guest physical address to host address.
 
-  @param EptPointer     EPT pointer
   @param Addr           Guest physical address
   @param EntryPtr       EPT entry pointer.
                         NULL on output means Entry not found.
@@ -100,7 +393,6 @@ GuestLinearToHostPhysical (
 **/
 UINTN
 TranslateEPTGuestToHost (
-  IN UINT64      EptPointer,
   IN UINTN       Addr,
   OUT EPT_ENTRY  **EntryPtr  OPTIONAL
   )
@@ -115,7 +407,6 @@ TranslateEPTGuestToHost (
   UINTN                    Index4;
   UINTN                    Offset;
 
-  // Assume 4G
   Index4 = ((UINTN)RShiftU64 (Addr, 39)) & 0x1ff;
   Index3 = ((UINTN)Addr >> 30) & 0x1ff;
   Index2 = ((UINTN)Addr >> 21) & 0x1ff;
@@ -125,22 +416,38 @@ TranslateEPTGuestToHost (
   if (EntryPtr != NULL) {
     *EntryPtr = NULL;
   }
-  L4PageTable = (EPT_ENTRY *)((UINTN)mGuestContextCommonSmm.EptPointer.Uint64 & ~0xFFF);
+  L4PageTable = (EPT_ENTRY *)(UINTN)((UINTN)mGuestContextCommonSmm.EptPointer.Uint64 & PAGING_4K_ADDRESS_MASK_64);
   if ((L4PageTable[Index4].Bits32.Ra == 0) &&
       (L4PageTable[Index4].Bits32.Wa == 0) &&
       (L4PageTable[Index4].Bits32.Xa == 0)) {
+    if (EntryPtr != NULL) {
+      *EntryPtr = &L4PageTable[Index4];
+    }
     return 0;
   }
-  L3PageTable = (EPT_ENTRY *)((UINTN)L4PageTable[Index4].Uint64 & ~0xFFF);
+  L3PageTable = (EPT_ENTRY *)(UINTN)((UINTN)L4PageTable[Index4].Uint64 & PAGING_4K_ADDRESS_MASK_64);
   if ((L3PageTable[Index3].Bits32.Ra == 0) &&
       (L3PageTable[Index3].Bits32.Wa == 0) &&
       (L3PageTable[Index3].Bits32.Xa == 0)) {
+    if (EntryPtr != NULL) {
+      *EntryPtr = &L3PageTable[Index3];
+    }
     return 0;
   }
-  L2PageTable = (EPT_ENTRY *)((UINTN)L3PageTable[Index3].Uint64 & ~0xFFF);
+  if (L3PageTable[Index2].Bits32.Sp == 1) {
+    if (EntryPtr != NULL) {
+      *EntryPtr = &L3PageTable[Index3];
+    }
+    return ((UINTN)L3PageTable[Index3].Uint64 & PAGING_1G_ADDRESS_MASK_64) + ((UINTN)Addr & PAGING_1G_MASK);
+  }
+
+  L2PageTable = (EPT_ENTRY *)(UINTN)((UINTN)L3PageTable[Index3].Uint64 & PAGING_4K_ADDRESS_MASK_64);
   if ((L2PageTable[Index2].Bits32.Ra == 0) &&
       (L2PageTable[Index2].Bits32.Wa == 0) &&
       (L2PageTable[Index2].Bits32.Xa == 0)) {
+    if (EntryPtr != NULL) {
+      *EntryPtr = &L2PageTable[Index2];
+    }
     return 0;
   }
 
@@ -148,10 +455,10 @@ TranslateEPTGuestToHost (
     if (EntryPtr != NULL) {
       *EntryPtr = &L2PageTable[Index2];
     }
-    return ((UINTN)L2PageTable[Index2].Uint64 & ~0x1FFFFF) + ((UINTN)Addr & 0x1FFFFF);
+    return ((UINTN)L2PageTable[Index2].Uint64 & PAGING_2M_ADDRESS_MASK_64) + ((UINTN)Addr & PAGING_2M_MASK);
   }
 
-  L1PageTable = (EPT_ENTRY *)((UINTN)L2PageTable[Index2].Uint64 & ~0xFFF);
+  L1PageTable = (EPT_ENTRY *)(UINTN)((UINTN)L2PageTable[Index2].Uint64 & PAGING_4K_ADDRESS_MASK_64);
   if ((L1PageTable[Index1].Bits32.Ra == 0) &&
       (L1PageTable[Index1].Bits32.Wa == 0) &&
       (L1PageTable[Index1].Bits32.Xa == 0)) {
@@ -162,131 +469,7 @@ TranslateEPTGuestToHost (
   if (EntryPtr != NULL) {
     *EntryPtr = &L1PageTable[Index1];
   }
-  return ((UINTN)L1PageTable[Index1].Uint64 & ~0xFFF) + Offset;
-}
-
-/**
-
-  This function set EPT page table attribute by address.
-
-  @param GuestPhysicalAddr        Guest physical address
-  @param Sp                       Super page
-  @param Ra                       Read access
-  @param Wa                       Write access
-  @param Xa                       Execute access
-  @param EptPageAttributeSetting  EPT page attribute setting
-
-**/
-VOID
-EPTSetPageAttribute (
-  IN UINT64                     GuestPhysicalAddr,
-  IN UINT32                     Sp,
-  IN UINT32                     Ra,
-  IN UINT32                     Wa,
-  IN UINT32                     Xa,
-  IN EPT_PAGE_ATTRIBUTE_SETTING EptPageAttributeSetting
-  )
-{
-  EPT_ENTRY  *EptEntry;
-  UINT_128   Data128;
-  EPT_ENTRY  *L1PageTable;
-  UINTN      Index1;
-  EPT_ENTRY  *L2PageTable;
-  UINT64     BaseAddress;
-
-  EptEntry = NULL;
-  TranslateEPTGuestToHost (mGuestContextCommonSmm.EptPointer.Uint64, (UINTN)GuestPhysicalAddr, &EptEntry);
-  if (EptEntry == NULL) {
-    DEBUG ((EFI_D_ERROR, "!!!EPTSetPageAttribute fail!!! Addr - %x, Sp - %x, Ra - %x, Wa - %x, Xa - %x\n", (UINTN)GuestPhysicalAddr, (UINTN)Sp, (UINTN)Ra, (UINTN)Wa, (UINTN)Xa));
-    CpuDeadLoop ();
-    return ;
-  }
-
-  if (Sp == 1) {
-    //
-    // Super page
-    //
-    if (EptEntry->Bits32.Sp == 1) {
-      switch (EptPageAttributeSetting) {
-      case EptPageAttributeSet:
-        EptEntry->Bits32.Ra = (UINT32)Ra;
-        EptEntry->Bits32.Wa = (UINT32)Wa;
-        EptEntry->Bits32.Xa = (UINT32)Xa;
-        break;
-      case EptPageAttributeAnd:
-        EptEntry->Bits32.Ra &= (UINT32)Ra;
-        EptEntry->Bits32.Wa &= (UINT32)Wa;
-        EptEntry->Bits32.Xa &= (UINT32)Xa;
-        break;
-      case EptPageAttributeOr:
-        EptEntry->Bits32.Ra |= (UINT32)Ra;
-        EptEntry->Bits32.Wa |= (UINT32)Wa;
-        EptEntry->Bits32.Xa |= (UINT32)Xa;
-        break;
-      default:
-        CpuDeadLoop ();
-        break;
-      }
-    } else {
-      for (BaseAddress = GuestPhysicalAddr; BaseAddress < GuestPhysicalAddr + SIZE_2MB; BaseAddress += SIZE_4KB) {
-        EPTSetPageAttribute (BaseAddress, 0, Ra, Wa, Xa, EptPageAttributeSetting);
-      }
-    }
-
-    return ;
-  }
-
-  if (EptEntry->Bits32.Sp == 1) {
-    L2PageTable = EptEntry;
-    BaseAddress = L2PageTable->Uint64 & ~0x1FFFFF;
-
-    L1PageTable = (EPT_ENTRY *)AllocatePages (1);
-
-    for (Index1 = 0; Index1 < 512; Index1 ++) {
-      L1PageTable->Uint64       = BaseAddress;
-      L1PageTable->Bits32.Ra    = EptEntry->Bits32.Ra;
-      L1PageTable->Bits32.Wa    = EptEntry->Bits32.Wa;
-      L1PageTable->Bits32.Xa    = EptEntry->Bits32.Xa;
-      L1PageTable->Bits32.Emt   = EptEntry->Bits32.Emt;
-
-      if (BaseAddress == (GuestPhysicalAddr & ~0xFFF)) {
-        EptEntry = L1PageTable;
-      }
-
-      BaseAddress += SIZE_4KB;
-      L1PageTable ++;
-    }
-
-    L2PageTable->Uint64       = (UINT64)((UINTN)L1PageTable - SIZE_4KB);
-    L2PageTable->Bits32.Ra    = 1;
-    L2PageTable->Bits32.Wa    = 1;
-    L2PageTable->Bits32.Xa    = 1;
-  }
-  switch (EptPageAttributeSetting) {
-  case EptPageAttributeSet:
-    EptEntry->Bits32.Ra = (UINT32)Ra;
-    EptEntry->Bits32.Wa = (UINT32)Wa;
-    EptEntry->Bits32.Xa = (UINT32)Xa;
-    break;
-  case EptPageAttributeAnd:
-    EptEntry->Bits32.Ra &= (UINT32)Ra;
-    EptEntry->Bits32.Wa &= (UINT32)Wa;
-    EptEntry->Bits32.Xa &= (UINT32)Xa;
-    break;
-  case EptPageAttributeOr:
-    EptEntry->Bits32.Ra |= (UINT32)Ra;
-    EptEntry->Bits32.Wa |= (UINT32)Wa;
-    EptEntry->Bits32.Xa |= (UINT32)Xa;
-    break;
-  default:
-    CpuDeadLoop ();
-    break;
-  }
-
-  Data128.Lo = mGuestContextCommonSmm.EptPointer.Uint64;
-  Data128.Hi = 0;
-  AsmInvEpt (INVEPT_TYPE_SINGLE_CONTEXT_INVALIDATION, &Data128);
-  return ;
+  return ((UINTN)L1PageTable[Index1].Uint64 & PAGING_4K_ADDRESS_MASK_64) + Offset;
 }
 
 /**
@@ -301,7 +484,7 @@ EPTSetPageAttribute (
   @param EptPageAttributeSetting  EPT page attribute setting
 
 **/
-VOID
+RETURN_STATUS
 EPTSetPageAttributeRange (
   IN UINT64                     Base,
   IN UINT64                     Length,
@@ -311,20 +494,49 @@ EPTSetPageAttributeRange (
   IN EPT_PAGE_ATTRIBUTE_SETTING EptPageAttributeSetting
   )
 {
-  UINT64   Address;
+  EPT_ENTRY                         *PageEntry;
+  PAGE_ATTRIBUTE                    PageAttribute;
+  UINTN                             PageEntryLength;
+  PAGE_ATTRIBUTE                    SplitAttribute;
+  RETURN_STATUS                     Status;
+  UINT_128   Data128;
 
 //  DEBUG ((EFI_D_INFO, "EPTSetPageAttributeRange - 0x%016lx - 0x%016lx\n", Base, Length));
-
-  for (Address = Base; Address < Base + Length; ) {
-    if (((Address & (SIZE_2MB - 1)) == 0) &&
-        ((Base <= Address + SIZE_2MB) && (Address + SIZE_2MB < Base + Length))) {
-      EPTSetPageAttribute (Address, 1, Ra, Wa, Xa, EptPageAttributeSetting);
-      Address += SIZE_2MB;
+  
+  while (Length != 0) {
+    PageEntry = GetPageTableEntry (Base, &PageAttribute);
+    if (PageEntry == NULL) {
+      DEBUG ((EFI_D_INFO, "PageEntry == NULL\n"));
+      return RETURN_UNSUPPORTED;
+    }
+    PageEntryLength = PageAttributeToLength (PageAttribute);
+    SplitAttribute = NeedSplitPage (Base, Length, PageAttribute);
+    if (SplitAttribute == PageNone) {
+      ConvertPageEntryAttribute (PageEntry, Ra, Wa, Xa, EptPageAttributeSetting);
+      //
+      // Convert success, move to next
+      //
+      Base += PageEntryLength;
+      Length -= PageEntryLength;
     } else {
-      EPTSetPageAttribute (Address, 0, Ra, Wa, Xa, EptPageAttributeSetting);
-      Address += SIZE_4KB;
+      Status = SplitPage (PageEntry, PageAttribute, SplitAttribute);
+      if (RETURN_ERROR (Status)) {
+        DEBUG ((EFI_D_INFO, "SplitPage - %r\n", Status));
+        return RETURN_UNSUPPORTED;
+      }
+      //
+      // Just split current page
+      // Convert success in next around
+      //
     }
   }
+
+  Data128.Lo = mGuestContextCommonSmm.EptPointer.Uint64;
+  Data128.Hi = 0;
+  AsmInvEpt (INVEPT_TYPE_SINGLE_CONTEXT_INVALIDATION, &Data128);
+
+  //DEBUG ((EFI_D_INFO, "EPTSetPageAttributeRange - %r\n", RETURN_SUCCESS));
+  return RETURN_SUCCESS;
 }
 
 /**

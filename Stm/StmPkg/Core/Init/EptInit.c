@@ -35,6 +35,17 @@ FIXED_MTRR_STRUCT_INFO mFixedMtrrStructInfo[] = {
   {0xF8000, SIZE_4KB},
 };
 
+/**
+
+  This function dump EPT page table.
+
+  @param EptPointer EPT pointer
+
+**/
+VOID
+EptDumpPageTable (
+  IN EPT_POINTER              *EptPointer
+  );
 
 /**
 
@@ -310,7 +321,11 @@ EptCreatePageTable (
   SmrrLength = (UINT32)mMtrrInfo.SmrrMask & 0xFFFFF000;
   SmrrLength = ~SmrrLength + 1;
 
-  L4PageTable = (EPT_ENTRY *)AllocatePages (1 + NumberOfPml4EntriesNeeded + NumberOfPml4EntriesNeeded * NumberOfPdpEntriesNeeded);
+  //
+  // Setup below 4G
+  //
+  L4PageTable = (EPT_ENTRY *)AllocatePages (6);
+  ZeroMem (L4PageTable, STM_PAGES_TO_SIZE(6));
 
   EptPointer->Uint64 = (UINT64)(UINTN)L4PageTable;
   EptPointer->Bits32.Gaw = EPT_GAW_48BIT;
@@ -320,13 +335,13 @@ EptCreatePageTable (
   L2PageTable = (EPT_ENTRY *)((UINTN)L3PageTable + SIZE_4KB);
 
   BaseAddress = 0;
-  for (Index4 = 0; Index4 < NumberOfPml4EntriesNeeded; Index4 ++) {
+  for (Index4 = 0; Index4 < 1; Index4 ++) {
     L4PageTable->Uint64 = (UINT64)(UINTN)L3PageTable;
     L4PageTable->Bits32.Ra    = 1;
     L4PageTable->Bits32.Wa    = 1;
     L4PageTable->Bits32.Xa    = 1;
     L4PageTable ++;
-    for (Index3 = 0; Index3 < NumberOfPdpEntriesNeeded; Index3 ++) {
+    for (Index3 = 0; Index3 < 4; Index3 ++) {
       L3PageTable->Uint64 = (UINT64)(UINTN)L2PageTable;
       L3PageTable->Bits32.Ra    = 1;
       L3PageTable->Bits32.Wa    = 1;
@@ -348,6 +363,7 @@ EptCreatePageTable (
             L2PageTable->Bits32.Emt = MemoryType;
             if ((BaseAddress >= SmrrBase) && (BaseAddress < SmrrBase + SmrrLength)) {
               DEBUG ((EFI_D_INFO, "EPT init: %x - %x\n", (UINTN)BaseAddress, (UINTN)L2PageTable->Bits32.Emt));
+              L2PageTable->Bits32.Xa    = 1;
             }
 
             L2PageTable ++;
@@ -377,6 +393,59 @@ EptCreatePageTable (
           L1PageTable->Bits32.Emt = MemoryType;
           L1PageTable ++;
           BaseAddress += SIZE_4KB;
+        }
+      }
+    }
+  }
+
+  //
+  // Setup above 4G
+  //
+  if (sizeof(UINTN) == sizeof(UINT64)) {
+    ASSERT(BaseAddress == BASE_4GB);
+    L4PageTable = (EPT_ENTRY *)(UINTN)(EptPointer->Uint64 & ~(SIZE_4KB - 1));
+    for (Index4 = 0; Index4 < NumberOfPml4EntriesNeeded; Index4 ++) {
+      if (Index4 > 0) {
+        L3PageTable = (EPT_ENTRY *)(UINTN)AllocatePages (1);
+        L4PageTable[Index4].Uint64 = (UINT64)(UINTN)L3PageTable;
+        L4PageTable[Index4].Bits32.Ra = 1;
+        L4PageTable[Index4].Bits32.Wa = 1;
+        L4PageTable[Index4].Bits32.Xa = 1;
+        Index3 = 0;
+      } else {
+        // Start from 4G - L4PageTable[0] already allocated.
+        L3PageTable = (EPT_ENTRY *)(UINTN)(L4PageTable[0].Uint64 & ~(SIZE_4KB - 1));
+        Index3 = 4;
+      }
+      
+      if (Is1GPageSupport()) {
+        for (; Index3 < NumberOfPdpEntriesNeeded; Index3 ++) {
+          L3PageTable[Index3].Uint64 = BaseAddress;
+          L3PageTable[Index3].Bits32.Ra = 1;
+          L3PageTable[Index3].Bits32.Wa = 1;
+          L3PageTable[Index3].Bits32.Xa = Xa;
+          L3PageTable[Index3].Bits32.Sp = 1;
+          MemoryType = GetMemoryType (BaseAddress);
+          L3PageTable[Index3].Bits32.Emt = MemoryType;
+          BaseAddress += SIZE_1GB;
+        }
+      } else {
+        for (; Index3 < NumberOfPdpEntriesNeeded; Index3 ++) {
+          L2PageTable = (EPT_ENTRY *)(UINTN)AllocatePages (1);
+          L3PageTable[Index3].Uint64 = (UINT64)(UINTN)L2PageTable;
+          L3PageTable[Index3].Bits32.Ra = 1;
+          L3PageTable[Index3].Bits32.Wa = 1;
+          L3PageTable[Index3].Bits32.Xa = 1;
+          for (Index2 = 0; Index2 < 512; Index2 ++) {
+            L2PageTable[Index2].Uint64 = BaseAddress;
+            L2PageTable[Index2].Bits32.Ra = 1;
+            L2PageTable[Index2].Bits32.Wa = 1;
+            L2PageTable[Index2].Bits32.Xa = Xa;
+            L2PageTable[Index2].Bits32.Sp = 1;
+            MemoryType = GetMemoryType (BaseAddress);
+            L2PageTable[Index2].Bits32.Emt = MemoryType;
+            BaseAddress += SIZE_2MB;
+          }
         }
       }
     }
@@ -419,19 +488,35 @@ EptDumpPageTable (
     NumberOfPdpEntriesNeeded = 512;
   }
 
-  L4PageTable = (EPT_ENTRY *)(UINTN)EptPointer->Uint64;
+  L4PageTable = (EPT_ENTRY *)(UINTN)(EptPointer->Uint64 & (~(SIZE_4KB - 1)));
   for (Index4 = 0; Index4 < NumberOfPml4EntriesNeeded; Index4 ++, L4PageTable++) {
-    DEBUG ((EFI_D_INFO, "  L4PageTable(0x%x) - 0x%016lx\n", Index4, L4PageTable->Uint64));
-    L3PageTable = (EPT_ENTRY *)(UINTN)L4PageTable->Uint64;
+    if (L4PageTable->Uint64 != 0) {
+      DEBUG ((EFI_D_INFO, "  L4PageTable(0x%x) - 0x%016lx\n", Index4, L4PageTable->Uint64));
+    } else {
+      continue;
+    }
+    L3PageTable = (EPT_ENTRY *)(UINTN)(L4PageTable->Uint64 & (~(SIZE_4KB - 1)));
     for (Index3 = 0; Index3 < NumberOfPdpEntriesNeeded; Index3 ++, L3PageTable++) {
-      DEBUG ((EFI_D_INFO, "    L3PageTable(0x%x) - 0x%016lx\n", Index3, L3PageTable->Uint64));
-      L2PageTable = (EPT_ENTRY *)(UINTN)L3PageTable->Uint64;
-      for (Index2 = 0; Index2 < 512; Index2 ++, L2PageTable++) {
-        DEBUG ((EFI_D_INFO, "      L2PageTable(0x%x) - 0x%016lx\n", Index2, L2PageTable->Uint64));
-        if (L2PageTable->Bits32.Sp == 0) {
-          L1PageTable = (EPT_ENTRY *)(UINTN)L2PageTable->Uint64;
-          for (Index1 = 0; Index1 < 512; Index1 ++, L1PageTable++) {
-            DEBUG ((EFI_D_INFO, "        L1PageTable(0x%x) - 0x%016lx\n", Index1, L1PageTable->Uint64));
+      if (L3PageTable->Uint64 != 0) {
+        DEBUG ((EFI_D_INFO, "    L3PageTable(0x%x) - 0x%016lx\n", Index3, L3PageTable->Uint64));
+      } else {
+        continue;
+      }
+      if (L3PageTable->Bits32.Sp == 0) {
+        L2PageTable = (EPT_ENTRY *)(UINTN)(L3PageTable->Uint64 & (~(SIZE_4KB - 1)));
+        for (Index2 = 0; Index2 < 512; Index2 ++, L2PageTable++) {
+          if (L2PageTable->Uint64 != 0) {
+            DEBUG ((EFI_D_INFO, "      L2PageTable(0x%x) - 0x%016lx\n", Index2, L2PageTable->Uint64));
+          } else {
+            continue;
+          }
+          if (L2PageTable->Bits32.Sp == 0) {
+            L1PageTable = (EPT_ENTRY *)(UINTN)(L2PageTable->Uint64 & (~(SIZE_4KB - 1)));
+            for (Index1 = 0; Index1 < 512; Index1 ++, L1PageTable++) {
+              if (L1PageTable->Uint64 != 0) {
+                DEBUG ((EFI_D_INFO, "        L1PageTable(0x%x) - 0x%016lx\n", Index1, L1PageTable->Uint64));
+              }
+            }
           }
         }
       }

@@ -86,6 +86,18 @@ CreateHostPaging (
   );
 
 /**
+  Check if 1-GByte pages is supported by processor or not.
+
+  @retval TRUE   1-GByte pages is supported.
+  @retval FALSE  1-GByte pages is not supported.
+
+**/
+BOOLEAN
+Is1GPageSupport (
+  VOID
+  );
+
+/**
 
   This function initialize VMCS for SMI.
 
