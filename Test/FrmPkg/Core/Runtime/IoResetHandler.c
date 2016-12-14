@@ -73,7 +73,7 @@ IoResetWriteHandler (
 
   Index = ApicToIndex (ReadLocalApicId ());
 
-  DEBUG ((EFI_D_INFO, "(FRM) !!!IoResetHandler!!!\n"));
+  DEBUG ((EFI_D_INFO, "(FRM) !!!IoResetWriteHandler!!!\n"));
 
   FrmTeardownBsp (Index, 0);
   AsmWbinvd ();
@@ -113,7 +113,7 @@ KbcResetWriteHandler (
 
   Index = ApicToIndex (ReadLocalApicId ());
 
-  DEBUG ((EFI_D_INFO, "(FRM) !!!KbcResetHandler!!!\n"));
+  DEBUG ((EFI_D_INFO, "(FRM) !!!KbcResetWriteHandler!!!\n"));
 
   if ((UINT8)Value != KBC_RESET_WRITE_VALUE) {
     // Normal KB

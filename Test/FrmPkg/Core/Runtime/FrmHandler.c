@@ -139,7 +139,7 @@ FrmHandlerC (
   //
   InfoBasic.Uint32 = VmRead32 (VMCS_32_RO_EXIT_REASON_INDEX);
   if (InfoBasic.Bits.Reason >= VmExitReasonMax) {
-    DEBUG ((EFI_D_ERROR, "(FRM) !!!UnknownReason!!!\n"));
+    DEBUG ((EFI_D_ERROR, "(FRM) !!!UnknownReason!!! (0x%x)\n", InfoBasic.Bits.Reason));
     DumpVmcsAllField ();
 
     CpuDeadLoop ();
