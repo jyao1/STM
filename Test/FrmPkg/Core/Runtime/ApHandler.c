@@ -178,6 +178,8 @@ SetVmcsGuestApWakeupField (
   VmWriteN (VMCS_N_CONTROL_CR0_READ_SHADOW_INDEX, mGuestContextCommon.GuestContextPerCpu[Index].Cr0);
   VmWriteN (VMCS_N_CONTROL_CR4_READ_SHADOW_INDEX, mGuestContextCommon.GuestContextPerCpu[Index].Cr4 & ~CR4_VMXE & ~CR4_SMXE);
 
+  VmWrite64 (VMCS_64_GUEST_IA32_EFER_INDEX,       mGuestContextCommon.GuestContextPerCpu[Index].EFER);
+
   ZeroMem (&mGuestContextCommon.GuestContextPerCpu[Index].Register, sizeof(X86_REGISTER));
   AsmCpuidEx (
     CPUID_FEATURE_INFORMATION,

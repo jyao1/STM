@@ -112,6 +112,7 @@ SetVmcsControlField (
   if (PinBasedCtls.Bits.VmxPreemptionTimer) {
     VmExitCtrls.Bits.SaveVmxPreemptionTimerValue = 1;
   }
+  VmExitCtrls.Bits.SaveIA32_EFER = 1;
 
   Data64 = AsmReadMsr64 (IA32_VMX_ENTRY_CTLS_MSR_INDEX);
   VmEntryCtrls.Uint32 = (UINT32)Data64 & (UINT32)RShiftU64 (Data64, 32);
@@ -235,9 +236,11 @@ SetVmcsGuestField (
   VmWrite64 (VMCS_64_GUEST_VMCS_LINK_PTR_INDEX,          0xffffffffffffffff);
 
   if ((mGuestContextCommon.GuestContextPerCpu[mBspIndex].Cr0 & CR0_PG) == 0) {
-    ASSERT(mGuestContextCommon.GuestContextPerCpu[Index].UnrestrictedGuest);
+    // do not assert here, because it will be assigned later.
+    //ASSERT(mGuestContextCommon.GuestContextPerCpu[Index].UnrestrictedGuest);
     VmWriteN(VMCS_N_GUEST_CR0_INDEX, VmReadN(VMCS_N_GUEST_CR0_INDEX) & (~CR0_PG));
   }
 
+  VmWrite64 (VMCS_64_GUEST_IA32_EFER_INDEX, mGuestContextCommon.GuestContextPerCpu[Index].EFER);
   return ;
 }
