@@ -13,6 +13,7 @@
 **/
 
 #include "StmInit.h"
+#include "PeStm.h"
 
 /**
 
@@ -33,21 +34,22 @@ SetMsrBitmapEx (
   UINT8 *MsrBitmap;
   UINTN Index;
   UINTN Offset;
+  UINT32 VmType = SMI_HANDLER;
 
   if (!MsrWrite) {
     if (MsrIndex < 0x2000) {
-      MsrBitmap = (UINT8 *)(UINTN)mGuestContextCommonSmm.MsrBitmap;
+      MsrBitmap = (UINT8 *)(UINTN)mGuestContextCommonSmm[VmType].MsrBitmap;
     } else if (MsrIndex >= 0xC0000000 && MsrIndex < 0xC0002000){
-      MsrBitmap = (UINT8 *)(UINTN)(mGuestContextCommonSmm.MsrBitmap + 0x400);
+      MsrBitmap = (UINT8 *)(UINTN)(mGuestContextCommonSmm[VmType].MsrBitmap + 0x400);
       MsrIndex -= 0xC0000000;
     } else {
       return ;
     }
   } else {
     if (MsrIndex < 0x2000) {
-      MsrBitmap = (UINT8 *)(UINTN)(mGuestContextCommonSmm.MsrBitmap + 0x800);
+      MsrBitmap = (UINT8 *)(UINTN)(mGuestContextCommonSmm[VmType].MsrBitmap + 0x800);
     } else if (MsrIndex >= 0xC0000000 && MsrIndex < 0xC0002000){
-      MsrBitmap = (UINT8 *)(UINTN)(mGuestContextCommonSmm.MsrBitmap + 0xC00);
+      MsrBitmap = (UINT8 *)(UINTN)(mGuestContextCommonSmm[VmType].MsrBitmap + 0xC00);
       MsrIndex -= 0xC0000000;
     } else {
       return ;
@@ -198,7 +200,7 @@ MsrInit (
   VOID
   )
 {
-  mGuestContextCommonSmm.MsrBitmap = (UINT64)(UINTN)AllocatePages (1);
+  mGuestContextCommonSmm[SMI_HANDLER].MsrBitmap = (UINT64)(UINTN)AllocatePages (1);
 
   SetAllMsrBitmaps ();
 

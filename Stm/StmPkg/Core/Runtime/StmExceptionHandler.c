@@ -24,6 +24,7 @@
 // bit 1 - exception 1
 // etc.
 //
+//UINT32 mErrorCodeFlag = 0x00027d00;
 UINT32 mErrorCodeFlag = 0x00027d00;
 
 EFI_EXCEPTION_CALLBACK          mExternalVectorTable[STM_MAX_IDT_NUM];

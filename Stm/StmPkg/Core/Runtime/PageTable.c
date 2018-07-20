@@ -13,6 +13,7 @@
 **/
 
 #include "StmRuntime.h"
+#include "PeStm.h"
 
 #define PAGING_4K_MASK  0xFFF
 #define PAGING_4M_MASK  0x3FFFFF
@@ -295,11 +296,12 @@ GuestLinearToGuestPhysical (
   IN UINTN    GuestLinearAddress
   )
 {
+  UINT32 VmType = SMI_HANDLER;
   return TranslateGuestLinearToPhysical (
            VmReadN (VMCS_N_GUEST_CR3_INDEX),
-           mGuestContextCommonSmm.GuestContextPerCpu[CpuIndex].Cr0,
-           mGuestContextCommonSmm.GuestContextPerCpu[CpuIndex].Cr4,
-           mGuestContextCommonSmm.GuestContextPerCpu[CpuIndex].Efer,
+           mGuestContextCommonSmm[VmType].GuestContextPerCpu[CpuIndex].Cr0,
+           mGuestContextCommonSmm[VmType].GuestContextPerCpu[CpuIndex].Cr4,
+           mGuestContextCommonSmm[VmType].GuestContextPerCpu[CpuIndex].Efer,
            GuestLinearAddress,
            NULL,
            NULL,
@@ -396,6 +398,7 @@ MapLinearAddressOneEntry (
   UINT64   *L1PageTable;
   UINT32   *L1PageTable32;
   UINTN    Index1;
+  UINT32   VmType = SMI_HANDLER;
 
   Ia32e = FALSE;
   Pg    = FALSE;
@@ -405,9 +408,9 @@ MapLinearAddressOneEntry (
   Entry = NULL;
   CurrentPhysicalAddress = TranslateGuestLinearToPhysical (
                              VmReadN (VMCS_N_GUEST_CR3_INDEX),
-                             mGuestContextCommonSmm.GuestContextPerCpu[CpuIndex].Cr0,
-                             mGuestContextCommonSmm.GuestContextPerCpu[CpuIndex].Cr4,
-                             mGuestContextCommonSmm.GuestContextPerCpu[CpuIndex].Efer,
+                             mGuestContextCommonSmm[VmType].GuestContextPerCpu[CpuIndex].Cr0,
+                             mGuestContextCommonSmm[VmType].GuestContextPerCpu[CpuIndex].Cr4,
+                             mGuestContextCommonSmm[VmType].GuestContextPerCpu[CpuIndex].Efer,
                              LinearAddress,
                              &Ia32e,
                              &Pg,
@@ -495,8 +498,9 @@ MapVirtualAddressToPhysicalAddress (
   UINTN    Address;
   UINTN    Base;
   UINTN    Length;
+  UINT32   VmType = SMI_HANDLER;
 
-  if ((mGuestContextCommonSmm.GuestContextPerCpu[CpuIndex].Cr4 & CR4_PAE) == 0) {
+  if ((mGuestContextCommonSmm[VmType].GuestContextPerCpu[CpuIndex].Cr4 & CR4_PAE) == 0) {
     SuperPageSize = SIZE_4MB;
   } else {
     SuperPageSize = SIZE_2MB;
@@ -553,6 +557,7 @@ UnmapLinearAddressOneEntry (
   UINT64   *L1PageTable;
   UINT32   *L1PageTable32;
   UINTN    Index1;
+  UINT32   VmType = SMI_HANDLER;
 
   ASSERT ((SuperPageSize == SIZE_4KB) || (SuperPageSize == SIZE_4MB) || (SuperPageSize == SIZE_2MB));
 
@@ -561,9 +566,9 @@ UnmapLinearAddressOneEntry (
   Entry = NULL;
   CurrentPhysicalAddress = TranslateGuestLinearToPhysical (
                              VmReadN (VMCS_N_GUEST_CR3_INDEX),
-                             mGuestContextCommonSmm.GuestContextPerCpu[CpuIndex].Cr0,
-                             mGuestContextCommonSmm.GuestContextPerCpu[CpuIndex].Cr4,
-                             mGuestContextCommonSmm.GuestContextPerCpu[CpuIndex].Efer,
+                             mGuestContextCommonSmm[VmType].GuestContextPerCpu[CpuIndex].Cr0,
+                             mGuestContextCommonSmm[VmType].GuestContextPerCpu[CpuIndex].Cr4,
+                             mGuestContextCommonSmm[VmType].GuestContextPerCpu[CpuIndex].Efer,
                              LinearAddress,
                              &Ia32e,
                              &Pg,
@@ -643,8 +648,9 @@ UnmapVirtualAddressToPhysicalAddress (
   UINTN    Address;
   UINTN    Base;
   UINTN    Length;
+  UINT32   VmType = SMI_HANDLER;
 
-  if ((mGuestContextCommonSmm.GuestContextPerCpu[CpuIndex].Cr4 & CR4_PAE) == 0) {
+  if ((mGuestContextCommonSmm[VmType].GuestContextPerCpu[CpuIndex].Cr4 & CR4_PAE) == 0) {
     SuperPageSize = SIZE_4MB;
   } else {
     SuperPageSize = SIZE_2MB;

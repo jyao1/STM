@@ -70,6 +70,7 @@
   Ia32/AsmTestAndReset.asm
   Ia32/AsmTestAndSet.s
   Ia32/AsmTestAndReset.s
+  Ia32/AsmSendInt2.asm
 
 [Sources.x64]
   x64/AsmInvEpt.asm
@@ -109,7 +110,7 @@
   x64/AsmTestAndReset.asm
   x64/AsmTestAndSet.s
   x64/AsmTestAndReset.s
-
+  x64/AsmSendInt2.asm
 [Packages]
   StmPkg/StmPkg.dec
 

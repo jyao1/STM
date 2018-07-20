@@ -1,0 +1,13 @@
+z:/stm_reference/stmpegit/stm-pe/stm/Build/StmPkg/DEBUG_VS2010x86/IA32/StmPkg/EdkII/MdePkg/Library/BasePrintLib/BasePrintLib/OUTPUT/BasePrintLib.lib
+z:/stm_reference/stmpegit/stm-pe/stm/Build/StmPkg/DEBUG_VS2010x86/IA32/StmPkg/EdkII/PcAtChipsetPkg/Library/SerialIoLib/SerialIoLib/OUTPUT/PcAtSerialPortLib.lib
+z:/stm_reference/stmpegit/stm-pe/stm/Build/StmPkg/DEBUG_VS2010x86/IA32/StmPkg/EdkII/MdePkg/Library/BasePcdLibNull/BasePcdLibNull/OUTPUT/BasePcdLibNull.lib
+z:/stm_reference/stmpegit/stm-pe/stm/Build/StmPkg/DEBUG_VS2010x86/IA32/StmPkg/Library/MpSafeDebugLibSerialPort/MpSafeDebugLibSerialPort/OUTPUT/MpSafDebugLibSerialPort.lib
+z:/stm_reference/stmpegit/stm-pe/stm/Build/StmPkg/DEBUG_VS2010x86/IA32/StmPkg/Library/SimpleSynchronizationLib/SimpleSynchronizationLib/OUTPUT/SimpleSynchronizationLib.lib
+z:/stm_reference/stmpegit/stm-pe/stm/Build/StmPkg/DEBUG_VS2010x86/IA32/StmPkg/EdkII/MdePkg/Library/BaseIoLibIntrinsic/BaseIoLibIntrinsic/OUTPUT/BaseIoLibIntrinsic.lib
+z:/stm_reference/stmpegit/stm-pe/stm/Build/StmPkg/DEBUG_VS2010x86/IA32/StmPkg/EdkII/MdePkg/Library/BaseMemoryLib/BaseMemoryLib/OUTPUT/BaseMemoryLib.lib
+z:/stm_reference/stmpegit/stm-pe/stm/Build/StmPkg/DEBUG_VS2010x86/IA32/StmPkg/EdkII/MdePkg/Library/BaseLib/BaseLib/OUTPUT/BaseLib.lib
+z:/stm_reference/stmpegit/stm-pe/stm/Build/StmPkg/DEBUG_VS2010x86/IA32/StmPkg/EdkII/MdePkg/Library/BasePciExpressLib/BasePciExpressLib/OUTPUT/BasePciExpressLib.lib
+z:/stm_reference/stmpegit/stm-pe/stm/Build/StmPkg/DEBUG_VS2010x86/IA32/StmPkg/EdkII/MdePkg/Library/BasePciLibPciExpress/BasePciLibPciExpress/OUTPUT/BasePciLibPciExpress.lib
+z:/stm_reference/stmpegit/stm-pe/stm/Build/StmPkg/DEBUG_VS2010x86/IA32/StmPkg/Library/StmLib/StmLib/OUTPUT/StmLib.lib
+z:/stm_reference/stmpegit/stm-pe/stm/Build/StmPkg/DEBUG_VS2010x86/IA32/StmPkg/Library/StmPlatformLibNull/StmPlatformLibNull/OUTPUT/StmPlatformLibNull.lib
+z:/stm_reference/stmpegit/stm-pe/stm/Build/StmPkg/DEBUG_VS2010x86/IA32/StmPkg/Core/Stm/OUTPUT/Stm.lib

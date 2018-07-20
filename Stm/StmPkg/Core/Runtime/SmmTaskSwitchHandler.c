@@ -13,6 +13,7 @@
 **/
 
 #include "StmRuntime.h"
+#include "PeStm.h"
 
 GLOBAL_REMOVE_IF_UNREFERENCED
 CHAR8 *mTaskTypeStr[] = {
@@ -40,6 +41,7 @@ SmmTaskSwitchHandler (
   TASK_STATE              *Tss;
   UINT16                  CurrentTr;
   TASK_STATE              *CurrentTss;
+  UINT32				  VmType = SMI_HANDLER;
 
 //  DEBUG ((EFI_D_INFO, "!!!TaskSwitchHandler - %08x\n", (UINTN)Index));
   DEBUG ((EFI_D_INFO, "T"));
@@ -89,14 +91,14 @@ SmmTaskSwitchHandler (
   //
   if ((Qualification.TaskSwitch.TaskType == TASK_SWITCH_SOURCE_CALL) ||
       (Qualification.TaskSwitch.TaskType == TASK_SWITCH_SOURCE_TASK_GATE)) {
-    CurrentTss->Eax = (UINT32)mGuestContextCommonSmm.GuestContextPerCpu[Index].Register.Rax;
-    CurrentTss->Ebx = (UINT32)mGuestContextCommonSmm.GuestContextPerCpu[Index].Register.Rbx;
-    CurrentTss->Ecx = (UINT32)mGuestContextCommonSmm.GuestContextPerCpu[Index].Register.Rcx;
-    CurrentTss->Edx = (UINT32)mGuestContextCommonSmm.GuestContextPerCpu[Index].Register.Rdx;
-    CurrentTss->Esi = (UINT32)mGuestContextCommonSmm.GuestContextPerCpu[Index].Register.Rsi;
-    CurrentTss->Edi = (UINT32)mGuestContextCommonSmm.GuestContextPerCpu[Index].Register.Rdi;
-    CurrentTss->Ebp = (UINT32)mGuestContextCommonSmm.GuestContextPerCpu[Index].Register.Rbp;
-    CurrentTss->Esp = (UINT32)mGuestContextCommonSmm.GuestContextPerCpu[Index].Register.Rsp;
+    CurrentTss->Eax = (UINT32)mGuestContextCommonSmm[VmType].GuestContextPerCpu[Index].Register.Rax;
+    CurrentTss->Ebx = (UINT32)mGuestContextCommonSmm[VmType].GuestContextPerCpu[Index].Register.Rbx;
+    CurrentTss->Ecx = (UINT32)mGuestContextCommonSmm[VmType].GuestContextPerCpu[Index].Register.Rcx;
+    CurrentTss->Edx = (UINT32)mGuestContextCommonSmm[VmType].GuestContextPerCpu[Index].Register.Rdx;
+    CurrentTss->Esi = (UINT32)mGuestContextCommonSmm[VmType].GuestContextPerCpu[Index].Register.Rsi;
+    CurrentTss->Edi = (UINT32)mGuestContextCommonSmm[VmType].GuestContextPerCpu[Index].Register.Rdi;
+    CurrentTss->Ebp = (UINT32)mGuestContextCommonSmm[VmType].GuestContextPerCpu[Index].Register.Rbp;
+    CurrentTss->Esp = (UINT32)mGuestContextCommonSmm[VmType].GuestContextPerCpu[Index].Register.Rsp;
 
     CurrentTss->Eip = (UINT32)VmReadN (VMCS_N_GUEST_RIP_INDEX);
     if (Qualification.TaskSwitch.TaskType == TASK_SWITCH_SOURCE_CALL) {
@@ -127,14 +129,14 @@ SmmTaskSwitchHandler (
       (Qualification.TaskSwitch.TaskType == TASK_SWITCH_SOURCE_TASK_GATE)) {
     Tss->Link = CurrentTr;
   }
-  mGuestContextCommonSmm.GuestContextPerCpu[Index].Register.Rax = Tss->Eax;
-  mGuestContextCommonSmm.GuestContextPerCpu[Index].Register.Rbx = Tss->Ebx;
-  mGuestContextCommonSmm.GuestContextPerCpu[Index].Register.Rcx = Tss->Ecx;
-  mGuestContextCommonSmm.GuestContextPerCpu[Index].Register.Rdx = Tss->Edx;
-  mGuestContextCommonSmm.GuestContextPerCpu[Index].Register.Rsi = Tss->Esi;
-  mGuestContextCommonSmm.GuestContextPerCpu[Index].Register.Rdi = Tss->Edi;
-  mGuestContextCommonSmm.GuestContextPerCpu[Index].Register.Rbp = Tss->Ebp;
-  mGuestContextCommonSmm.GuestContextPerCpu[Index].Register.Rsp = Tss->Esp;
+  mGuestContextCommonSmm[VmType].GuestContextPerCpu[Index].Register.Rax = Tss->Eax;
+  mGuestContextCommonSmm[VmType].GuestContextPerCpu[Index].Register.Rbx = Tss->Ebx;
+  mGuestContextCommonSmm[VmType].GuestContextPerCpu[Index].Register.Rcx = Tss->Ecx;
+  mGuestContextCommonSmm[VmType].GuestContextPerCpu[Index].Register.Rdx = Tss->Edx;
+  mGuestContextCommonSmm[VmType].GuestContextPerCpu[Index].Register.Rsi = Tss->Esi;
+  mGuestContextCommonSmm[VmType].GuestContextPerCpu[Index].Register.Rdi = Tss->Edi;
+  mGuestContextCommonSmm[VmType].GuestContextPerCpu[Index].Register.Rbp = Tss->Ebp;
+  mGuestContextCommonSmm[VmType].GuestContextPerCpu[Index].Register.Rsp = Tss->Esp;
 
   VmWriteN (VMCS_N_GUEST_RIP_INDEX, Tss->Eip);
 

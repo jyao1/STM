@@ -13,6 +13,7 @@
 **/
 
 #include "StmRuntime.h"
+#include "PeStm.h"
 
 /**
 
@@ -351,8 +352,9 @@ SmmVmcallReturnFromProtectionExceptionHandler (
   )
 {
   X86_REGISTER                       *Reg;
+  UINT32 VmType = SMI_HANDLER;
 
-  Reg = &mGuestContextCommonSmm.GuestContextPerCpu[Index].Register;
+  Reg = &mGuestContextCommonSmm[VmType].GuestContextPerCpu[Index].Register;
 
   // EBX = 0: resume SMM guest using register state found on exception stack
   // EBX = 1 to 0x0F: EBX contains a BIOS error code which the STM must record in the TXT.ERRORCODE
@@ -418,12 +420,13 @@ SmmVmcallHandler (
   STM_STATUS                         Status;
   STM_VMCALL_HANDLER                 StmVmcallHandler;
   UINT64                             AddressParameter;
+  UINT32							 VmType = SMI_HANDLER;
 
-  Reg = &mGuestContextCommonSmm.GuestContextPerCpu[Index].Register;
+  Reg = &mGuestContextCommonSmm[VmType].GuestContextPerCpu[Index].Register;
 
   StmVmcallHandler = GetSmmVmcallHandlerByIndex (ReadUnaligned32 ((UINT32 *)&Reg->Rax));
   if (StmVmcallHandler == NULL) {
-    DEBUG ((EFI_D_INFO, "GetSmmVmcallHandlerByIndex - %x!\n", (UINTN)ReadUnaligned32 ((UINT32 *)&Reg->Rax)));
+    DEBUG((EFI_D_INFO, "%ld SmmVmcallHandler - GetSmmVmcallHandlerByIndex - %x!\n", Index, (UINTN)ReadUnaligned32 ((UINT32 *)&Reg->Rax)));
     // Should not happen
     CpuDeadLoop ();
     Status = ERROR_INVALID_API;

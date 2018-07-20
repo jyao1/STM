@@ -14,6 +14,10 @@
 
 #include "StmInit.h"
 #include "StmRuntime.h"
+#include "StmPe.h"
+
+extern void CpuReadySync(UINT32 Index);
+extern unsigned int CpuInSmiCount;
 
 /**
 
@@ -35,20 +39,20 @@ SmmSetup (
   }
 
   AsmVmPtrStore (&mGuestContextCommonSmi.GuestContextPerCpu[Index].Vmcs);
-  Rflags = AsmVmPtrLoad (&mGuestContextCommonSmm.GuestContextPerCpu[Index].Vmcs);
+  Rflags = AsmVmPtrLoad (&mGuestContextCommonSmm[SMI_HANDLER].GuestContextPerCpu[Index].Vmcs);
   if ((Rflags & (RFLAGS_CF | RFLAGS_ZF)) != 0) {
-    DEBUG ((EFI_D_ERROR, "ERROR: AsmVmPtrLoad(%d) - %016lx : %08x\n", (UINTN)Index, mGuestContextCommonSmm.GuestContextPerCpu[Index].Vmcs, Rflags));
+    DEBUG ((EFI_D_ERROR, "ERROR: AsmVmPtrLoad(%d) - %016lx : %08x\n", (UINTN)Index, mGuestContextCommonSmm[SMI_HANDLER].GuestContextPerCpu[Index].Vmcs, Rflags));
     CpuDeadLoop ();
   }
 
   VmWriteN (VMCS_N_GUEST_RIP_INDEX, (UINTN)mHostContextCommon.HostContextPerCpu[Index].TxtProcessorSmmDescriptor->SmmStmSetupRip);
   VmWriteN (VMCS_N_GUEST_RSP_INDEX, (UINTN)mHostContextCommon.HostContextPerCpu[Index].TxtProcessorSmmDescriptor->SmmSmiHandlerRsp);
-  VmWriteN (VMCS_N_GUEST_CR3_INDEX, mGuestContextCommonSmm.GuestContextPerCpu[Index].Cr3);
+  VmWriteN (VMCS_N_GUEST_CR3_INDEX, mGuestContextCommonSmm[SMI_HANDLER].GuestContextPerCpu[Index].Cr3);
 
   //
   // We need update HOST_RSP to save context for SetJump.
   //
-  VmWriteN  (VMCS_N_HOST_RSP_INDEX,         mHostContextCommon.HostContextPerCpu[Index].Stack - (mHostContextCommon.StmHeader->SwStmHdr.PerProcDynamicMemorySize / 2));
+  VmWriteN  (VMCS_N_HOST_RSP_INDEX, mHostContextCommon.HostContextPerCpu[Index].Stack - (mHostContextCommon.StmHeader->SwStmHdr.PerProcDynamicMemorySize / 2));
 
   JumpFlag = SetJump (&mHostContextCommon.HostContextPerCpu[Index].JumpBuffer);
   if (JumpFlag == 0) {
@@ -60,9 +64,9 @@ SmmSetup (
     DEBUG ((EFI_D_INFO, "SmmStmSetupRip start (%d) ...\n", (UINTN)Index));
     DEBUG ((EFI_D_INFO, "New HostStack (%d) - %08x\n", (UINTN)Index, VmReadN  (VMCS_N_HOST_RSP_INDEX)));
     mHostContextCommon.HostContextPerCpu[Index].JumpBufferValid = TRUE;
-    mGuestContextCommonSmm.GuestContextPerCpu[Index].Launched = TRUE;
-    Rflags = AsmVmLaunch (&mGuestContextCommonSmm.GuestContextPerCpu[Index].Register);
-    mGuestContextCommonSmm.GuestContextPerCpu[Index].Launched = FALSE;
+    mGuestContextCommonSmm[SMI_HANDLER].GuestContextPerCpu[Index].Launched = TRUE;
+    Rflags = AsmVmLaunch (&mGuestContextCommonSmm[SMI_HANDLER].GuestContextPerCpu[Index].Register);
+    mGuestContextCommonSmm[SMI_HANDLER].GuestContextPerCpu[Index].Launched = FALSE;
     AcquireSpinLock (&mHostContextCommon.DebugLock);
     DEBUG ((EFI_D_ERROR, "!!!SmmSetup FAIL!!!\n"));
     DEBUG ((EFI_D_ERROR, "Rflags: %08x\n", Rflags));
@@ -77,7 +81,7 @@ SmmSetup (
   //
   VmWriteN  (VMCS_N_HOST_RSP_INDEX,         mHostContextCommon.HostContextPerCpu[Index].Stack);
 
-  AsmVmPtrStore (&mGuestContextCommonSmm.GuestContextPerCpu[Index].Vmcs);
+  AsmVmPtrStore (&mGuestContextCommonSmm[SMI_HANDLER].GuestContextPerCpu[Index].Vmcs);
 
   Rflags = AsmVmPtrLoad (&mGuestContextCommonSmi.GuestContextPerCpu[Index].Vmcs);
   if ((Rflags & (RFLAGS_CF | RFLAGS_ZF)) != 0) {

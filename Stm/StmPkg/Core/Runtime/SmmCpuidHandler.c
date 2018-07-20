@@ -13,6 +13,7 @@
 **/
 
 #include "StmRuntime.h"
+#include "PeStm.h"
 
 /**
 
@@ -27,8 +28,9 @@ SmmCpuidHandler (
   )
 {
   X86_REGISTER      *Reg;
+  UINT32 VmType = SMI_HANDLER;
 
-  Reg = &mGuestContextCommonSmm.GuestContextPerCpu[Index].Register;
+  Reg = &mGuestContextCommonSmm[VmType].GuestContextPerCpu[Index].Register;
 
   AsmCpuidEx (
     ReadUnaligned32 ((UINT32 *)&Reg->Rax),

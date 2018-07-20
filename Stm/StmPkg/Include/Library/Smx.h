@@ -33,6 +33,8 @@
 #define TXT_MLE_JOIN                0x290
 #define TXT_HEAP_BASE               0x300
 #define TXT_HEAP_SIZE               0x308
+#define TXT_MSEG_BASE               0x310
+#define TXT_MSEG_SIZE               0x318
 #define TXT_DPR_REG                 0x330
 #define   TXT_DPR_REG_LCK           0x1
 #define   TXT_DPR_REG_SIZE_MASK     0xFF0

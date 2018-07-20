@@ -1,0 +1,563 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <Keyword>MakeFileProj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <NMakeBuildCommandLine>buildstm.bat</NMakeBuildCommandLine>
+    <NMakeCleanCommandLine>buildstm.bat</NMakeCleanCommandLine>
+    <NMakeReBuildCommandLine>buildstm.bat</NMakeReBuildCommandLine>
+    <NMakePreprocessorDefinitions>WIN32;_DEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <NMakeBuildCommandLine>buildstm.bat</NMakeBuildCommandLine>
+    <NMakeCleanCommandLine>buildstm.bat</NMakeCleanCommandLine>
+    <NMakeReBuildCommandLine>buildstm.bat</NMakeReBuildCommandLine>
+    <NMakePreprocessorDefinitions>WIN32;_DEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <NMakeBuildCommandLine>buildstm.bat RELEASE</NMakeBuildCommandLine>
+    <NMakeReBuildCommandLine>buildstm.bag RELEASE</NMakeReBuildCommandLine>
+    <NMakePreprocessorDefinitions>WIN32;NDEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <NMakeBuildCommandLine>buildstm.bat RELEASE</NMakeBuildCommandLine>
+    <NMakeReBuildCommandLine>buildstm.bag RELEASE</NMakeReBuildCommandLine>
+    <NMakePreprocessorDefinitions>WIN32;NDEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(ProjectDir)\StmPkg\Core\Init\;$(ProjectDir)\StmPkg\Core\;$(ProjectDir)\StmPkg\EdkII\MdePkg\Include\$(Platform);$(ProjectDir)\StmPkg\EdkII\BaseTools\Source\C\Include\;$(ProjectDir)StmPkg\Include\$(Platform);$(ProjectDir)\StmPkg\Include\;$(ProjectDir)\StmPkg\Core\Runtime\;$(ProjectDir)\StmPkg\EdkII\MdePkg\Include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="stmpkg\core\Cpu.c" />
+    <ClCompile Include="stmpkg\core\Dump.c" />
+    <ClCompile Include="stmpkg\core\EventLog.c" />
+    <ClCompile Include="stmpkg\core\init\EptInit.c" />
+    <ClCompile Include="stmpkg\core\init\IoInit.c" />
+    <ClCompile Include="stmpkg\core\init\Memory.c" />
+    <ClCompile Include="stmpkg\core\init\MsrInit.c" />
+    <ClCompile Include="stmpkg\core\init\Paging.c" />
+    <ClCompile Include="StmPkg\Core\Init\PeVmcsInit.c" />
+    <ClCompile Include="stmpkg\core\init\Relocate.c" />
+    <ClCompile Include="stmpkg\core\init\StmInit.c" />
+    <ClCompile Include="stmpkg\core\init\VmcsInit.c" />
+    <ClCompile Include="stmpkg\core\runtime\ia32\SmmException.c" />
+    <ClCompile Include="stmpkg\core\runtime\ia32\SmmStateSyncIa32eGpr.c" />
+    <ClCompile Include="stmpkg\core\runtime\PageTable.c" />
+    <ClCompile Include="StmPkg\Core\Runtime\PeEptHandler.c" />
+    <ClCompile Include="StmPkg\Core\Runtime\PeSmmHandler.c" />
+    <ClCompile Include="StmPkg\Core\Runtime\PeSmmVmcallHandler.c" />
+    <ClCompile Include="stmpkg\core\runtime\SmiEventHandler.c" />
+    <ClCompile Include="stmpkg\core\runtime\SmiHandler.c" />
+    <ClCompile Include="stmpkg\core\runtime\SmiVmcallHandler.c" />
+    <ClCompile Include="stmpkg\core\runtime\SmmCacheHandler.c" />
+    <ClCompile Include="stmpkg\core\runtime\SmmCpuidHandler.c" />
+    <ClCompile Include="stmpkg\core\runtime\SmmCrHandler.c" />
+    <ClCompile Include="stmpkg\core\runtime\SmmEptHandler.c" />
+    <ClCompile Include="stmpkg\core\runtime\SmmExceptionHandler.c" />
+    <ClCompile Include="stmpkg\core\runtime\SmmHandler.c" />
+    <ClCompile Include="stmpkg\core\runtime\SmmIoHandler.c" />
+    <ClCompile Include="stmpkg\core\runtime\SmmMp.c" />
+    <ClCompile Include="stmpkg\core\runtime\SmmMsrHandler.c" />
+    <ClCompile Include="stmpkg\core\runtime\SmmRsmHandler.c" />
+    <ClCompile Include="stmpkg\core\runtime\SmmSetup.c" />
+    <ClCompile Include="stmpkg\core\runtime\SmmStateSync.c" />
+    <ClCompile Include="stmpkg\core\runtime\SmmTaskSwitchHandler.c" />
+    <ClCompile Include="stmpkg\core\runtime\SmmTearDown.c" />
+    <ClCompile Include="stmpkg\core\runtime\SmmVmcallHandler.c" />
+    <ClCompile Include="stmpkg\core\runtime\StmExceptionHandler.c" />
+    <ClCompile Include="StmPkg\Core\Runtime\StmLoadPeVm.c" />
+    <ClCompile Include="stmpkg\core\runtime\StmTearDown.c" />
+    <ClCompile Include="stmpkg\core\runtime\x64\SmmException.c" />
+    <ClCompile Include="stmpkg\core\runtime\x64\SmmStateSyncIa32eGpr.c" />
+    <ClCompile Include="stmpkg\core\StmPerformance.c" />
+    <ClCompile Include="stmpkg\core\StmResource.c" />
+    <ClCompile Include="stmpkg\core\VmcsRecord.c" />
+    <ClCompile Include="stmpkg\edkii\basetools\source\c\common\BasePeCoff.c" />
+    <ClCompile Include="stmpkg\edkii\basetools\source\c\common\BinderFuncs.c" />
+    <ClCompile Include="stmpkg\edkii\basetools\source\c\common\CommonLib.c" />
+    <ClCompile Include="stmpkg\edkii\basetools\source\c\common\Crc32.c" />
+    <ClCompile Include="stmpkg\edkii\basetools\source\c\common\Decompress.c" />
+    <ClCompile Include="stmpkg\edkii\basetools\source\c\common\EfiCompress.c" />
+    <ClCompile Include="stmpkg\edkii\basetools\source\c\common\EfiUtilityMsgs.c" />
+    <ClCompile Include="stmpkg\edkii\basetools\source\c\common\FirmwareVolumeBuffer.c" />
+    <ClCompile Include="stmpkg\edkii\basetools\source\c\common\FvLib.c" />
+    <ClCompile Include="stmpkg\edkii\basetools\source\c\common\MemoryFile.c" />
+    <ClCompile Include="stmpkg\edkii\basetools\source\c\common\MyAlloc.c" />
+    <ClCompile Include="stmpkg\edkii\basetools\source\c\common\OsPath.c" />
+    <ClCompile Include="stmpkg\edkii\basetools\source\c\common\ParseGuidedSectionTools.c" />
+    <ClCompile Include="stmpkg\edkii\basetools\source\c\common\ParseInf.c" />
+    <ClCompile Include="stmpkg\edkii\basetools\source\c\common\PeCoffLoaderEx.c" />
+    <ClCompile Include="stmpkg\edkii\basetools\source\c\common\SimpleFileParsing.c" />
+    <ClCompile Include="stmpkg\edkii\basetools\source\c\common\StringFuncs.c" />
+    <ClCompile Include="stmpkg\edkii\basetools\source\c\common\TianoCompress.c" />
+    <ClCompile Include="stmpkg\edkii\basetools\source\c\genstm\GenStm.c" />
+    <ClCompile Include="stmpkg\edkii\mdepkg\library\basedebuglibnull\DebugLib.c" />
+    <ClCompile Include="stmpkg\edkii\mdepkg\library\baseiolibintrinsic\IoHighLevel.c" />
+    <ClCompile Include="stmpkg\edkii\mdepkg\library\baseiolibintrinsic\IoLib.c" />
+    <ClCompile Include="stmpkg\edkii\mdepkg\library\baseiolibintrinsic\IoLibGcc.c" />
+    <ClCompile Include="stmpkg\edkii\mdepkg\library\baseiolibintrinsic\IoLibIcc.c" />
+    <ClCompile Include="stmpkg\edkii\mdepkg\library\baseiolibintrinsic\IoLibMmioBuffer.c" />
+    <ClCompile Include="stmpkg\edkii\mdepkg\library\baseiolibintrinsic\IoLibMsc.c" />
+    <ClCompile Include="stmpkg\edkii\mdepkg\library\baselib\BitField.c" />
+    <ClCompile Include="stmpkg\edkii\mdepkg\library\baselib\Cpu.c" />
+    <ClCompile Include="stmpkg\edkii\mdepkg\library\baselib\CpuDeadLoop.c" />
+    <ClCompile Include="stmpkg\edkii\mdepkg\library\baselib\DivU64x32.c" />
+    <ClCompile Include="stmpkg\edkii\mdepkg\library\baselib\DivU64x32Remainder.c" />
+    <ClCompile Include="stmpkg\edkii\mdepkg\library\baselib\ia32\CpuBreakpoint.c" />
+    <ClCompile Include="stmpkg\edkii\mdepkg\library\baselib\ia32\CpuId.c" />
+    <ClCompile Include="stmpkg\edkii\mdepkg\library\baselib\ia32\CpuIdEx.c" />
+    <ClCompile Include="stmpkg\edkii\mdepkg\library\baselib\ia32\CpuPause.c" />
+    <ClCompile Include="stmpkg\edkii\mdepkg\library\baselib\ia32\DisableCache.c" />
+    <ClCompile Include="stmpkg\edkii\mdepkg\library\baselib\ia32\DisableInterrupts.c" />
+    <ClCompile Include="stmpkg\edkii\mdepkg\library\baselib\ia32\DivU64x32.c" />
+    <ClCompile Include="stmpkg\edkii\mdepkg\library\baselib\ia32\DivU64x32Remainder.c" />
+    <ClCompile Include="stmpkg\edkii\mdepkg\library\baselib\ia32\EnableCache.c" />
+    <ClCompile Include="stmpkg\edkii\mdepkg\library\baselib\ia32\EnableDisableInterrupts.c" />
+    <ClCompile Include="stmpkg\edkii\mdepkg\library\baselib\ia32\EnableInterrupts.c" />
+    <ClCompile Include="stmpkg\edkii\mdepkg\library\baselib\ia32\FlushCacheLine.c" />
+    <ClCompile Include="stmpkg\edkii\mdepkg\library\baselib\ia32\FxRestore.c" />
+    <ClCompile Include="stmpkg\edkii\mdepkg\library\baselib\ia32\FxSave.c" />
+    <ClCompile Include="stmpkg\edkii\mdepkg\library\baselib\ia32\GccInline.c" />
+    <ClCompile Include="stmpkg\edkii\mdepkg\library\baselib\ia32\Invd.c" />
+    <ClCompile Include="stmpkg\edkii\mdepkg\library\baselib\ia32\LongJump.c" />
+    <ClCompile Include="stmpkg\edkii\mdepkg\library\baselib\ia32\LShiftU64.c" />
+    <ClCompile Include="stmpkg\edkii\mdepkg\library\baselib\ia32\MultU64x32.c" />
+    <ClCompile Include="stmpkg\edkii\mdepkg\library\baselib\ia32\Non-existing.c" />
+    <ClCompile Include="stmpkg\edkii\mdepkg\library\baselib\ia32\ReadCr0.c" />
+    <ClCompile Include="stmpkg\edkii\mdepkg\library\baselib\ia32\ReadCr2.c" />
+    <ClCompile Include="stmpkg\edkii\mdepkg\library\baselib\ia32\ReadCr3.c" />
+    <ClCompile Include="stmpkg\edkii\mdepkg\library\baselib\ia32\ReadCr4.c" />
+    <ClCompile Include="stmpkg\edkii\mdepkg\library\baselib\ia32\ReadCs.c" />
+    <ClCompile Include="stmpkg\edkii\mdepkg\library\baselib\ia32\ReadDr0.c" />
+    <ClCompile Include="stmpkg\edkii\mdepkg\library\baselib\ia32\ReadDr1.c" />
+    <ClCompile Include="stmpkg\edkii\mdepkg\library\baselib\ia32\ReadDr2.c" />
+    <ClCompile Include="stmpkg\edkii\mdepkg\library\baselib\ia32\ReadDr3.c" />
+    <ClCompile Include="stmpkg\edkii\mdepkg\library\baselib\ia32\ReadDr4.c" />
+    <ClCompile Include="stmpkg\edkii\mdepkg\library\baselib\ia32\ReadDr5.c" />
+    <ClCompile Include="stmpkg\edkii\mdepkg\library\baselib\ia32\ReadDr6.c" />
+    <ClCompile Include="stmpkg\edkii\mdepkg\library\baselib\ia32\ReadDr7.c" />
+    <ClCompile Include="stmpkg\edkii\mdepkg\library\baselib\ia32\ReadDs.c" />
+    <ClCompile Include="stmpkg\edkii\mdepkg\library\baselib\ia32\ReadEflags.c" />
+    <ClCompile Include="stmpkg\edkii\mdepkg\library\baselib\ia32\ReadEs.c" />
+    <ClCompile Include="stmpkg\edkii\mdepkg\library\baselib\ia32\ReadFs.c" />
+    <ClCompile Include="stmpkg\edkii\mdepkg\library\baselib\ia32\ReadGdtr.c" />
+    <ClCompile Include="stmpkg\edkii\mdepkg\library\baselib\ia32\ReadGs.c" />
+    <ClCompile Include="stmpkg\edkii\mdepkg\library\baselib\ia32\ReadIdtr.c" />
+    <ClCompile Include="stmpkg\edkii\mdepkg\library\baselib\ia32\ReadLdtr.c" />
+    <ClCompile Include="stmpkg\edkii\mdepkg\library\baselib\ia32\ReadMsr64.c" />
+    <ClCompile Include="stmpkg\edkii\mdepkg\library\baselib\ia32\ReadSs.c" />
+    <ClCompile Include="stmpkg\edkii\mdepkg\library\baselib\ia32\ReadTr.c" />
+    <ClCompile Include="stmpkg\edkii\mdepkg\library\baselib\ia32\ReadTsc.c" />
+    <ClCompile Include="stmpkg\edkii\mdepkg\library\baselib\ia32\RShiftU64.c" />
+    <ClCompile Include="stmpkg\edkii\mdepkg\library\baselib\ia32\SetJump.c" />
+    <ClCompile Include="stmpkg\edkii\mdepkg\library\baselib\ia32\Wbinvd.c" />
+    <ClCompile Include="stmpkg\edkii\mdepkg\library\baselib\ia32\WriteCr0.c" />
+    <ClCompile Include="stmpkg\edkii\mdepkg\library\baselib\ia32\WriteCr2.c" />
+    <ClCompile Include="stmpkg\edkii\mdepkg\library\baselib\ia32\WriteCr3.c" />
+    <ClCompile Include="stmpkg\edkii\mdepkg\library\baselib\ia32\WriteCr4.c" />
+    <ClCompile Include="stmpkg\edkii\mdepkg\library\baselib\ia32\WriteDr0.c" />
+    <ClCompile Include="stmpkg\edkii\mdepkg\library\baselib\ia32\WriteDr1.c" />
+    <ClCompile Include="stmpkg\edkii\mdepkg\library\baselib\ia32\WriteDr2.c" />
+    <ClCompile Include="stmpkg\edkii\mdepkg\library\baselib\ia32\WriteDr3.c" />
+    <ClCompile Include="stmpkg\edkii\mdepkg\library\baselib\ia32\WriteDr4.c" />
+    <ClCompile Include="stmpkg\edkii\mdepkg\library\baselib\ia32\WriteDr5.c" />
+    <ClCompile Include="stmpkg\edkii\mdepkg\library\baselib\ia32\WriteDr6.c" />
+    <ClCompile Include="stmpkg\edkii\mdepkg\library\baselib\ia32\WriteDr7.c" />
+    <ClCompile Include="stmpkg\edkii\mdepkg\library\baselib\ia32\WriteGdtr.c" />
+    <ClCompile Include="stmpkg\edkii\mdepkg\library\baselib\ia32\WriteIdtr.c" />
+    <ClCompile Include="stmpkg\edkii\mdepkg\library\baselib\ia32\WriteLdtr.c" />
+    <ClCompile Include="stmpkg\edkii\mdepkg\library\baselib\ia32\WriteMsr64.c" />
+    <ClCompile Include="stmpkg\edkii\mdepkg\library\baselib\LongJump.c" />
+    <ClCompile Include="stmpkg\edkii\mdepkg\library\baselib\LShiftU64.c" />
+    <ClCompile Include="stmpkg\edkii\mdepkg\library\baselib\Math64.c" />
+    <ClCompile Include="stmpkg\edkii\mdepkg\library\baselib\MultU64x32.c" />
+    <ClCompile Include="stmpkg\edkii\mdepkg\library\baselib\RShiftU64.c" />
+    <ClCompile Include="stmpkg\edkii\mdepkg\library\baselib\SetJump.c" />
+    <ClCompile Include="stmpkg\edkii\mdepkg\library\baselib\String.c" />
+    <ClCompile Include="stmpkg\edkii\mdepkg\library\baselib\SwapBytes16.c" />
+    <ClCompile Include="stmpkg\edkii\mdepkg\library\baselib\SwapBytes32.c" />
+    <ClCompile Include="stmpkg\edkii\mdepkg\library\baselib\Unaligned.c" />
+    <ClCompile Include="stmpkg\edkii\mdepkg\library\baselib\x64\CpuBreakpoint.c" />
+    <ClCompile Include="stmpkg\edkii\mdepkg\library\baselib\x64\GccInline.c" />
+    <ClCompile Include="stmpkg\edkii\mdepkg\library\baselib\x64\Non-existing.c" />
+    <ClCompile Include="stmpkg\edkii\mdepkg\library\baselib\x64\ReadMsr64.c" />
+    <ClCompile Include="stmpkg\edkii\mdepkg\library\baselib\x64\WriteMsr64.c" />
+    <ClCompile Include="stmpkg\edkii\mdepkg\library\baselib\X86FxRestore.c" />
+    <ClCompile Include="stmpkg\edkii\mdepkg\library\baselib\X86FxSave.c" />
+    <ClCompile Include="stmpkg\edkii\mdepkg\library\baselib\X86GetInterruptState.c" />
+    <ClCompile Include="stmpkg\edkii\mdepkg\library\baselib\X86MemoryFence.c" />
+    <ClCompile Include="stmpkg\edkii\mdepkg\library\baselib\X86Msr.c" />
+    <ClCompile Include="stmpkg\edkii\mdepkg\library\baselib\X86ReadGdtr.c" />
+    <ClCompile Include="stmpkg\edkii\mdepkg\library\baselib\X86ReadIdtr.c" />
+    <ClCompile Include="stmpkg\edkii\mdepkg\library\baselib\X86WriteGdtr.c" />
+    <ClCompile Include="stmpkg\edkii\mdepkg\library\baselib\X86WriteIdtr.c" />
+    <ClCompile Include="stmpkg\edkii\mdepkg\library\basememorylib\CompareMemWrapper.c" />
+    <ClCompile Include="stmpkg\edkii\mdepkg\library\basememorylib\CopyMem.c" />
+    <ClCompile Include="stmpkg\edkii\mdepkg\library\basememorylib\CopyMemWrapper.c" />
+    <ClCompile Include="stmpkg\edkii\mdepkg\library\basememorylib\MemLibGeneric.c" />
+    <ClCompile Include="stmpkg\edkii\mdepkg\library\basememorylib\MemLibGuid.c" />
+    <ClCompile Include="stmpkg\edkii\mdepkg\library\basememorylib\ScanMem16Wrapper.c" />
+    <ClCompile Include="stmpkg\edkii\mdepkg\library\basememorylib\ScanMem32Wrapper.c" />
+    <ClCompile Include="stmpkg\edkii\mdepkg\library\basememorylib\ScanMem64Wrapper.c" />
+    <ClCompile Include="stmpkg\edkii\mdepkg\library\basememorylib\ScanMem8Wrapper.c" />
+    <ClCompile Include="stmpkg\edkii\mdepkg\library\basememorylib\SetMem.c" />
+    <ClCompile Include="stmpkg\edkii\mdepkg\library\basememorylib\SetMem16Wrapper.c" />
+    <ClCompile Include="stmpkg\edkii\mdepkg\library\basememorylib\SetMem32Wrapper.c" />
+    <ClCompile Include="stmpkg\edkii\mdepkg\library\basememorylib\SetMem64Wrapper.c" />
+    <ClCompile Include="stmpkg\edkii\mdepkg\library\basememorylib\SetMemWrapper.c" />
+    <ClCompile Include="stmpkg\edkii\mdepkg\library\basememorylib\ZeroMemWrapper.c" />
+    <ClCompile Include="stmpkg\edkii\mdepkg\library\basepcdlibnull\PcdLib.c" />
+    <ClCompile Include="stmpkg\edkii\mdepkg\library\basepcicf8lib\PciCf8Lib.c" />
+    <ClCompile Include="stmpkg\edkii\mdepkg\library\basepciexpresslib\PciExpressLib.c" />
+    <ClCompile Include="stmpkg\edkii\mdepkg\library\basepcilibcf8\PciLib.c" />
+    <ClCompile Include="stmpkg\edkii\mdepkg\library\basepcilibpciexpress\PciLib.c" />
+    <ClCompile Include="stmpkg\edkii\mdepkg\library\baseprintlib\PrintLib.c" />
+    <ClCompile Include="stmpkg\edkii\mdepkg\library\baseprintlib\PrintLibInternal.c" />
+    <ClCompile Include="stmpkg\edkii\pcatchipsetpkg\library\serialiolib\SerialPortLib.c" />
+    <ClCompile Include="stmpkg\library\mpsafedebuglibserialport\DebugLib.c" />
+    <ClCompile Include="stmpkg\library\simplesynchronizationlib\ia32\GccInline.c" />
+    <ClCompile Include="stmpkg\library\simplesynchronizationlib\ia32\InterlockedCompareExchange32.c" />
+    <ClCompile Include="stmpkg\library\simplesynchronizationlib\ia32\InterlockedCompareExchange64.c" />
+    <ClCompile Include="stmpkg\library\simplesynchronizationlib\ia32\InterlockedDecrement.c" />
+    <ClCompile Include="stmpkg\library\simplesynchronizationlib\ia32\InterlockedIncrement.c" />
+    <ClCompile Include="stmpkg\library\simplesynchronizationlib\Synchronization.c" />
+    <ClCompile Include="stmpkg\library\simplesynchronizationlib\SynchronizationGcc.c" />
+    <ClCompile Include="stmpkg\library\simplesynchronizationlib\SynchronizationMsc.c" />
+    <ClCompile Include="stmpkg\library\simplesynchronizationlib\x64\GccInline.c" />
+    <ClCompile Include="stmpkg\library\simplesynchronizationlib\x64\InterlockedCompareExchange32.c" />
+    <ClCompile Include="stmpkg\library\simplesynchronizationlib\x64\InterlockedCompareExchange64.c" />
+    <ClCompile Include="stmpkg\library\simplesynchronizationlib\x64\InterlockedDecrement.c" />
+    <ClCompile Include="stmpkg\library\simplesynchronizationlib\x64\InterlockedIncrement.c" />
+    <ClCompile Include="StmPkg\Library\StmLib\Ia32\Vmx64.c" />
+    <ClCompile Include="StmPkg\Library\StmLib\Smx.c" />
+    <ClCompile Include="StmPkg\Library\StmLib\Vmx.c" />
+    <ClCompile Include="StmPkg\Library\StmLib\x64\Vmx64.c" />
+    <ClCompile Include="stmpkg\tool\genstm\GenStm.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ClassDiagram1.cd" />
+    <None Include="stmpkg\core\init\ia32\AsmStmInit.asm" />
+    <None Include="stmpkg\core\init\x64\AsmStmInit.asm" />
+    <None Include="stmpkg\core\runtime\ia32\Exception.asm" />
+    <None Include="stmpkg\core\runtime\ia32\VmExit.asm" />
+    <None Include="stmpkg\core\runtime\x64\Exception.asm" />
+    <None Include="stmpkg\core\runtime\x64\VmExit.asm" />
+    <None Include="stmpkg\edkii\mdepkg\library\baselib\ia32\CpuBreakpoint.asm" />
+    <None Include="stmpkg\edkii\mdepkg\library\baselib\ia32\CpuId.asm" />
+    <None Include="stmpkg\edkii\mdepkg\library\baselib\ia32\CpuIdEx.asm" />
+    <None Include="stmpkg\edkii\mdepkg\library\baselib\ia32\CpuPause.asm" />
+    <None Include="stmpkg\edkii\mdepkg\library\baselib\ia32\DisableCache.asm" />
+    <None Include="stmpkg\edkii\mdepkg\library\baselib\ia32\DisableInterrupts.asm" />
+    <None Include="stmpkg\edkii\mdepkg\library\baselib\ia32\DivU64x32.asm" />
+    <None Include="stmpkg\edkii\mdepkg\library\baselib\ia32\DivU64x32Remainder.asm" />
+    <None Include="stmpkg\edkii\mdepkg\library\baselib\ia32\EnableCache.asm" />
+    <None Include="stmpkg\edkii\mdepkg\library\baselib\ia32\EnableDisableInterrupts.asm" />
+    <None Include="stmpkg\edkii\mdepkg\library\baselib\ia32\EnableInterrupts.asm" />
+    <None Include="stmpkg\edkii\mdepkg\library\baselib\ia32\FlushCacheLine.asm" />
+    <None Include="stmpkg\edkii\mdepkg\library\baselib\ia32\FxRestore.asm" />
+    <None Include="stmpkg\edkii\mdepkg\library\baselib\ia32\FxSave.asm" />
+    <None Include="stmpkg\edkii\mdepkg\library\baselib\ia32\Invd.asm" />
+    <None Include="stmpkg\edkii\mdepkg\library\baselib\ia32\LongJump.asm" />
+    <None Include="stmpkg\edkii\mdepkg\library\baselib\ia32\LShiftU64.asm" />
+    <None Include="stmpkg\edkii\mdepkg\library\baselib\ia32\MultU64x32.asm" />
+    <None Include="stmpkg\edkii\mdepkg\library\baselib\ia32\ReadCr0.asm" />
+    <None Include="stmpkg\edkii\mdepkg\library\baselib\ia32\ReadCr2.asm" />
+    <None Include="stmpkg\edkii\mdepkg\library\baselib\ia32\ReadCr3.asm" />
+    <None Include="stmpkg\edkii\mdepkg\library\baselib\ia32\ReadCr4.asm" />
+    <None Include="stmpkg\edkii\mdepkg\library\baselib\ia32\ReadCs.asm" />
+    <None Include="stmpkg\edkii\mdepkg\library\baselib\ia32\ReadDr0.asm" />
+    <None Include="stmpkg\edkii\mdepkg\library\baselib\ia32\ReadDr1.asm" />
+    <None Include="stmpkg\edkii\mdepkg\library\baselib\ia32\ReadDr2.asm" />
+    <None Include="stmpkg\edkii\mdepkg\library\baselib\ia32\ReadDr3.asm" />
+    <None Include="stmpkg\edkii\mdepkg\library\baselib\ia32\ReadDr4.asm" />
+    <None Include="stmpkg\edkii\mdepkg\library\baselib\ia32\ReadDr5.asm" />
+    <None Include="stmpkg\edkii\mdepkg\library\baselib\ia32\ReadDr6.asm" />
+    <None Include="stmpkg\edkii\mdepkg\library\baselib\ia32\ReadDr7.asm" />
+    <None Include="stmpkg\edkii\mdepkg\library\baselib\ia32\ReadDs.asm" />
+    <None Include="stmpkg\edkii\mdepkg\library\baselib\ia32\ReadEflags.asm" />
+    <None Include="stmpkg\edkii\mdepkg\library\baselib\ia32\ReadEs.asm" />
+    <None Include="stmpkg\edkii\mdepkg\library\baselib\ia32\ReadFs.asm" />
+    <None Include="stmpkg\edkii\mdepkg\library\baselib\ia32\ReadGdtr.asm" />
+    <None Include="stmpkg\edkii\mdepkg\library\baselib\ia32\ReadGs.asm" />
+    <None Include="stmpkg\edkii\mdepkg\library\baselib\ia32\ReadIdtr.asm" />
+    <None Include="stmpkg\edkii\mdepkg\library\baselib\ia32\ReadLdtr.asm" />
+    <None Include="stmpkg\edkii\mdepkg\library\baselib\ia32\ReadMsr64.asm" />
+    <None Include="stmpkg\edkii\mdepkg\library\baselib\ia32\ReadSs.asm" />
+    <None Include="stmpkg\edkii\mdepkg\library\baselib\ia32\ReadTr.asm" />
+    <None Include="stmpkg\edkii\mdepkg\library\baselib\ia32\ReadTsc.asm" />
+    <None Include="stmpkg\edkii\mdepkg\library\baselib\ia32\RShiftU64.asm" />
+    <None Include="stmpkg\edkii\mdepkg\library\baselib\ia32\SetJump.asm" />
+    <None Include="stmpkg\edkii\mdepkg\library\baselib\ia32\Wbinvd.asm" />
+    <None Include="stmpkg\edkii\mdepkg\library\baselib\ia32\WriteCr0.asm" />
+    <None Include="stmpkg\edkii\mdepkg\library\baselib\ia32\WriteCr2.asm" />
+    <None Include="stmpkg\edkii\mdepkg\library\baselib\ia32\WriteCr3.asm" />
+    <None Include="stmpkg\edkii\mdepkg\library\baselib\ia32\WriteCr4.asm" />
+    <None Include="stmpkg\edkii\mdepkg\library\baselib\ia32\WriteDr0.asm" />
+    <None Include="stmpkg\edkii\mdepkg\library\baselib\ia32\WriteDr1.asm" />
+    <None Include="stmpkg\edkii\mdepkg\library\baselib\ia32\WriteDr2.asm" />
+    <None Include="stmpkg\edkii\mdepkg\library\baselib\ia32\WriteDr3.asm" />
+    <None Include="stmpkg\edkii\mdepkg\library\baselib\ia32\WriteDr4.asm" />
+    <None Include="stmpkg\edkii\mdepkg\library\baselib\ia32\WriteDr5.asm" />
+    <None Include="stmpkg\edkii\mdepkg\library\baselib\ia32\WriteDr6.asm" />
+    <None Include="stmpkg\edkii\mdepkg\library\baselib\ia32\WriteDr7.asm" />
+    <None Include="stmpkg\edkii\mdepkg\library\baselib\ia32\WriteGdtr.asm" />
+    <None Include="stmpkg\edkii\mdepkg\library\baselib\ia32\WriteIdtr.asm" />
+    <None Include="stmpkg\edkii\mdepkg\library\baselib\ia32\WriteLdtr.asm" />
+    <None Include="stmpkg\edkii\mdepkg\library\baselib\ia32\WriteMsr64.asm" />
+    <None Include="stmpkg\edkii\mdepkg\library\baselib\x64\CpuBreakpoint.asm" />
+    <None Include="stmpkg\edkii\mdepkg\library\baselib\x64\CpuId.asm" />
+    <None Include="stmpkg\edkii\mdepkg\library\baselib\x64\CpuIdEx.asm" />
+    <None Include="stmpkg\edkii\mdepkg\library\baselib\x64\CpuPause.asm" />
+    <None Include="stmpkg\edkii\mdepkg\library\baselib\x64\DisableCache.asm" />
+    <None Include="stmpkg\edkii\mdepkg\library\baselib\x64\DisableInterrupts.asm" />
+    <None Include="stmpkg\edkii\mdepkg\library\baselib\x64\EnableCache.asm" />
+    <None Include="stmpkg\edkii\mdepkg\library\baselib\x64\EnableDisableInterrupts.asm" />
+    <None Include="stmpkg\edkii\mdepkg\library\baselib\x64\EnableInterrupts.asm" />
+    <None Include="stmpkg\edkii\mdepkg\library\baselib\x64\FlushCacheLine.asm" />
+    <None Include="stmpkg\edkii\mdepkg\library\baselib\x64\FxRestore.asm" />
+    <None Include="stmpkg\edkii\mdepkg\library\baselib\x64\FxSave.asm" />
+    <None Include="stmpkg\edkii\mdepkg\library\baselib\x64\Invd.asm" />
+    <None Include="stmpkg\edkii\mdepkg\library\baselib\x64\LongJump.asm" />
+    <None Include="stmpkg\edkii\mdepkg\library\baselib\x64\ReadCr0.asm" />
+    <None Include="stmpkg\edkii\mdepkg\library\baselib\x64\ReadCr2.asm" />
+    <None Include="stmpkg\edkii\mdepkg\library\baselib\x64\ReadCr3.asm" />
+    <None Include="stmpkg\edkii\mdepkg\library\baselib\x64\ReadCr4.asm" />
+    <None Include="stmpkg\edkii\mdepkg\library\baselib\x64\ReadCs.asm" />
+    <None Include="stmpkg\edkii\mdepkg\library\baselib\x64\ReadDr0.asm" />
+    <None Include="stmpkg\edkii\mdepkg\library\baselib\x64\ReadDr1.asm" />
+    <None Include="stmpkg\edkii\mdepkg\library\baselib\x64\ReadDr2.asm" />
+    <None Include="stmpkg\edkii\mdepkg\library\baselib\x64\ReadDr3.asm" />
+    <None Include="stmpkg\edkii\mdepkg\library\baselib\x64\ReadDr4.asm" />
+    <None Include="stmpkg\edkii\mdepkg\library\baselib\x64\ReadDr5.asm" />
+    <None Include="stmpkg\edkii\mdepkg\library\baselib\x64\ReadDr6.asm" />
+    <None Include="stmpkg\edkii\mdepkg\library\baselib\x64\ReadDr7.asm" />
+    <None Include="stmpkg\edkii\mdepkg\library\baselib\x64\ReadDs.asm" />
+    <None Include="stmpkg\edkii\mdepkg\library\baselib\x64\ReadEflags.asm" />
+    <None Include="stmpkg\edkii\mdepkg\library\baselib\x64\ReadEs.asm" />
+    <None Include="stmpkg\edkii\mdepkg\library\baselib\x64\ReadFs.asm" />
+    <None Include="stmpkg\edkii\mdepkg\library\baselib\x64\ReadGdtr.asm" />
+    <None Include="stmpkg\edkii\mdepkg\library\baselib\x64\ReadGs.asm" />
+    <None Include="stmpkg\edkii\mdepkg\library\baselib\x64\ReadIdtr.asm" />
+    <None Include="stmpkg\edkii\mdepkg\library\baselib\x64\ReadLdtr.asm" />
+    <None Include="stmpkg\edkii\mdepkg\library\baselib\x64\ReadMsr64.asm" />
+    <None Include="stmpkg\edkii\mdepkg\library\baselib\x64\ReadSs.asm" />
+    <None Include="stmpkg\edkii\mdepkg\library\baselib\x64\ReadTr.asm" />
+    <None Include="stmpkg\edkii\mdepkg\library\baselib\x64\ReadTsc.asm" />
+    <None Include="stmpkg\edkii\mdepkg\library\baselib\x64\SetJump.asm" />
+    <None Include="stmpkg\edkii\mdepkg\library\baselib\x64\Wbinvd.asm" />
+    <None Include="stmpkg\edkii\mdepkg\library\baselib\x64\WriteCr0.asm" />
+    <None Include="stmpkg\edkii\mdepkg\library\baselib\x64\WriteCr2.asm" />
+    <None Include="stmpkg\edkii\mdepkg\library\baselib\x64\WriteCr3.asm" />
+    <None Include="stmpkg\edkii\mdepkg\library\baselib\x64\WriteCr4.asm" />
+    <None Include="stmpkg\edkii\mdepkg\library\baselib\x64\WriteDr0.asm" />
+    <None Include="stmpkg\edkii\mdepkg\library\baselib\x64\WriteDr1.asm" />
+    <None Include="stmpkg\edkii\mdepkg\library\baselib\x64\WriteDr2.asm" />
+    <None Include="stmpkg\edkii\mdepkg\library\baselib\x64\WriteDr3.asm" />
+    <None Include="stmpkg\edkii\mdepkg\library\baselib\x64\WriteDr4.asm" />
+    <None Include="stmpkg\edkii\mdepkg\library\baselib\x64\WriteDr5.asm" />
+    <None Include="stmpkg\edkii\mdepkg\library\baselib\x64\WriteDr6.asm" />
+    <None Include="stmpkg\edkii\mdepkg\library\baselib\x64\WriteDr7.asm" />
+    <None Include="stmpkg\edkii\mdepkg\library\baselib\x64\WriteGdtr.asm" />
+    <None Include="stmpkg\edkii\mdepkg\library\baselib\x64\WriteIdtr.asm" />
+    <None Include="stmpkg\edkii\mdepkg\library\baselib\x64\WriteLdtr.asm" />
+    <None Include="stmpkg\edkii\mdepkg\library\baselib\x64\WriteMsr64.asm" />
+    <None Include="stmpkg\library\simplesynchronizationlib\ia32\InterlockedCompareExchange32.asm" />
+    <None Include="stmpkg\library\simplesynchronizationlib\ia32\InterlockedCompareExchange64.asm" />
+    <None Include="stmpkg\library\simplesynchronizationlib\ia32\InterlockedDecrement.asm" />
+    <None Include="stmpkg\library\simplesynchronizationlib\ia32\InterlockedIncrement.asm" />
+    <None Include="stmpkg\library\simplesynchronizationlib\x64\InterlockedCompareExchange32.asm" />
+    <None Include="stmpkg\library\simplesynchronizationlib\x64\InterlockedCompareExchange64.asm" />
+    <None Include="stmpkg\library\simplesynchronizationlib\x64\InterlockedDecrement.asm" />
+    <None Include="stmpkg\library\simplesynchronizationlib\x64\InterlockedIncrement.asm" />
+    <None Include="StmPkg\Library\StmLib\Ia32\AsmInvEpt.asm" />
+    <None Include="StmPkg\Library\StmLib\Ia32\AsmInvVpid.asm" />
+    <None Include="StmPkg\Library\StmLib\Ia32\AsmSendInt2.asm" />
+    <None Include="StmPkg\Library\StmLib\Ia32\AsmTestAndReset.asm" />
+    <None Include="StmPkg\Library\StmLib\Ia32\AsmTestAndSet.asm" />
+    <None Include="StmPkg\Library\StmLib\Ia32\AsmVmCall.asm" />
+    <None Include="StmPkg\Library\StmLib\Ia32\AsmVmClear.asm" />
+    <None Include="StmPkg\Library\StmLib\Ia32\AsmVmLaunch.asm" />
+    <None Include="StmPkg\Library\StmLib\Ia32\AsmVmPtrLoad.asm" />
+    <None Include="StmPkg\Library\StmLib\Ia32\AsmVmPtrStore.asm" />
+    <None Include="StmPkg\Library\StmLib\Ia32\AsmVmRead.asm" />
+    <None Include="StmPkg\Library\StmLib\Ia32\AsmVmResume.asm" />
+    <None Include="StmPkg\Library\StmLib\Ia32\AsmVmWrite.asm" />
+    <None Include="StmPkg\Library\StmLib\Ia32\AsmVmxOff.asm" />
+    <None Include="StmPkg\Library\StmLib\Ia32\AsmVmxOn.asm" />
+    <None Include="StmPkg\Library\StmLib\Ia32\AsmXGetBv.asm" />
+    <None Include="StmPkg\Library\StmLib\Ia32\AsmXRestore.asm" />
+    <None Include="StmPkg\Library\StmLib\Ia32\AsmXSave.asm" />
+    <None Include="StmPkg\Library\StmLib\Ia32\AsmXSetBv.asm" />
+    <None Include="StmPkg\Library\StmLib\x64\AsmInvEpt.asm" />
+    <None Include="StmPkg\Library\StmLib\x64\AsmInvVpid.asm" />
+    <None Include="StmPkg\Library\StmLib\x64\AsmSendInt2.asm" />
+    <None Include="StmPkg\Library\StmLib\x64\AsmTestAndReset.asm" />
+    <None Include="StmPkg\Library\StmLib\x64\AsmTestAndSet.asm" />
+    <None Include="StmPkg\Library\StmLib\x64\AsmVmCall.asm" />
+    <None Include="StmPkg\Library\StmLib\x64\AsmVmClear.asm" />
+    <None Include="StmPkg\Library\StmLib\x64\AsmVmLaunch.asm" />
+    <None Include="StmPkg\Library\StmLib\x64\AsmVmPtrLoad.asm" />
+    <None Include="StmPkg\Library\StmLib\x64\AsmVmPtrStore.asm" />
+    <None Include="StmPkg\Library\StmLib\x64\AsmVmRead.asm" />
+    <None Include="StmPkg\Library\StmLib\x64\AsmVmResume.asm" />
+    <None Include="StmPkg\Library\StmLib\x64\AsmVmWrite.asm" />
+    <None Include="StmPkg\Library\StmLib\x64\AsmVmxOff.asm" />
+    <None Include="StmPkg\Library\StmLib\x64\AsmVmxOn.asm" />
+    <None Include="StmPkg\Library\StmLib\x64\AsmXGetBv.asm" />
+    <None Include="StmPkg\Library\StmLib\x64\AsmXRestore.asm" />
+    <None Include="StmPkg\Library\StmLib\x64\AsmXSave.asm" />
+    <None Include="StmPkg\Library\StmLib\x64\AsmXSetBv.asm" />
+    <None Include="Z:\stm_reference\stmcode\StmPkg\Library\StmLib\Ia32\AsmSendInt2.asm" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="stmpkg\core\CpuDef.h" />
+    <ClInclude Include="stmpkg\core\init\StmInit.h" />
+    <ClInclude Include="StmPkg\Core\Runtime\StmLoadPeVm.h" />
+    <ClInclude Include="StmPkg\Core\Runtime\StmPe.h" />
+    <ClInclude Include="stmpkg\core\runtime\StmRuntime.h" />
+    <ClInclude Include="stmpkg\core\Stm.h" />
+    <ClInclude Include="stmpkg\edkii\basetools\source\c\common\BinderFuncs.h" />
+    <ClInclude Include="stmpkg\edkii\basetools\source\c\common\CommonLib.h" />
+    <ClInclude Include="stmpkg\edkii\basetools\source\c\common\Compress.h" />
+    <ClInclude Include="stmpkg\edkii\basetools\source\c\common\Crc32.h" />
+    <ClInclude Include="stmpkg\edkii\basetools\source\c\common\Decompress.h" />
+    <ClInclude Include="stmpkg\edkii\basetools\source\c\common\EfiUtilityMsgs.h" />
+    <ClInclude Include="stmpkg\edkii\basetools\source\c\common\FirmwareVolumeBufferLib.h" />
+    <ClInclude Include="stmpkg\edkii\basetools\source\c\common\FvLib.h" />
+    <ClInclude Include="stmpkg\edkii\basetools\source\c\common\MemoryFile.h" />
+    <ClInclude Include="stmpkg\edkii\basetools\source\c\common\MyAlloc.h" />
+    <ClInclude Include="stmpkg\edkii\basetools\source\c\common\OsPath.h" />
+    <ClInclude Include="stmpkg\edkii\basetools\source\c\common\ParseGuidedSectionTools.h" />
+    <ClInclude Include="stmpkg\edkii\basetools\source\c\common\ParseInf.h" />
+    <ClInclude Include="stmpkg\edkii\basetools\source\c\common\PeCoffLib.h" />
+    <ClInclude Include="stmpkg\edkii\basetools\source\c\common\SimpleFileParsing.h" />
+    <ClInclude Include="stmpkg\edkii\basetools\source\c\common\StringFuncs.h" />
+    <ClInclude Include="stmpkg\edkii\basetools\source\c\common\WinNtInclude.h" />
+    <ClInclude Include="stmpkg\edkii\basetools\source\c\genstm\GenStm.h" />
+    <ClInclude Include="stmpkg\edkii\basetools\source\c\include\common\BaseTypes.h" />
+    <ClInclude Include="stmpkg\edkii\basetools\source\c\include\common\MdeModuleHii.h" />
+    <ClInclude Include="stmpkg\edkii\basetools\source\c\include\common\PiFirmwareFile.h" />
+    <ClInclude Include="stmpkg\edkii\basetools\source\c\include\common\PiFirmwareVolume.h" />
+    <ClInclude Include="stmpkg\edkii\basetools\source\c\include\common\UefiBaseTypes.h" />
+    <ClInclude Include="stmpkg\edkii\basetools\source\c\include\common\UefiCapsule.h" />
+    <ClInclude Include="stmpkg\edkii\basetools\source\c\include\common\UefiInternalFormRepresentation.h" />
+    <ClInclude Include="stmpkg\edkii\basetools\source\c\include\common\UefiMultiPhase.h" />
+    <ClInclude Include="stmpkg\edkii\basetools\source\c\include\common\VariableFormat.h" />
+    <ClInclude Include="stmpkg\edkii\basetools\source\c\include\common\WorkingBlockHeader.h" />
+    <ClInclude Include="stmpkg\edkii\basetools\source\c\include\guid\PcAnsi.h" />
+    <ClInclude Include="stmpkg\edkii\basetools\source\c\include\guid\PiFirmwareFileSystem.h" />
+    <ClInclude Include="stmpkg\edkii\basetools\source\c\include\ia32\ProcessorBind.h" />
+    <ClInclude Include="stmpkg\edkii\basetools\source\c\include\industrystandard\Acpi.h" />
+    <ClInclude Include="stmpkg\edkii\basetools\source\c\include\industrystandard\Acpi1_0.h" />
+    <ClInclude Include="stmpkg\edkii\basetools\source\c\include\industrystandard\Acpi2_0.h" />
+    <ClInclude Include="stmpkg\edkii\basetools\source\c\include\industrystandard\Acpi3_0.h" />
+    <ClInclude Include="stmpkg\edkii\basetools\source\c\include\industrystandard\EfiPci.h" />
+    <ClInclude Include="stmpkg\edkii\basetools\source\c\include\industrystandard\MemoryMappedConfigurationSpaceAccessTable.h" />
+    <ClInclude Include="stmpkg\edkii\basetools\source\c\include\industrystandard\pci22.h" />
+    <ClInclude Include="stmpkg\edkii\basetools\source\c\include\industrystandard\pci23.h" />
+    <ClInclude Include="stmpkg\edkii\basetools\source\c\include\industrystandard\pci30.h" />
+    <ClInclude Include="stmpkg\edkii\basetools\source\c\include\industrystandard\PeImage.h" />
+    <ClInclude Include="stmpkg\edkii\basetools\source\c\include\protocol\DevicePath.h" />
+    <ClInclude Include="stmpkg\edkii\basetools\source\c\include\protocol\GraphicsOutput.h" />
+    <ClInclude Include="stmpkg\edkii\basetools\source\c\include\protocol\GuidedSectionExtraction.h" />
+    <ClInclude Include="stmpkg\edkii\basetools\source\c\include\protocol\HiiFramework.h" />
+    <ClInclude Include="stmpkg\edkii\basetools\source\c\include\protocol\UgaDraw.h" />
+    <ClInclude Include="stmpkg\edkii\basetools\source\c\include\x64\ProcessorBind.h" />
+    <ClInclude Include="stmpkg\edkii\mdepkg\include\Base.h" />
+    <ClInclude Include="stmpkg\edkii\mdepkg\include\ia32\ProcessorBind.h" />
+    <ClInclude Include="stmpkg\edkii\mdepkg\include\industrystandard\Acpi.h" />
+    <ClInclude Include="stmpkg\edkii\mdepkg\include\industrystandard\Acpi10.h" />
+    <ClInclude Include="stmpkg\edkii\mdepkg\include\industrystandard\Acpi20.h" />
+    <ClInclude Include="stmpkg\edkii\mdepkg\include\industrystandard\Acpi30.h" />
+    <ClInclude Include="stmpkg\edkii\mdepkg\include\industrystandard\Acpi40.h" />
+    <ClInclude Include="stmpkg\edkii\mdepkg\include\industrystandard\MemoryMappedConfigurationSpaceAccessTable.h" />
+    <ClInclude Include="stmpkg\edkii\mdepkg\include\industrystandard\Pci.h" />
+    <ClInclude Include="stmpkg\edkii\mdepkg\include\industrystandard\Pci22.h" />
+    <ClInclude Include="stmpkg\edkii\mdepkg\include\industrystandard\Pci23.h" />
+    <ClInclude Include="stmpkg\edkii\mdepkg\include\industrystandard\Pci30.h" />
+    <ClInclude Include="stmpkg\edkii\mdepkg\include\industrystandard\PciExpress21.h" />
+    <ClInclude Include="stmpkg\edkii\mdepkg\include\industrystandard\PeImage.h" />
+    <ClInclude Include="stmpkg\edkii\mdepkg\include\library\BaseLib.h" />
+    <ClInclude Include="stmpkg\edkii\mdepkg\include\library\BaseMemoryLib.h" />
+    <ClInclude Include="stmpkg\edkii\mdepkg\include\library\DebugLib.h" />
+    <ClInclude Include="stmpkg\edkii\mdepkg\include\library\IoLib.h" />
+    <ClInclude Include="stmpkg\edkii\mdepkg\include\library\PcdLib.h" />
+    <ClInclude Include="stmpkg\edkii\mdepkg\include\library\PciCf8Lib.h" />
+    <ClInclude Include="stmpkg\edkii\mdepkg\include\library\PciExpressLib.h" />
+    <ClInclude Include="stmpkg\edkii\mdepkg\include\library\PciLib.h" />
+    <ClInclude Include="stmpkg\edkii\mdepkg\include\library\PrintLib.h" />
+    <ClInclude Include="stmpkg\edkii\mdepkg\include\library\SerialPortLib.h" />
+    <ClInclude Include="stmpkg\edkii\mdepkg\include\library\SynchronizationLib.h" />
+    <ClInclude Include="stmpkg\edkii\mdepkg\include\protocol\DebugSupport.h" />
+    <ClInclude Include="stmpkg\edkii\mdepkg\include\x64\ProcessorBind.h" />
+    <ClInclude Include="stmpkg\edkii\mdepkg\library\baseiolibintrinsic\BaseIoLibIntrinsicInternal.h" />
+    <ClInclude Include="stmpkg\edkii\mdepkg\library\baselib\BaseLibInternals.h" />
+    <ClInclude Include="stmpkg\edkii\mdepkg\library\basememorylib\MemLibInternals.h" />
+    <ClInclude Include="stmpkg\edkii\mdepkg\library\baseprintlib\PrintLibInternal.h" />
+    <ClInclude Include="stmpkg\include\ia32\CpuArchSpecific.h" />
+    <ClInclude Include="stmpkg\include\library\Smx.h" />
+    <ClInclude Include="stmpkg\include\library\StmLib.h" />
+    <ClInclude Include="stmpkg\include\library\Vmx.h" />
+    <ClInclude Include="stmpkg\include\StmApi.h" />
+    <ClInclude Include="stmpkg\include\x64\CpuArchSpecific.h" />
+    <ClInclude Include="stmpkg\library\simplesynchronizationlib\BaseSynchronizationLibInternals.h" />
+    <ClInclude Include="stmpkg\tool\genstm\GenStm.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

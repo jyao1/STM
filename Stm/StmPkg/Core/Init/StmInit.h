@@ -209,4 +209,13 @@ RegisterBiosResource (
   IN STM_RSC   *Resource
   );
 
+
+VOID AsmHostEntrypointSmmPe (
+  VOID
+  );
+
+
+void SetupStmPageFault();
+
+#define CPUSYNC
 #endif

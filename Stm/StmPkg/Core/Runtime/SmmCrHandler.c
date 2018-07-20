@@ -13,6 +13,7 @@
 **/
 
 #include "StmRuntime.h"
+#include "PeStm.h"
 
 /**
 
@@ -42,16 +43,17 @@ SmmCrHandler (
   UINTN                   *GptRegPtr;
   VM_ENTRY_CONTROLS       VmEntryControls;
   STM_REGISTER_VIOLATION_DESC     RegisterViolation;
+  UINT32				  VmType = SMI_HANDLER;
 
   Qualification.UintN = VmReadN (VMCS_N_RO_EXIT_QUALIFICATION_INDEX);
-  GptRegPtr = (UINTN *)&mGuestContextCommonSmm.GuestContextPerCpu[Index].Register;
+  GptRegPtr = (UINTN *)&mGuestContextCommonSmm[VmType].GuestContextPerCpu[Index].Register;
 
   switch (Qualification.CrAccess.CrNum) {
   case 3: // Cr3
     if (Qualification.CrAccess.AccessType == 0) { // MOV to CR
 
-      if ((!mGuestContextCommonSmm.GuestContextPerCpu[Index].UnrestrictedGuest) &&
-          ((mGuestContextCommonSmm.GuestContextPerCpu[Index].Cr0 & CR0_PG) == 0)) {
+      if ((!mGuestContextCommonSmm[VmType].GuestContextPerCpu[Index].UnrestrictedGuest) &&
+          ((mGuestContextCommonSmm[VmType].GuestContextPerCpu[Index].Cr0 & CR0_PG) == 0)) {
         //
         // Need cache current Setting
         //
@@ -65,17 +67,17 @@ SmmCrHandler (
       //
       // Save current data as old data
       //
-      mGuestContextCommonSmm.GuestContextPerCpu[Index].Cr3 = GptRegPtr[Qualification.CrAccess.GpReg];
+      mGuestContextCommonSmm[VmType].GuestContextPerCpu[Index].Cr3 = GptRegPtr[Qualification.CrAccess.GpReg];
       goto Ret;
     } else if (Qualification.CrAccess.AccessType == 1) { // MOV from CR
-      GptRegPtr[Qualification.CrAccess.GpReg] = mGuestContextCommonSmm.GuestContextPerCpu[Index].Cr3;
+      GptRegPtr[Qualification.CrAccess.GpReg] = mGuestContextCommonSmm[VmType].GuestContextPerCpu[Index].Cr3;
       goto Ret;
     }
     break;
   case 0: // Cr0
     if (Qualification.CrAccess.AccessType == 0) { // MOV to CR
 
-      if ((!mGuestContextCommonSmm.GuestContextPerCpu[Index].UnrestrictedGuest) &&
+      if ((!mGuestContextCommonSmm[VmType].GuestContextPerCpu[Index].UnrestrictedGuest) &&
           ((GptRegPtr[Qualification.CrAccess.GpReg] & CR0_PE) == 0)) {
         //
         // Disabling PE is not support when UnrestrictedGuest is OFF.
@@ -101,16 +103,16 @@ SmmCrHandler (
       // Check IA32e mode switch
       //
       VmEntryControls.Uint32 = VmRead32 (VMCS_32_CONTROL_VMENTRY_CONTROLS_INDEX);
-      if (((mGuestContextCommonSmm.GuestContextPerCpu[Index].Efer & IA32_EFER_MSR_MLE) != 0)&& 
+      if (((mGuestContextCommonSmm[VmType].GuestContextPerCpu[Index].Efer & IA32_EFER_MSR_MLE) != 0)&& 
           ((GptRegPtr[Qualification.CrAccess.GpReg] & CR0_PG) != 0)) {
-        mGuestContextCommonSmm.GuestContextPerCpu[Index].Efer |= IA32_EFER_MSR_MLA;
+        mGuestContextCommonSmm[VmType].GuestContextPerCpu[Index].Efer |= IA32_EFER_MSR_MLA;
         VmEntryControls.Bits.Ia32eGuest = 1;
       } else {
-        mGuestContextCommonSmm.GuestContextPerCpu[Index].Efer &= ~IA32_EFER_MSR_MLA;
+        mGuestContextCommonSmm[VmType].GuestContextPerCpu[Index].Efer &= ~IA32_EFER_MSR_MLA;
         VmEntryControls.Bits.Ia32eGuest = 0;
       }
       VmWrite32 (VMCS_32_CONTROL_VMENTRY_CONTROLS_INDEX, VmEntryControls.Uint32);
-      VmWrite64 (VMCS_64_GUEST_IA32_EFER_INDEX,          mGuestContextCommonSmm.GuestContextPerCpu[Index].Efer);
+      VmWrite64 (VMCS_64_GUEST_IA32_EFER_INDEX, mGuestContextCommonSmm[VmType].GuestContextPerCpu[Index].Efer);
 
       // check CD
       if (GptRegPtr[Qualification.CrAccess.GpReg] & CR0_CD) {
@@ -124,11 +126,11 @@ SmmCrHandler (
       //
       // Check UnrestrictedGuest
       //
-      if (!mGuestContextCommonSmm.GuestContextPerCpu[Index].UnrestrictedGuest) {
+      if (!mGuestContextCommonSmm[VmType].GuestContextPerCpu[Index].UnrestrictedGuest) {
         //
         // Need check PG and PE
         //
-        if (((mGuestContextCommonSmm.GuestContextPerCpu[Index].Cr0 & CR0_PG) != 0) &&
+        if (((mGuestContextCommonSmm[VmType].GuestContextPerCpu[Index].Cr0 & CR0_PG) != 0) &&
             ((GptRegPtr[Qualification.CrAccess.GpReg] & CR0_PG) == 0)) {
           //
           // Disable Paging, but still PE, or disable PE at same time.
@@ -138,40 +140,40 @@ SmmCrHandler (
           } else {
 //            DEBUG ((EFI_D_INFO, "-PGE"));
           }
-          mGuestContextCommonSmm.GuestContextPerCpu[Index].Cr3 = VmReadN (VMCS_N_GUEST_CR3_INDEX);
+          mGuestContextCommonSmm[VmType].GuestContextPerCpu[Index].Cr3 = VmReadN (VMCS_N_GUEST_CR3_INDEX);
           if ((VmReadN (VMCS_N_GUEST_CR4_INDEX) & CR4_PAE) != 0) {
             VmWrite64 (VMCS_64_GUEST_IA32_EFER_INDEX, VmRead64 (VMCS_64_GUEST_IA32_EFER_INDEX) & ~IA32_EFER_MSR_MLE);
-            mGuestContextCommonSmm.GuestContextPerCpu[Index].Cr4 = VmReadN (VMCS_N_GUEST_CR4_INDEX) & ~CR4_VMXE & ~CR4_SMXE;
+            mGuestContextCommonSmm[VmType].GuestContextPerCpu[Index].Cr4 = VmReadN (VMCS_N_GUEST_CR4_INDEX) & ~CR4_VMXE & ~CR4_SMXE;
             VmWriteN (VMCS_N_GUEST_CR4_INDEX, VmReadN (VMCS_N_GUEST_CR4_INDEX) & ~CR4_PAE);
-            VmWriteN (VMCS_N_GUEST_CR3_INDEX, mGuestContextCommonSmm.CompatiblePageTable);
+            VmWriteN (VMCS_N_GUEST_CR3_INDEX, mGuestContextCommonSmm[VmType].CompatiblePageTable);
           } else {
-            VmWriteN (VMCS_N_GUEST_CR3_INDEX, mGuestContextCommonSmm.CompatiblePageTable);
+            VmWriteN (VMCS_N_GUEST_CR3_INDEX, mGuestContextCommonSmm[VmType].CompatiblePageTable);
           }
 
           VmWriteN (VMCS_N_GUEST_CR0_INDEX, VmReadN (VMCS_N_GUEST_CR0_INDEX) | CR0_PG | CR0_PE);
           if ((GptRegPtr[Qualification.CrAccess.GpReg] & CR0_PE) != 0) {
             VmWriteN (VMCS_N_CONTROL_CR0_READ_SHADOW_INDEX, VmReadN (VMCS_N_CONTROL_CR0_READ_SHADOW_INDEX) & ~CR0_PG);
           } else {
-            mGuestContextCommonSmm.GuestContextPerCpu[Index].Cr0 = GptRegPtr[Qualification.CrAccess.GpReg];
+            mGuestContextCommonSmm[VmType].GuestContextPerCpu[Index].Cr0 = GptRegPtr[Qualification.CrAccess.GpReg];
             VmWriteN (VMCS_N_CONTROL_CR0_READ_SHADOW_INDEX, VmReadN (VMCS_N_CONTROL_CR0_READ_SHADOW_INDEX) & ~CR0_PE & ~CR0_PG);
 
             // LaunchVm86Monitor (Index);
             CpuDeadLoop (); // never returned
           }
 
-        } else if (((mGuestContextCommonSmm.GuestContextPerCpu[Index].Cr0 & CR0_PG) == 0) &&
+        } else if (((mGuestContextCommonSmm[VmType].GuestContextPerCpu[Index].Cr0 & CR0_PG) == 0) &&
                    ((GptRegPtr[Qualification.CrAccess.GpReg] & CR0_PG) != 0)) {
           //
           // Enable Paging, from PE
           //
 //          DEBUG ((EFI_D_INFO, "+PG"));
           VmWriteN (VMCS_N_GUEST_CR0_INDEX, VmReadN (VMCS_N_GUEST_CR0_INDEX) | CR0_PG | CR0_PE);
-          VmWriteN (VMCS_N_GUEST_CR3_INDEX, mGuestContextCommonSmm.GuestContextPerCpu[Index].Cr3);
-          VmWriteN (VMCS_N_GUEST_CR4_INDEX, mGuestContextCommonSmm.GuestContextPerCpu[Index].Cr4 | (UINTN)(AsmReadMsr64 (IA32_VMX_CR4_FIXED0_MSR_INDEX) & AsmReadMsr64 (IA32_VMX_CR4_FIXED1_MSR_INDEX)));
+          VmWriteN (VMCS_N_GUEST_CR3_INDEX, mGuestContextCommonSmm[VmType].GuestContextPerCpu[Index].Cr3);
+          VmWriteN (VMCS_N_GUEST_CR4_INDEX, mGuestContextCommonSmm[VmType].GuestContextPerCpu[Index].Cr4 | (UINTN)(AsmReadMsr64 (IA32_VMX_CR4_FIXED0_MSR_INDEX) & AsmReadMsr64 (IA32_VMX_CR4_FIXED1_MSR_INDEX)));
 
-          VmWrite64 (VMCS_64_GUEST_IA32_EFER_INDEX, mGuestContextCommonSmm.GuestContextPerCpu[Index].Efer);
-          if ((mGuestContextCommonSmm.GuestContextPerCpu[Index].Efer & IA32_EFER_MSR_MLE) != 0) {
-            mGuestContextCommonSmm.GuestContextPerCpu[Index].Efer |= IA32_EFER_MSR_MLA;
+          VmWrite64 (VMCS_64_GUEST_IA32_EFER_INDEX, mGuestContextCommonSmm[VmType].GuestContextPerCpu[Index].Efer);
+          if ((mGuestContextCommonSmm[VmType].GuestContextPerCpu[Index].Efer & IA32_EFER_MSR_MLE) != 0) {
+            mGuestContextCommonSmm[VmType].GuestContextPerCpu[Index].Efer |= IA32_EFER_MSR_MLA;
             VmEntryControls.Uint32 = VmRead32 (VMCS_32_CONTROL_VMENTRY_CONTROLS_INDEX);
             VmEntryControls.Bits.Ia32eGuest = 1;
             VmWrite32 (VMCS_32_CONTROL_VMENTRY_CONTROLS_INDEX, VmEntryControls.Uint32);
@@ -179,19 +181,19 @@ SmmCrHandler (
 
           VmWriteN (VMCS_N_CONTROL_CR4_READ_SHADOW_INDEX, VmReadN (VMCS_N_GUEST_CR4_INDEX) & ~CR4_VMXE & ~CR4_SMXE);
 
-        } else if (((mGuestContextCommonSmm.GuestContextPerCpu[Index].Cr0 & CR0_PE) != 0) &&
+        } else if (((mGuestContextCommonSmm[VmType].GuestContextPerCpu[Index].Cr0 & CR0_PE) != 0) &&
                    ((GptRegPtr[Qualification.CrAccess.GpReg] & CR0_PE) == 0)) {
           //
           // Disable protection
           //
 //          DEBUG ((EFI_D_INFO, "-PE"));
-          mGuestContextCommonSmm.GuestContextPerCpu[Index].Cr0 = GptRegPtr[Qualification.CrAccess.GpReg];
+          mGuestContextCommonSmm[VmType].GuestContextPerCpu[Index].Cr0 = GptRegPtr[Qualification.CrAccess.GpReg];
           VmWriteN (VMCS_N_GUEST_CR0_INDEX, VmReadN (VMCS_N_GUEST_CR0_INDEX) | CR0_PG | CR0_PE);
           VmWriteN (VMCS_N_CONTROL_CR0_READ_SHADOW_INDEX, VmReadN (VMCS_N_CONTROL_CR0_READ_SHADOW_INDEX) & ~CR0_PE & ~CR0_PG);
 
           // LaunchVm86Monitor (Index);
           CpuDeadLoop (); // never returned
-        } else if (((mGuestContextCommonSmm.GuestContextPerCpu[Index].Cr0 & CR0_PE) == 0) &&
+        } else if (((mGuestContextCommonSmm[VmType].GuestContextPerCpu[Index].Cr0 & CR0_PE) == 0) &&
                    ((GptRegPtr[Qualification.CrAccess.GpReg] & CR0_PE) != 0)) {
           //
           // Enable protection
@@ -204,7 +206,7 @@ SmmCrHandler (
       //
       // Save current data as old data
       //
-      mGuestContextCommonSmm.GuestContextPerCpu[Index].Cr0 = GptRegPtr[Qualification.CrAccess.GpReg];
+      mGuestContextCommonSmm[VmType].GuestContextPerCpu[Index].Cr0 = GptRegPtr[Qualification.CrAccess.GpReg];
 
       // special for EPT
       Ia32PAESync (Index);
@@ -219,8 +221,8 @@ SmmCrHandler (
     break;
   case 4: // Cr4
     if (Qualification.CrAccess.AccessType == 0) { // MOV to CR
-      if ((!mGuestContextCommonSmm.GuestContextPerCpu[Index].UnrestrictedGuest) &&
-          ((mGuestContextCommonSmm.GuestContextPerCpu[Index].Cr0 & CR0_PG) == 0)) {
+      if ((!mGuestContextCommonSmm[VmType].GuestContextPerCpu[Index].UnrestrictedGuest) &&
+          ((mGuestContextCommonSmm[VmType].GuestContextPerCpu[Index].Cr0 & CR0_PG) == 0)) {
         //
         // Need cache current Setting
         //
@@ -234,7 +236,7 @@ SmmCrHandler (
       //
       // Save current data as old data
       //
-      mGuestContextCommonSmm.GuestContextPerCpu[Index].Cr4 = GptRegPtr[Qualification.CrAccess.GpReg];
+      mGuestContextCommonSmm[VmType].GuestContextPerCpu[Index].Cr4 = GptRegPtr[Qualification.CrAccess.GpReg];
       goto Ret;
 #if 0
     } else if (Qualification.CrAccess.AccessType == 1) { // MOV from CR

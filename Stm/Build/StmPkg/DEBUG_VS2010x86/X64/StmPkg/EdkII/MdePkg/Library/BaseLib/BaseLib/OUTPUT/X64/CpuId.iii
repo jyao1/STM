@@ -1,0 +1,62 @@
+;------------------------------------------------------------------------------
+;
+; Copyright (c) 2006 - 2008, Intel Corporation. All rights reserved.<BR>
+; This program and the accompanying materials
+; are licensed and made available under the terms and conditions of the BSD License
+; which accompanies this distribution.  The full text of the license may be found at
+; http:
+;
+; THE PROGRAM IS DISTRIBUTED UNDER THE BSD LICENSE ON AN "AS IS" BASIS,
+; WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
+;
+; Module Name:
+;
+;   CpuId.Asm
+;
+; Abstract:
+;
+;   AsmCpuid function
+;
+; Notes:
+;
+;------------------------------------------------------------------------------
+
+    .code
+
+;------------------------------------------------------------------------------
+;  void
+;  __cdecl
+;  AsmCpuid (
+;       UINT32  RegisterInEax,
+;      UINT32  *RegisterOutEax  ,
+;      UINT32  *RegisterOutEbx  ,
+;      UINT32  *RegisterOutEcx  ,
+;      UINT32  *RegisterOutEdx  
+;    )
+;------------------------------------------------------------------------------
+AsmCpuid    PROC    USES    rbx
+    mov     eax, ecx
+    push    rax                         ; save Index on stack
+    push    rdx
+    cpuid
+    test    r9, r9
+    jz      @F
+    mov     [r9], ecx
+@@:
+    pop     rcx
+    jrcxz   @F
+    mov     [rcx], eax
+@@:
+    mov     rcx, r8
+    jrcxz   @F
+    mov     [rcx], ebx
+@@:
+    mov     rcx, [rsp + 38h]
+    jrcxz   @F
+    mov     [rcx], edx
+@@:
+    pop     rax                         ; restore Index to rax as return value
+    ret
+AsmCpuid    ENDP
+
+    END

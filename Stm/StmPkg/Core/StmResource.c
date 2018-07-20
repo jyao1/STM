@@ -14,6 +14,7 @@
 
 #include "Stm.h"
 #include "StmRuntime.h"
+#include "PeStm.h"
 
 #define DEFAULT_PROTECTED_DEFAULT_PAGES  4
 
@@ -1434,8 +1435,10 @@ RegisterProtectedResourceNode (
   case MEM_RANGE:
   case MMIO_RANGE:
     EPTSetPageAttributeRange (
+     mGuestContextCommonSmm[SMI_HANDLER].EptPointer.Uint64,
       Resource->Mem.Base,
       Resource->Mem.Length,
+	  Resource->Mem.Base,
       ((Resource->Mem.RWXAttributes & STM_RSC_MEM_R) != 0) ? 0 : 1,
       ((Resource->Mem.RWXAttributes & STM_RSC_MEM_W) != 0) ? 0 : 1,
       ((Resource->Mem.RWXAttributes & STM_RSC_MEM_X) != 0) ? 0 : 1,
@@ -1464,8 +1467,10 @@ RegisterProtectedResourceNode (
       LastNodeBus = GetLastNodeBus (Resource);
       PciExpressDeviceBase = PCI_EXPRESS_ADDRESS(LastNodeBus, Resource->PciCfg.PciDevicePath[Resource->PciCfg.LastNodeIndex].PciDevice, Resource->PciCfg.PciDevicePath[Resource->PciCfg.LastNodeIndex].PciFunction, 0);
       EPTSetPageAttributeRange (
+        mGuestContextCommonSmm[SMI_HANDLER].EptPointer.Uint64,
         PciExpressDeviceBase + mHostContextCommon.PciExpressBaseAddress,
         SIZE_4KB,
+		PciExpressDeviceBase + mHostContextCommon.PciExpressBaseAddress,
         ((Resource->PciCfg.RWAttributes & STM_RSC_PCI_CFG_R) != 0) ? 0 : 1,
         ((Resource->PciCfg.RWAttributes & STM_RSC_PCI_CFG_W) != 0) ? 0 : 1,
         0,
@@ -1534,8 +1539,10 @@ UnRegisterProtectedResourceNode (
   case MEM_RANGE:
   case MMIO_RANGE:
     EPTSetPageAttributeRange (
+	  mGuestContextCommonSmm[SMI_HANDLER].EptPointer.Uint64,
       Resource->Mem.Base,
       Resource->Mem.Length,
+	  Resource->Mem.Base,
       ((Resource->Mem.RWXAttributes & STM_RSC_MEM_R) != 0) ? 1 : 0,
       ((Resource->Mem.RWXAttributes & STM_RSC_MEM_W) != 0) ? 1 : 0,
       ((Resource->Mem.RWXAttributes & STM_RSC_MEM_X) != 0) ? 1 : 0,
@@ -1563,8 +1570,10 @@ UnRegisterProtectedResourceNode (
       LastNodeBus = GetLastNodeBus (Resource);
       PciExpressDeviceBase = PCI_EXPRESS_ADDRESS(LastNodeBus, Resource->PciCfg.PciDevicePath[Resource->PciCfg.LastNodeIndex].PciDevice, Resource->PciCfg.PciDevicePath[Resource->PciCfg.LastNodeIndex].PciFunction, 0);
       EPTSetPageAttributeRange (
+		mGuestContextCommonSmm[SMI_HANDLER].EptPointer.Uint64,
         PciExpressDeviceBase + mHostContextCommon.PciExpressBaseAddress,
         SIZE_4KB,
+		PciExpressDeviceBase + mHostContextCommon.PciExpressBaseAddress,
         ((Resource->PciCfg.RWAttributes & STM_RSC_PCI_CFG_R) != 0) ? 1 : 0,
         ((Resource->PciCfg.RWAttributes & STM_RSC_PCI_CFG_W) != 0) ? 1 : 0,
         0,
@@ -1805,6 +1814,9 @@ RegisterBiosResourceNode (
   IN STM_RSC   *Resource
   )
 {
+  UINT8   LastNodeBus;
+  UINT64  PciExpressDeviceBase;
+
   if (Resource->Header.IgnoreResource != 0) {
     return ;
   }
@@ -1821,8 +1833,41 @@ RegisterBiosResourceNode (
     break;
   case MEM_RANGE:
   case MMIO_RANGE:
+	  EPTSetPageAttributeRange (
+     mGuestContextCommonSmm[SMI_HANDLER].EptPointer.Uint64,
+      Resource->Mem.Base,
+      Resource->Mem.Length,
+	  Resource->Mem.Base,
+      ((Resource->Mem.RWXAttributes & STM_RSC_MEM_R) == STM_RSC_MEM_R) ? 1 : 0,
+      ((Resource->Mem.RWXAttributes & STM_RSC_MEM_W) == STM_RSC_MEM_W) ? 1 : 0,
+      ((Resource->Mem.RWXAttributes & STM_RSC_MEM_X) == STM_RSC_MEM_X) ? 1 : 0,
+      EptPageAttributeSet
+      );
+    Resource->Header.ReturnStatus = 1;
+    break;
   case IO_RANGE:
+	  break;
   case PCI_CFG_RANGE:
+	  SetIoBitmapRange (0xCF8, 1);
+    SetIoBitmapRange (0xCFC, 4);
+    // STM_RSC_BGI is NOT supported in this version
+    if (mHostContextCommon.PciExpressBaseAddress != 0) {
+      LastNodeBus = GetLastNodeBus (Resource);
+      PciExpressDeviceBase = PCI_EXPRESS_ADDRESS(LastNodeBus, Resource->PciCfg.PciDevicePath[Resource->PciCfg.LastNodeIndex].PciDevice, Resource->PciCfg.PciDevicePath[Resource->PciCfg.LastNodeIndex].PciFunction, 0);
+      EPTSetPageAttributeRange (
+        mGuestContextCommonSmm[SMI_HANDLER].EptPointer.Uint64,
+        PciExpressDeviceBase + mHostContextCommon.PciExpressBaseAddress,
+        SIZE_4KB,
+		PciExpressDeviceBase + mHostContextCommon.PciExpressBaseAddress,
+        ((Resource->PciCfg.RWAttributes & STM_RSC_PCI_CFG_R) == STM_RSC_PCI_CFG_R) ? 1 : 0,
+        ((Resource->PciCfg.RWAttributes & STM_RSC_PCI_CFG_W) == STM_RSC_PCI_CFG_W) ? 1 : 0,
+        0,
+        EptPageAttributeAnd
+        );
+    }
+    Resource->Header.ReturnStatus = 1;
+    break;
+
   case TRAPPED_IO_RANGE:
     // Not supported
     break;

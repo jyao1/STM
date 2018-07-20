@@ -16,6 +16,18 @@
 
 /**
 
+  This function dump event log entry.
+
+  @param LogEntry    Log entry
+
+**/
+VOID
+DumpEventLogEntry (
+  IN STM_LOG_ENTRY             *LogEntry
+  );
+
+/**
+
   This function clear event log.
 
   @param EventLog Event log structure
@@ -160,6 +172,7 @@ AddEventLog (
   LogEntry = GetNextEmpty (EventLog);
   if (LogEntry == NULL) {
     ReleaseSpinLock (&mHostContextCommon.EventLog.EventLogLock);
+	DEBUG((EFI_D_ERROR, "No Log entries available\n"));
     return ;
   }
   if ((LogEntry->Hdr.Valid == 1) && (LogEntry->Hdr.ReadByMle == 0)) {
@@ -176,6 +189,7 @@ AddEventLog (
   AsmTestAndReset (16, &LogEntry->Hdr.Type);
 
   ReleaseSpinLock (&mHostContextCommon.EventLog.EventLogLock);
+  DumpEventLogEntry(LogEntry);   /*DEBUG*/
   return ;
 }
 
@@ -372,7 +386,7 @@ DumpEventLog (
       if (LogEntry->Hdr.Valid == 0) {
         continue ;
       }
-      DumpEventLogEntry (LogEntry);
+      DumpEventLogEntry(LogEntry);
     }
   }
 }

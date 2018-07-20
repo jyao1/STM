@@ -13,6 +13,7 @@
 **/
 
 #include "StmRuntime.h"
+#include "PeStm.h"
 
 /**
 
@@ -101,10 +102,12 @@ WriteSyncSmmStateSaveAreaSse2 (
   IN BOOLEAN                            Scrub
   )
 {
+  UINT32 VmType = SMI_HANDLER;
+
   if (!Scrub) {
-    CopyMem (&mGuestContextCommonSmm.GuestContextPerCpu[Index].Register.FxBuffer, &mGuestContextCommonSmi.GuestContextPerCpu[Index].Register.FxBuffer, sizeof(IA32_FX_BUFFER));
+    CopyMem (&mGuestContextCommonSmm[VmType].GuestContextPerCpu[Index].Register.FxBuffer, &mGuestContextCommonSmi.GuestContextPerCpu[Index].Register.FxBuffer, sizeof(IA32_FX_BUFFER));
   } else {
-    ZeroMem (&mGuestContextCommonSmm.GuestContextPerCpu[Index].Register.FxBuffer, sizeof(IA32_FX_BUFFER));
+    ZeroMem (&mGuestContextCommonSmm[VmType].GuestContextPerCpu[Index].Register.FxBuffer, sizeof(IA32_FX_BUFFER));
   }
 }
 
@@ -120,5 +123,7 @@ ReadSyncSmmStateSaveAreaSse2 (
   IN UINT32                             Index
   )
 {
-  CopyMem (&mGuestContextCommonSmi.GuestContextPerCpu[Index].Register.FxBuffer, &mGuestContextCommonSmm.GuestContextPerCpu[Index].Register.FxBuffer, sizeof(IA32_FX_BUFFER));
+  UINT32              VmType = SMI_HANDLER;
+
+  CopyMem (&mGuestContextCommonSmi.GuestContextPerCpu[Index].Register.FxBuffer, &mGuestContextCommonSmm[VmType].GuestContextPerCpu[Index].Register.FxBuffer, sizeof(IA32_FX_BUFFER));
 }

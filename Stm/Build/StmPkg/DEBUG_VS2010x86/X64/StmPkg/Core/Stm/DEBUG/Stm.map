@@ -1,0 +1,1324 @@
+ Stm
+
+ Timestamp is 5b5209b3 (Fri Jul 20 12:11:31 2018)
+
+ Preferred load address is 0000000000000000
+
+ Start         Length     Name                   Class
+ 0001:00000000 00014181H .text                   CODE
+ 0002:00000000 0000aeb3H .rdata                  DATA
+ 0002:0000aeb4 0000007cH .rdata$debug            DATA
+ 0003:00000000 00001b38H .data                   DATA
+ 0003:00001b40 00003070H .bss                    DATA
+ 0004:00000000 0000093cH .pdata                  DATA
+ 0005:00000000 000006f4H .xdata                  DATA
+
+  Address         Publics by Value              Rva+Base               Lib:Object
+
+ 0000:00000000       __ImageBase                0000000000000000     <linker-defined>
+ 0001:00000000       FindAcpiRsdPtr             00000000000002c0 f   Stm:StmInit.obj
+ 0001:00000054       FindAcpiPtr                0000000000000314 f   Stm:StmInit.obj
+ 0001:00000118       BspInit                    00000000000003d8 f   Stm:StmInit.obj
+ 0001:00001514       ApInit                     00000000000017d4 f   Stm:StmInit.obj
+ 0001:00001688       CommonInit                 0000000000001948 f   Stm:StmInit.obj
+ 0001:000018c8       VmcsInit                   0000000000001b88 f   Stm:StmInit.obj
+ 0001:00001bfc       InitializeSmmMonitor       0000000000001ebc f   Stm:StmInit.obj
+ 0001:00001e20       CpuReadySync               00000000000020e0 f   Stm:StmInit.obj
+ 0001:00001ebc       UnknownHandlerSmi          000000000000217c f   Stm:SmiHandler.obj
+ 0001:00001f10       CheckPendingMtf            00000000000021d0 f   Stm:SmiHandler.obj
+ 0001:00001f48       StmHandlerSmi              0000000000002208 f   Stm:SmiHandler.obj
+ 0001:000020ec       Is1GPageSupport            00000000000023ac f   Stm:Paging.obj
+ 0001:00002144       StmPageFault               0000000000002404 f   Stm:Paging.obj
+ 0001:00002230       GetNextEmpty               00000000000024f0 f   Stm:EventLog.obj
+ 0001:000023d0       AddEventLog                0000000000002690 f   Stm:EventLog.obj
+ 0001:000024e0       AddEventLogForResource     00000000000027a0 f   Stm:EventLog.obj
+ 0001:00002558       DumpEventLogEntry          0000000000002818 f   Stm:EventLog.obj
+ 0001:000026dc       LaunchPeVm                 000000000000299c f   Stm:PeLoadVm.obj
+ 0001:00002b40       RunPermVM                  0000000000002e00 f   Stm:PeLoadVm.obj
+ 0001:00002c64       PostPeVmProc               0000000000002f24 f   Stm:PeLoadVm.obj
+ 0001:00003364       FreePE_DataStructures      0000000000003624 f   Stm:PeLoadVm.obj
+ 0001:00003408       save_Inter_PeVm            00000000000036c8 f   Stm:PeLoadVm.obj
+ 0001:00003460       RestoreInterPeVm           0000000000003720 f   Stm:PeLoadVm.obj
+ 0001:000035ac       print_region_list          000000000000386c f   Stm:PeLoadVm.obj
+ 0001:0000366c       NullExceptionHandler       000000000000392c f   Stm:PeLoadVm.obj
+ 0001:000036cc       InitPe                     000000000000398c f   Stm:PeLoadVm.obj
+ 0001:000038b0       GetMemoryType              0000000000003b70 f   Stm:EptInit.obj
+ 0001:00003a80       EptCreatePageTable         0000000000003d40 f   Stm:EptInit.obj
+ 0001:00003ae4       EptAllocatePte             0000000000003da4 f   Stm:EptInit.obj
+ 0001:00003d20       EptDumpPageTable           0000000000003fe0 f   Stm:EptInit.obj
+ 0001:00003ee0       EptInit                    00000000000041a0 f   Stm:EptInit.obj
+ 0001:00004358       SetIoBitmapRange           0000000000004618 f   Stm:IoInit.obj
+ 0001:000043d4       ApicToIndex                0000000000004694 f   Stm:SmmMp.obj
+ 0001:0000443c       InitializeSmiVmcs          00000000000046fc f   Stm:VmcsInit.obj
+ 0001:0000473c       InitializeSmmVmcs          00000000000049fc f   Stm:VmcsInit.obj
+ 0001:00005150       AllocatePages              0000000000005410 f   Stm:Memory.obj
+ 0001:0000521c       FreePages                  00000000000054dc f   Stm:Memory.obj
+ 0001:000052dc       ReadLocalApicId            000000000000559c f   Stm:Cpu.obj
+ 0001:00005324       SmmSetup                   00000000000055e4 f   Stm:SmmSetup.obj
+ 0001:000055f0       DumpStmResourceHeader      00000000000058b0 f   Stm:StmResource.obj
+ 0001:00005660       DumpStmResourceNode        0000000000005920 f   Stm:StmResource.obj
+ 0001:000059f8       DumpStmResource            0000000000005cb8 f   Stm:StmResource.obj
+ 0001:00005a2c       GetLastNodeBus             0000000000005cec f   Stm:StmResource.obj
+ 0001:00005ab8       IsPciResourceNodeValid     0000000000005d78 f   Stm:StmResource.obj
+ 0001:00005c14       IsResourceNodeValid        0000000000005ed4 f   Stm:StmResource.obj
+ 0001:00005e6c       IsResourceListValid        000000000000612c f   Stm:StmResource.obj
+ 0001:00005eb8       IsResourceNodeOverlap      0000000000006178 f   Stm:StmResource.obj
+ 0001:00006098       IsResourceListOverlapWithNode 0000000000006358 f   Stm:StmResource.obj
+ 0001:000060f4       IsResourceListOverlap      00000000000063b4 f   Stm:StmResource.obj
+ 0001:00006150       GetSizeFromResource        0000000000006410 f   Stm:StmResource.obj
+ 0001:000061f0       CopyStmResourceMem         00000000000064b0 f   Stm:StmResource.obj
+ 0001:00006270       GetStmResourceMem          0000000000006530 f   Stm:StmResource.obj
+ 0001:000062cc       GetStmResourceIo           000000000000658c f   Stm:StmResource.obj
+ 0001:00006320       GetStmResourcePci          00000000000065e0 f   Stm:StmResource.obj
+ 0001:000063e0       GetStmResourceMsr          00000000000066a0 f   Stm:StmResource.obj
+ 0001:0000641c       AddProtectedResource       00000000000066dc f   Stm:StmResource.obj
+ 0001:00006548       AddProtectedResourceWithType 0000000000006808 f   Stm:StmResource.obj
+ 0001:0000676c       DeleteProtectedResource    0000000000006a2c f   Stm:StmResource.obj
+ 0001:00006910       RegisterProtectedResourceNode 0000000000006bd0 f   Stm:StmResource.obj
+ 0001:00006abc       RegisterProtectedResource  0000000000006d7c f   Stm:StmResource.obj
+ 0001:00006af8       UnRegisterProtectedResourceNode 0000000000006db8 f   Stm:StmResource.obj
+ 0001:00006cec       UnRegisterProtectedResource 0000000000006fac f   Stm:StmResource.obj
+ 0001:00006d28       RawDuplicateResource       0000000000006fe8 f   Stm:StmResource.obj
+ 0001:00006ddc       RawFreeResource            000000000000709c f   Stm:StmResource.obj
+ 0001:00006e5c       DuplicateResource          000000000000711c f   Stm:StmResource.obj
+ 0001:00006eb4       RegisterBiosResourceNode   0000000000007174 f   Stm:StmResource.obj
+ 0001:00007068       RegisterBiosResource       0000000000007328 f   Stm:StmResource.obj
+ 0001:00007098       UnknownHandlerSmm          0000000000007358 f   Stm:SmmHandler.obj
+ 0001:00007164       StmHandlerSmm              0000000000007424 f   Stm:SmmHandler.obj
+ 0001:0000731c       PeCoffRelocateImageOnTheSpot 00000000000075dc f   Stm:Relocate.obj
+ 0001:00007478       RelocateStmImage           0000000000007738 f   Stm:Relocate.obj
+ 0001:00007580       SetMsrBitmapEx             0000000000007840 f   Stm:MsrInit.obj
+ 0001:00007610       DumpExceptionX64           00000000000078d0 f   Stm:StmExceptionHandler.obj
+ 0001:000078ec       HostExceptionHandler       0000000000007bac f   Stm:StmExceptionHandler.obj
+ 0001:00007910       DumpVmcs64Filed            0000000000007bd0 f   Stm:Dump.obj
+ 0001:00007940       DumpVmcs32Filed            0000000000007c00 f   Stm:Dump.obj
+ 0001:00007970       DumpVmcsAllField           0000000000007c30 f   Stm:Dump.obj
+ 0001:00007b5c       DumpRegContext             0000000000007e1c f   Stm:Dump.obj
+ 0001:00007bb0       SmiEventHandler            0000000000007e70 f   Stm:SmiEventHandler.obj
+ 0001:00007e70       SmiVmcallInitializeProtectionHandler 0000000000008130 f   Stm:SmiVmcallHandler.obj
+ 0001:00007e90       SmiVmcallStartHandler      0000000000008150 f   Stm:SmiVmcallHandler.obj
+ 0001:00007f28       SmiVmcallStopHandler       00000000000081e8 f   Stm:SmiVmcallHandler.obj
+ 0001:00007fc4       SmiVmcallProtectResourceHandler 0000000000008284 f   Stm:SmiVmcallHandler.obj
+ 0001:0000819c       SmiVmcallUnprotectResourceHandler 000000000000845c f   Stm:SmiVmcallHandler.obj
+ 0001:000082a0       SmiVmcallGetBiosResourcesHandler 0000000000008560 f   Stm:SmiVmcallHandler.obj
+ 0001:00008470       SmiVmcallManageVmcsDatabaseHandler 0000000000008730 f   Stm:SmiVmcallHandler.obj
+ 0001:00008530       SmiVmcallEventNewLogHandler 00000000000087f0 f   Stm:SmiVmcallHandler.obj
+ 0001:0000868c       SmiVmcallEventConfigureLogHandler 000000000000894c f   Stm:SmiVmcallHandler.obj
+ 0001:000086f8       SmiVmcallEventStartLogHandler 00000000000089b8 f   Stm:SmiVmcallHandler.obj
+ 0001:00008768       SmiVmcallEventStopLogHandler 0000000000008a28 f   Stm:SmiVmcallHandler.obj
+ 0001:000087d4       SmiVmcallEventClearLogHandler 0000000000008a94 f   Stm:SmiVmcallHandler.obj
+ 0001:0000884c       SmiVmcallEventDeleteLogHandler 0000000000008b0c f   Stm:SmiVmcallHandler.obj
+ 0001:000088a4       SmiVmcallManageEventLogHandler 0000000000008b64 f   Stm:SmiVmcallHandler.obj
+ 0001:0000897c       SmiVmcallAddTempPeVmHandler 0000000000008c3c f   Stm:SmiVmcallHandler.obj
+ 0001:00008a34       SmiVmcallAddPermPeVmHandler 0000000000008cf4 f   Stm:SmiVmcallHandler.obj
+ 0001:00008ae8       SmiVmcallAddPermPeVmNoRunHandler 0000000000008da8 f   Stm:SmiVmcallHandler.obj
+ 0001:00008ba0       SmiVmcallRunPeVmHandler    0000000000008e60 f   Stm:SmiVmcallHandler.obj
+ 0001:00008c58       SmiVmcallEndPermVmHandler  0000000000008f18 f   Stm:SmiVmcallHandler.obj
+ 0001:00008cfc       SmiVmcallHandler           0000000000008fbc f   Stm:SmiVmcallHandler.obj
+ 0001:00008e94       PeEPTViolationHandler      0000000000009154 f   Stm:PeEptHandler.obj
+ 0001:00009198       PeEPTMisconfigurationHandler 0000000000009458 f   Stm:PeEptHandler.obj
+ 0001:000091fc       PeInvEPTHandler            00000000000094bc f   Stm:PeEptHandler.obj
+ 0001:0000925c       PeEptFree                  000000000000951c f   Stm:PeEptHandler.obj
+ 0001:000093cc       PeStmHandlerSmm            000000000000968c f   Stm:PeSmmHandler.obj
+ 0001:00009664       SetupProtExecVm            0000000000009924 f   Stm:PeVmcsInit.obj
+ 0001:00009e8c       GetMultiProcessorState     000000000000a14c f   Stm:PeVmxState.obj
+ 0001:00009fc8       GetRootVmxState            000000000000a288 f   Stm:PeVmxState.obj
+ 0001:0000a2c8       SetupGetRootVmxState       000000000000a588 f   Stm:PeVmxState.obj
+ 0001:0000a478       PrintVmxState              000000000000a738 f   Stm:PeVmxState.obj
+ 0001:0000a620       GetPageTableEntry          000000000000a8e0 f   Stm:SmmEptHandler.obj
+ 0001:0000a804       TranslateEPTGuestToHost    000000000000aac4 f   Stm:SmmEptHandler.obj
+ 0001:0000a930       EPTSetPageAttributeRange   000000000000abf0 f   Stm:SmmEptHandler.obj
+ 0001:0000acfc       SmmEPTViolationHandler     000000000000afbc f   Stm:SmmEptHandler.obj
+ 0001:0000b030       SmmEPTMisconfigurationHandler 000000000000b2f0 f   Stm:SmmEptHandler.obj
+ 0001:0000b064       SmmInvEPTHandler           000000000000b324 f   Stm:SmmEptHandler.obj
+ 0001:0000b098       Ia32PAESync                000000000000b358 f   Stm:SmmEptHandler.obj
+ 0001:0000b140       WriteSyncSmmStateSaveAreaIa32eGpr 000000000000b400 f   Stm:SmmStateSyncIa32eGpr.obj
+ 0001:0000b1e4       WriteSyncSmmStateSaveAreaSse2 000000000000b4a4 f   Stm:SmmStateSyncIa32eGpr.obj
+ 0001:0000b218       StmTxtReset                000000000000b4d8 f   Stm:SmmVmcallHandler.obj
+ 0001:0000b270       IsGuestAddressValid        000000000000b530 f   Stm:SmmVmcallHandler.obj
+ 0001:0000b400       SmmVmcallMapAddressRangeHandler 000000000000b6c0 f   Stm:SmmVmcallHandler.obj
+ 0001:0000b4c4       SmmVmcallUnmapAddressRangeHandler 000000000000b784 f   Stm:SmmVmcallHandler.obj
+ 0001:0000b560       SmmVmcallAddressLookupHandler 000000000000b820 f   Stm:SmmVmcallHandler.obj
+ 0001:0000b838       SmmVmcallReturnFromProtectionExceptionHandler 000000000000baf8 f   Stm:SmmVmcallHandler.obj
+ 0001:0000b8a4       SmmVmcallHandler           000000000000bb64 f   Stm:SmmVmcallHandler.obj
+ 0001:0000b9c8       RsmHandler                 000000000000bc88 f   Stm:SmmRsmHandler.obj
+ 0001:0000bce4       SmmExceptionHandler        000000000000bfa4 f   Stm:SmmExceptionHandler.obj
+ 0001:0000bcfc       SmmTaskSwitchHandler       000000000000bfbc f   Stm:SmmTaskSwitchHandler.obj
+ 0001:0000c64c       SmmCpuidHandler            000000000000c90c f   Stm:SmmCpuidHandler.obj
+ 0001:0000c6ec       SmmReadMsrHandler          000000000000c9ac f   Stm:SmmMsrHandler.obj
+ 0001:0000c8b8       SmmWriteMsrHandler         000000000000cb78 f   Stm:SmmMsrHandler.obj
+ 0001:0000cb94       SmmIoHandler               000000000000ce54 f   Stm:SmmIoHandler.obj
+ 0001:0000d164       SmmInvdHandler             000000000000d424 f   Stm:SmmCacheHandler.obj
+ 0001:0000d164       SmmWbinvdHandler           000000000000d424 f   Stm:SmmCacheHandler.obj
+ 0001:0000d198       SmmCrHandler               000000000000d458 f   Stm:SmmCrHandler.obj
+ 0001:0000d7bc       WriteSyncSmmStateSaveArea  000000000000da7c f   Stm:SmmStateSync.obj
+ 0001:0000dd0c       ReadSyncSmmStateSaveArea   000000000000dfcc f   Stm:SmmStateSync.obj
+ 0001:0000df6c       PeSmiHandler               000000000000e22c f   Stm:PeSmiHandler.obj
+ 0001:0000e2bc       RequestVmcsDatabaseEntry   000000000000e57c f   Stm:VmcsRecord.obj
+ 0001:0000e38c       DumpVmcsRecord             000000000000e64c f   Stm:VmcsRecord.obj
+ 0001:0000e4b4       AddPeVm                    000000000000e774 f   Stm:PeSmiVmcallHandler.obj
+ 0001:0000f2a8       StmTeardown                000000000000f568 f   Stm:StmTearDown.obj
+ 0001:0000f460       SmmTeardown                000000000000f720 f   Stm:SmmTearDown.obj
+ 0001:0000f718       PePreEmptionTimerHandler   000000000000f9d8 f   Stm:PeSmmPreemptionTimerHandler.obj
+ 0001:0000f75c       PeCrHandler                000000000000fa1c f   Stm:PeSmmCrHandler.obj
+ 0001:0000f7bc       PeBadGuestStateHandler     000000000000fa7c f   Stm:PeSmmBadGuestStateHandler.obj
+ 0001:0000f858       PeIoHandler                000000000000fb18 f   Stm:PeSmmIoHandler.obj
+ 0001:0000fa30       PeSmmVmcallMapAddressRangeHandler 000000000000fcf0 f   Stm:PeSmmVmcallHandler.obj
+ 0001:0000fc08       PeSmmVmcallGetVmcsMap      000000000000fec8 f   Stm:PeSmmVmcallHandler.obj
+ 0001:0000fcf8       PeSmmVmcallHandler         000000000000ffb8 f   Stm:PeSmmVmcallHandler.obj
+ 0001:0000fe20       PeReadMsrHandler           00000000000100e0 f   Stm:PeSmmMsrHandler.obj
+ 0001:0000ff18       PeWriteMsrHandler          00000000000101d8 f   Stm:PeSmmMsrHandler.obj
+ 0001:000100ec       PeRsmHandler               00000000000103ac f   Stm:PeSmmRsmHandler.obj
+ 0001:00010218       PeExceptionHandler         00000000000104d8 f   Stm:PeSmmExceptionHandler.obj
+ 0001:000106cc       PeCpuidHandler             000000000001098c f   Stm:PeSmmCpuidHandler.obj
+ 0001:0001072c       InitPeGuestVmcs            00000000000109ec f   Stm:PeVmcsInit.obj
+ 0001:00010e68       MapVmcs                    0000000000011128 f   Stm:VmcsMapper.obj
+ 0001:00011104       GetVmcsOffset              00000000000113c4 f   Stm:VmcsMapper.obj
+ 0001:00011180       SignalPeVm                 0000000000011440 f   Stm:PeApicHandler.obj
+ 0001:000112a0       SendSmiToOtherProcessors   0000000000011560 f   Stm:PeApicHandler.obj
+ 0001:0001138c       TranslateGuestLinearToPhysical 000000000001164c f   Stm:PageTable.obj
+ 0001:0001165c       GuestLinearToGuestPhysical 000000000001191c f   Stm:PageTable.obj
+ 0001:000116e0       MapLinearAddressOneEntry   00000000000119a0 f   Stm:PageTable.obj
+ 0001:00011950       MapVirtualAddressToPhysicalAddress 0000000000011c10 f   Stm:PageTable.obj
+ 0001:00011a44       UnmapLinearAddressOneEntry 0000000000011d04 f   Stm:PageTable.obj
+ 0001:00011c88       UnmapVirtualAddressToPhysicalAddress 0000000000011f48 f   Stm:PageTable.obj
+ 0001:00011d5c       ResumeToBiosExceptionHandler 000000000001201c f   Stm:SmmException.obj
+ 0001:0001211c       ReturnFromBiosExceptionHandler 00000000000123dc f   Stm:SmmException.obj
+ 0001:00012324       DebugPrint                 00000000000125e4 f   MpSafDebugLibSerialPort:DebugLib.obj
+ 0001:00012410       DebugAssert                00000000000126d0 f   MpSafDebugLibSerialPort:DebugLib.obj
+ 0001:000124bc       InitializeSpinLock         000000000001277c f   SimpleSynchronizationLib:SynchronizationMsc.obj
+ 0001:000124f0       AcquireSpinLock            00000000000127b0 f   SimpleSynchronizationLib:SynchronizationMsc.obj
+ 0001:00012578       ReleaseSpinLock            0000000000012838 f   SimpleSynchronizationLib:SynchronizationMsc.obj
+ 0001:000125e4       InterlockedIncrement       00000000000128a4 f   SimpleSynchronizationLib:SynchronizationMsc.obj
+ 0001:0001261c       InterlockedCompareExchange32 00000000000128dc f   SimpleSynchronizationLib:SynchronizationMsc.obj
+ 0001:00012668       MmioRead16                 0000000000012928 f   BaseIoLibIntrinsic:IoLib.obj
+ 0001:00012698       MmioRead32                 0000000000012958 f   BaseIoLibIntrinsic:IoLib.obj
+ 0001:000126c8       MmioWrite32                0000000000012988 f   BaseIoLibIntrinsic:IoLib.obj
+ 0001:00012704       MmioRead64                 00000000000129c4 f   BaseIoLibIntrinsic:IoLib.obj
+ 0001:00012734       IoRead16                   00000000000129f4 f   BaseIoLibIntrinsic:IoLibMsc.obj
+ 0001:00012768       IoWrite16                  0000000000012a28 f   BaseIoLibIntrinsic:IoLibMsc.obj
+ 0001:000127a8       IoRead32                   0000000000012a68 f   BaseIoLibIntrinsic:IoLibMsc.obj
+ 0001:000127d8       IoWrite32                  0000000000012a98 f   BaseIoLibIntrinsic:IoLibMsc.obj
+ 0001:00012818       CopyMem                    0000000000012ad8 f   BaseMemoryLib:CopyMemWrapper.obj
+ 0001:000128d8       ZeroMem                    0000000000012b98 f   BaseMemoryLib:ZeroMemWrapper.obj
+ 0001:0001294c       RShiftU64                  0000000000012c0c f   BaseLib:RShiftU64.obj
+ 0001:00012990       ReadUnaligned32            0000000000012c50 f   BaseLib:Unaligned.obj
+ 0001:000129c0       WriteUnaligned32           0000000000012c80 f   BaseLib:Unaligned.obj
+ 0001:000129fc       LShiftU64                  0000000000012cbc f   BaseLib:LShiftU64.obj
+ 0001:00012a40       StrLen                     0000000000012d00 f   BaseLib:String.obj
+ 0001:00012ad4       AsciiStrLen                0000000000012d94 f   BaseLib:String.obj
+ 0001:00012b40       DivU64x32                  0000000000012e00 f   BaseLib:DivU64x32.obj
+ 0001:00012b80       InternalAssertJumpBuffer   0000000000012e40 f   BaseLib:SetJump.obj
+ 0001:00012bc8       VmRead16                   0000000000012e88 f   StmLib:Vmx.obj
+ 0001:00012c00       VmRead32                   0000000000012ec0 f   StmLib:Vmx.obj
+ 0001:00012c38       VmReadN                    0000000000012ef8 f   StmLib:Vmx.obj
+ 0001:00012c38       VmRead64                   0000000000012ef8 f   StmLib:Vmx64.obj
+ 0001:00012c70       VmWrite16                  0000000000012f30 f   StmLib:Vmx.obj
+ 0001:00012cb4       VmWrite32                  0000000000012f74 f   StmLib:Vmx.obj
+ 0001:00012cf4       VmWrite64                  0000000000012fb4 f   StmLib:Vmx64.obj
+ 0001:00012cf4       VmWriteN                   0000000000012fb4 f   StmLib:Vmx.obj
+ 0001:00012d34       AsciiSPrint                0000000000012ff4 f   BasePrintLib:PrintLib.obj
+ 0001:00012d60       BasePrintLibFillBuffer     0000000000013020 f   BasePrintLib:PrintLibInternal.obj
+ 0001:00012d94       BasePrintLibValueToString  0000000000013054 f   BasePrintLib:PrintLibInternal.obj
+ 0001:00012e0c       BasePrintLibSPrintMarker   00000000000130cc f   BasePrintLib:PrintLibInternal.obj
+ 0001:00013964       BasePrintLibSPrint         0000000000013c24 f   BasePrintLib:PrintLibInternal.obj
+ 0001:00013988       PciExpressRead8            0000000000013c48 f   BasePciExpressLib:PciExpressLib.obj
+ 0001:000139c4       PciExpressRead16           0000000000013c84 f   BasePciExpressLib:PciExpressLib.obj
+ 0001:00013a10       _ModuleEntryPoint          0000000000013cd0 f   Stm:AsmStmInit.obj
+ 0001:00013ac0       AsmHostEntrypointSmi       0000000000013d80 f   Stm:VmExit.obj
+ 0001:00013af5       AsmHostEntrypointSmm       0000000000013db5 f   Stm:VmExit.obj
+ 0001:00013b30       AsmExceptionHandlers       0000000000013df0     Stm:Exception.obj
+ 0001:00013c30       CommonInterruptEntry       0000000000013ef0 f   Stm:Exception.obj
+ 0001:00013da0       AsmHostEntrypointSmmPe     0000000000014060 f   Stm:PeVmExit.obj
+ 0001:00013de0       AsmWriteCr4                00000000000140a0 f   BaseLib:WriteCr4.obj
+ 0001:00013df0       AsmReadCr3                 00000000000140b0 f   BaseLib:ReadCr3.obj
+ 0001:00013e00       AsmReadCr4                 00000000000140c0 f   BaseLib:ReadCr4.obj
+ 0001:00013e10       AsmCpuid                   00000000000140d0 f   BaseLib:CpuId.obj
+ 0001:00013e40       AsmWbinvd                  0000000000014100 f   BaseLib:Wbinvd.obj
+ 0001:00013e50       AsmReadCr2                 0000000000014110 f   BaseLib:ReadCr2.obj
+ 0001:00013e60       AsmReadTsc                 0000000000014120 f   BaseLib:ReadTsc.obj
+ 0001:00013e70       AsmReadCr0                 0000000000014130 f   BaseLib:ReadCr0.obj
+ 0001:00013e80       AsmReadCs                  0000000000014140 f   BaseLib:ReadCs.obj
+ 0001:00013e90       AsmReadDs                  0000000000014150 f   BaseLib:ReadDs.obj
+ 0001:00013ea0       AsmCpuidEx                 0000000000014160 f   BaseLib:CpuIdEx.obj
+ 0001:00013ed0       SetJump                    0000000000014190 f   BaseLib:SetJump.obj
+ 0001:00013f60       AsmReadDr6                 0000000000014220 f   BaseLib:ReadDr6.obj
+ 0001:00013f70       AsmWriteCr2                0000000000014230 f   BaseLib:WriteCr2.obj
+ 0001:00013f80       CpuPause                   0000000000014240 f   BaseLib:CpuPause.obj
+ 0001:00013f90       InternalX86WriteIdtr       0000000000014250 f   BaseLib:WriteIdtr.obj
+ 0001:00013fa0       InternalX86ReadGdtr        0000000000014260 f   BaseLib:ReadGdtr.obj
+ 0001:00013fb0       InternalLongJump           0000000000014270 f   BaseLib:LongJump.obj
+ 0001:00014030       AsmVmClear                 00000000000142f0 f   StmLib:AsmVmClear.obj
+ 0001:00014040       AsmVmLaunch                0000000000014300 f   StmLib:AsmVmLaunch.obj
+ 0001:000140a0       AsmVmPtrStore              0000000000014360 f   StmLib:AsmVmPtrStore.obj
+ 0001:000140b0       AsmVmPtrLoad               0000000000014370 f   StmLib:AsmVmPtrLoad.obj
+ 0001:000140c0       AsmVmResume                0000000000014380 f   StmLib:AsmVmResume.obj
+ 0001:00014120       AsmTestAndReset            00000000000143e0 f   StmLib:AsmTestAndReset.obj
+ 0001:00014130       AsmTestAndSet              00000000000143f0 f   StmLib:AsmTestAndSet.obj
+ 0001:00014140       AsmSendInt2                0000000000014400 f   StmLib:AsmSendInt2.obj
+ 0001:00014150       AsmInvEpt                  0000000000014410 f   StmLib:AsmInvEpt.obj
+ 0001:00014160       AsmVmWrite                 0000000000014420 f   StmLib:AsmVmWrite.obj
+ 0001:00014170       AsmVmRead                  0000000000014430 f   StmLib:AsmVmRead.obj
+ 0002:00000020       ??_C@_0BE@EOEIEHNM@TXT?5MsegBase?9?5?$CF08x?6?$AA@ 0000000000014480     Stm:StmInit.obj
+ 0002:00000038       ??_C@_0BH@BBPGLOOE@TXT?5MsegLength?5?9?5?$CF08x?6?$AA@ 0000000000014498     Stm:StmInit.obj
+ 0002:00000050       ??_C@_0BH@LMMPPIFC@MsegBase?5?$CIMSR?$CJ?5?9?5?$CF08x?6?$AA@ 00000000000144b0     Stm:StmInit.obj
+ 0002:00000068       ??_C@_0CB@PMGKJEMK@MsegLength?5?$CIend?5of?5TSEG?$CJ?5?9?5?$CF08x?6@ 00000000000144c8     Stm:StmInit.obj
+ 0002:00000090       ??_C@_0P@HGLLOCGO@MsegBase?5?$DN?$DN?50?6?$AA@ 00000000000144f0     Stm:StmInit.obj
+ 0002:000000a0       ??_C@_0DI@CBKNGIKB@?5?5?5?$CK?$CK?$CK?$CK?$CK?$CK?$CK?$CK?$CK?$CK?$CK?$CK?$CK?$CK?$CK?$CK?$CK?$CK?$CK?$CK?$CK?$CK?5STM?1PE@ 0000000000014500     Stm:StmInit.obj
+ 0002:000000d8       ??_C@_08DIPMOEBC@13?354?355?$AA@ 0000000000014538     Stm:StmInit.obj
+ 0002:000000e8       ??_C@_0M@PAOKDMFI@Jul?512?52018?$AA@ 0000000000014548     Stm:StmInit.obj
+ 0002:000000f8       ??_C@_0BO@LIHMPNGH@?$CB?$CB?$CBSTM?5build?5time?5?9?5?$CFa?5?$CFa?$CB?$CB?$CB?6?$AA@ 0000000000014558     Stm:StmInit.obj
+ 0002:00000118       ??_C@_0BL@HNNCEJHJ@?$CB?$CB?$CBSTM?5Relocation?5DONE?$CB?$CB?$CB?6?$AA@ 0000000000014578     Stm:StmInit.obj
+ 0002:00000138       ??_C@_0CF@MDFMOPE@?$CB?$CB?$CBEnter?5StmInit?5?$CIBSP?$CJ?$CB?$CB?$CB?5?9?5?$CFd?5?$CI@ 0000000000014598     Stm:StmInit.obj
+ 0002:00000160       ??_C@_0CA@OLNNMDFD@CpuNumber?5from?5TXT?5Region?5?9?5?$CFd?6?$AA@ 00000000000145c0     Stm:StmInit.obj
+ 0002:00000180       ??_C@_0N@JACAOJPG@Rsdp?5?9?5?$CF08x?6?$AA@ 00000000000145e0     Stm:StmInit.obj
+ 0002:00000190       ??_C@_0N@JJMLEJIM@Rsdt?5?9?5?$CF08x?6?$AA@ 00000000000145f0     Stm:StmInit.obj
+ 0002:000001a0       ??_C@_0BA@DDIJOKAH@RsdtLen?5?9?5?$CF08x?6?$AA@ 0000000000014600     Stm:StmInit.obj
+ 0002:000001b0       ??_C@_0P@IBLFAEPD@Xsdt?5?9?5?$CF016lx?6?$AA@ 0000000000014610     Stm:StmInit.obj
+ 0002:000001c0       ??_C@_0BA@MHDKFACL@XsdtLen?5?9?5?$CF08x?6?$AA@ 0000000000014620     Stm:StmInit.obj
+ 0002:000001d0       ??_C@_0BP@FFLEKAFJ@CpuNumber?5from?5ACPI?5MADT?5?9?5?$CFd?6?$AA@ 0000000000014630     Stm:StmInit.obj
+ 0002:000001f0       ??_C@_0BD@HKHBANN@HeapBottom?5?9?5?$CF08x?6?$AA@ 0000000000014650     Stm:StmInit.obj
+ 0002:00000208       ??_C@_0BD@LAAPDBLM@HeapTop?5?5?5?5?9?5?$CF08x?6?$AA@ 0000000000014668     Stm:StmInit.obj
+ 0002:00000220       ??_C@_0CG@KBPJDDE@TxtProcessorSmmDescriptor?5?5?5?5?5?9?5@ 0000000000014680     Stm:StmInit.obj
+ 0002:00000248       ??_C@_0CI@DOMMCINA@?5?5Signature?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?9?5@ 00000000000146a8     Stm:StmInit.obj
+ 0002:00000270       ??_C@_0CG@OEJGABMG@?5?5Size?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?9?5@ 00000000000146d0     Stm:StmInit.obj
+ 0002:00000298       ??_C@_0CG@OOGJHCOA@?5?5SmmDescriptorVerMajor?5?5?5?5?5?5?5?9?5@ 00000000000146f8     Stm:StmInit.obj
+ 0002:000002c0       ??_C@_0CG@OMGALIGD@?5?5SmmDescriptorVerMinor?5?5?5?5?5?5?5?9?5@ 0000000000014720     Stm:StmInit.obj
+ 0002:000002e8       ??_C@_0CG@ILDPIAOC@?5?5LocalApicId?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?9?5@ 0000000000014748     Stm:StmInit.obj
+ 0002:00000310       ??_C@_0CG@KKLIELCN@?5?5ExecutionDisableOutsideSmrr?5?9?5@ 0000000000014770     Stm:StmInit.obj
+ 0002:00000338       ??_C@_0CG@LMJNGLPJ@?5?5Intel64Mode?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?9?5@ 0000000000014798     Stm:StmInit.obj
+ 0002:00000360       ??_C@_0CG@HOKNPECJ@?5?5Cr4Pae?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?9?5@ 00000000000147c0     Stm:StmInit.obj
+ 0002:00000388       ??_C@_0CG@FLDBJHNF@?5?5Cr4Pse?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?9?5@ 00000000000147e8     Stm:StmInit.obj
+ 0002:000003b0       ??_C@_0CG@MPAJGNB@?5?5SmramToVmcsRestoreRequired?5?5?9?5@ 0000000000014810     Stm:StmInit.obj
+ 0002:000003d8       ??_C@_0CG@BOKLJGPC@?5?5ReinitializeVmcsRequired?5?5?5?5?9?5@ 0000000000014838     Stm:StmInit.obj
+ 0002:00000400       ??_C@_0CG@BGGONCPN@?5?5DomainType?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?9?5@ 0000000000014860     Stm:StmInit.obj
+ 0002:00000428       ??_C@_0CG@MAKKAOAK@?5?5XStatePolicy?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?9?5@ 0000000000014888     Stm:StmInit.obj
+ 0002:00000450       ??_C@_0CG@HHOJDOAE@?5?5EptEnabled?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?9?5@ 00000000000148b0     Stm:StmInit.obj
+ 0002:00000478       ??_C@_0CG@MJNOECLI@?5?5SmmCs?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?9?5@ 00000000000148d8     Stm:StmInit.obj
+ 0002:000004a0       ??_C@_0CG@EJADLAGB@?5?5SmmDs?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?9?5@ 0000000000014900     Stm:StmInit.obj
+ 0002:000004c8       ??_C@_0CG@BABFEBAK@?5?5SmmSs?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?9?5@ 0000000000014928     Stm:StmInit.obj
+ 0002:000004f0       ??_C@_0CG@HOGPIABG@?5?5SmmOtherSegment?5?5?5?5?5?5?5?5?5?5?5?5?5?9?5@ 0000000000014950     Stm:StmInit.obj
+ 0002:00000518       ??_C@_0CG@GBBCLGHJ@?5?5SmmTr?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?9?5@ 0000000000014978     Stm:StmInit.obj
+ 0002:00000540       ??_C@_0CI@BLNOCAGF@?5?5SmmCr3?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?9?5@ 00000000000149a0     Stm:StmInit.obj
+ 0002:00000568       ??_C@_0CI@NPHLPLMN@?5?5SmmStmSetupRip?5?5?5?5?5?5?5?5?5?5?5?5?5?5?9?5@ 00000000000149c8     Stm:StmInit.obj
+ 0002:00000590       ??_C@_0CI@EGFMNAKJ@?5?5SmmStmTeardownRip?5?5?5?5?5?5?5?5?5?5?5?9?5@ 00000000000149f0     Stm:StmInit.obj
+ 0002:000005b8       ??_C@_0CI@FPPIIHMJ@?5?5SmmSmiHandlerRip?5?5?5?5?5?5?5?5?5?5?5?5?9?5@ 0000000000014a18     Stm:StmInit.obj
+ 0002:000005e0       ??_C@_0CI@CLKFAIEF@?5?5SmmSmiHandlerRsp?5?5?5?5?5?5?5?5?5?5?5?5?9?5@ 0000000000014a40     Stm:StmInit.obj
+ 0002:00000608       ??_C@_0CI@KEHHGOBB@?5?5SmmGdtPtr?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?9?5@ 0000000000014a68     Stm:StmInit.obj
+ 0002:00000630       ??_C@_0CG@IEEDDOHD@?5?5SmmGdtSize?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?9?5@ 0000000000014a90     Stm:StmInit.obj
+ 0002:00000658       ??_C@_0CG@NDIHEJJG@?5?5RequiredStmSmmRevId?5?5?5?5?5?5?5?5?5?9?5@ 0000000000014ab8     Stm:StmInit.obj
+ 0002:00000680       ??_C@_0CC@BHLBBNLE@?5?5StmProtectionExceptionHandler?3@ 0000000000014ae0     Stm:StmInit.obj
+ 0002:000006a8       ??_C@_0CI@EAGNHKGO@?5?5?5?5SpeRip?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?9?5@ 0000000000014b08     Stm:StmInit.obj
+ 0002:000006d0       ??_C@_0CI@IGOFCNMG@?5?5?5?5SpeRsp?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?9?5@ 0000000000014b30     Stm:StmInit.obj
+ 0002:000006f8       ??_C@_0CG@CCGFBIHE@?5?5?5?5SpeSs?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?9?5@ 0000000000014b58     Stm:StmInit.obj
+ 0002:00000720       ??_C@_0CG@DFKBGDFF@?5?5?5?5PageViolationException?5?5?5?5?9?5@ 0000000000014b80     Stm:StmInit.obj
+ 0002:00000748       ??_C@_0CG@DDLOHBIC@?5?5?5?5MsrViolationException?5?5?5?5?5?9?5@ 0000000000014ba8     Stm:StmInit.obj
+ 0002:00000770       ??_C@_0CG@JJLJCACG@?5?5?5?5RegisterViolationException?9?5@ 0000000000014bd0     Stm:StmInit.obj
+ 0002:00000798       ??_C@_0CG@OINEBKIC@?5?5?5?5IoViolationException?5?5?5?5?5?5?9?5@ 0000000000014bf8     Stm:StmInit.obj
+ 0002:000007c0       ??_C@_0CG@LBHJKDIO@?5?5?5?5PciViolationException?5?5?5?5?5?9?5@ 0000000000014c20     Stm:StmInit.obj
+ 0002:000007e8       ??_C@_0CI@MCFCHIMO@?5?5BiosHwResourceRequirements?5?5?9?5@ 0000000000014c48     Stm:StmInit.obj
+ 0002:00000810       ??_C@_0CI@FEHOIHFB@?5?5AcpiRsdp?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?9?5@ 0000000000014c70     Stm:StmInit.obj
+ 0002:00000838       ??_C@_0CG@NJBNHJFM@?5?5PhysicalAddressBits?5?5?5?5?5?5?5?5?5?9?5@ 0000000000014c98     Stm:StmInit.obj
+ 0002:00000860       ??_C@_0CK@LLBBFFCP@TXT?5Descriptor?5Signature?5ERROR?5?9@ 0000000000014cc0     Stm:StmInit.obj
+ 0002:00000890       ??_C@_0DI@GLNMANP@Version?5?499?5Bios?5detected?5Found?5@ 0000000000014cf0     Stm:StmInit.obj
+ 0002:000008c8       ??_C@_0CO@HELPHOGP@TXT?5Descriptor?5Size?5ERROR?5?9?5?$CF08x@ 0000000000014d28     Stm:StmInit.obj
+ 0002:000008f8       ??_C@_0BF@OPEIHLHC@Register?$CI?$CFd?$CJ?5?9?5?$CF08x?6?$AA@ 0000000000014d58     Stm:StmInit.obj
+ 0002:00000910       ??_C@_0CG@MDPCNBJI@StmHeader?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?9?5@ 0000000000014d70     Stm:StmInit.obj
+ 0002:00000938       ??_C@_0BB@CNMDODBI@Hardware?5field?3?6?$AA@ 0000000000014d98     Stm:StmInit.obj
+ 0002:00000950       ??_C@_0CG@JOAPKPJJ@?5?5StmHeaderRevision?5?5?5?5?5?5?5?5?5?5?5?9?5@ 0000000000014db0     Stm:StmInit.obj
+ 0002:00000978       ??_C@_0CG@EJFGEHAF@?5?5MonitorFeatures?5?5?5?5?5?5?5?5?5?5?5?5?5?9?5@ 0000000000014dd8     Stm:StmInit.obj
+ 0002:000009a0       ??_C@_0CG@KCIOALC@?5?5GdtrLimit?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?9?5@ 0000000000014e00     Stm:StmInit.obj
+ 0002:000009c8       ??_C@_0CG@DEIFKOAI@?5?5GdtrBaseOffset?5?5?5?5?5?5?5?5?5?5?5?5?5?5?9?5@ 0000000000014e28     Stm:StmInit.obj
+ 0002:000009f0       ??_C@_0CG@HNIEHDNK@?5?5CsSelector?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?9?5@ 0000000000014e50     Stm:StmInit.obj
+ 0002:00000a18       ??_C@_0CG@FCIAEJHD@?5?5EipOffset?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?9?5@ 0000000000014e78     Stm:StmInit.obj
+ 0002:00000a40       ??_C@_0CG@JDHCIFOM@?5?5EspOffset?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?9?5@ 0000000000014ea0     Stm:StmInit.obj
+ 0002:00000a68       ??_C@_0CG@GOHCPAAO@?5?5Cr3Offset?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?9?5@ 0000000000014ec8     Stm:StmInit.obj
+ 0002:00000a90       ??_C@_0BB@HDGFOJE@Software?5field?3?6?$AA@ 0000000000014ef0     Stm:StmInit.obj
+ 0002:00000aa8       ??_C@_0CG@PCKKOKCI@?5?5StmSpecVerMajor?5?5?5?5?5?5?5?5?5?5?5?5?5?9?5@ 0000000000014f08     Stm:StmInit.obj
+ 0002:00000ad0       ??_C@_0CG@LHKHOHMA@?5?5StmSpecVerMinor?5?5?5?5?5?5?5?5?5?5?5?5?5?9?5@ 0000000000014f30     Stm:StmInit.obj
+ 0002:00000af8       ??_C@_0CG@DALDGNBI@?5?5StaticImageSize?5?5?5?5?5?5?5?5?5?5?5?5?5?9?5@ 0000000000014f58     Stm:StmInit.obj
+ 0002:00000b20       ??_C@_0CG@CLHFOEPB@?5?5PerProcDynamicMemorySize?5?5?5?5?9?5@ 0000000000014f80     Stm:StmInit.obj
+ 0002:00000b48       ??_C@_0CG@GMICADJO@?5?5AdditionalDynamicMemorySize?5?9?5@ 0000000000014fa8     Stm:StmInit.obj
+ 0002:00000b70       ??_C@_0CG@DFDHBJD@?5?5Intel64ModeSupported?5?5?5?5?5?5?5?5?9?5@ 0000000000014fd0     Stm:StmInit.obj
+ 0002:00000b98       ??_C@_0CG@FLPBGPL@?5?5EptSupported?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?9?5@ 0000000000014ff8     Stm:StmInit.obj
+ 0002:00000bc0       ??_C@_0CG@KBFPADMI@?5?5NumberOfRevIDs?5?5?5?5?5?5?5?5?5?5?5?5?5?5?9?5@ 0000000000015020     Stm:StmInit.obj
+ 0002:00000be8       ??_C@_0CI@FEBODAOO@?5?5StmSmmRevID?$CI?$CF02d?$CJ?5?5?5?5?5?5?5?5?5?5?5?5?5@ 0000000000015048     Stm:StmInit.obj
+ 0002:00000c10       ??_C@_0BF@LDIPJPBD@MinMsegSize?5?9?5?$CF08x?$CB?6?$AA@ 0000000000015070     Stm:StmInit.obj
+ 0002:00000c28       ??_C@_0CG@MOCMIBKN@CPUID?5?9?5PhysicalAddressBits?5?9?50x@ 0000000000015088     Stm:StmInit.obj
+ 0002:00000c50       ??_C@_0CH@GGFEFEJL@PCIExpressBase?5?5?5from?5TXT?5Region@ 00000000000150b0     Stm:StmInit.obj
+ 0002:00000c78       ??_C@_0CH@DFBJMDAH@PCIExpressLength?5from?5TXT?5Region@ 00000000000150d8     Stm:StmInit.obj
+ 0002:00000ca0       ??_C@_0CG@PPFCFEHM@PCIExpressBase?5?5?5from?5ACPI?5MCFG?5@ 0000000000015100     Stm:StmInit.obj
+ 0002:00000cc8       ??_C@_0CG@BFGPIIO@PCIExpressLength?5from?5ACPI?5MCFG?5@ 0000000000015128     Stm:StmInit.obj
+ 0002:00000cf0       ??_C@_0CP@FNHHILJI@mHostContextCommon?4PciExpressBas@ 0000000000015150     Stm:StmInit.obj
+ 0002:00000d20       ??_C@_0EJ@KAOFMNFN@mHostContextCommon?4PciExpressBas@ 0000000000015180     Stm:StmInit.obj
+ 0002:00000d70       ??_C@_0DM@CKMCFNHD@mHostContextCommon?4PciExpressBas@ 00000000000151d0     Stm:StmInit.obj
+ 0002:00000db0       ??_C@_0BG@KNEJOCKG@DumpStmResource?5?9?5?$CFx?6?$AA@ 0000000000015210     Stm:StmInit.obj
+ 0002:00000dc8       ??_C@_0BL@DECDDAJO@RegisterBiosResource?5?9?5?$CFx?6?$AA@ 0000000000015228     Stm:StmInit.obj
+ 0002:00000de8       ??_C@_0CJ@NGKNEFGH@?$CB?$CB?$CBEnter?5StmInit?5?$CIAP?5done?$CJ?$CB?$CB?$CB?5?9?5@ 0000000000015248     Stm:StmInit.obj
+ 0002:00000e18       ??_C@_0DD@OGNKNABA@?$CB?$CB?$CBIndex?$CI0x?$CFx?$CJ?5?$DO?$DN?5mHostContextCo@ 0000000000015278     Stm:StmInit.obj
+ 0002:00000e50       ??_C@_0BP@GNJDPNBK@JoinedCpuNum?$CI?$CFd?$CJ?5?$DO?5CpuNum?$CI?$CFd?$CJ?6?$AA@ 00000000000152b0     Stm:StmInit.obj
+ 0002:00000e70       ??_C@_0BD@LEBIEFFI@SMBASE?$CI?$CFd?$CJ?5?9?5?$CF08x?6?$AA@ 00000000000152d0     Stm:StmInit.obj
+ 0002:00000e88       ??_C@_0CG@FCDLHGOO@TxtProcessorSmmDescriptor?$CI?$CFd?$CJ?5?9?5@ 00000000000152e8     Stm:StmInit.obj
+ 0002:00000eb0       ??_C@_0BC@IADILHBL@Stack?$CI?$CFd?$CJ?5?9?5?$CF08x?6?$AA@ 0000000000015310     Stm:StmInit.obj
+ 0002:00000ec8       ??_C@_0BJ@DGCPGBOD@SmiVmcsPtr?$CI?$CFd?$CJ?5?9?5?$CF016lx?6?$AA@ 0000000000015328     Stm:StmInit.obj
+ 0002:00000ee8       ??_C@_0BJ@DGHDMAHA@SmmVmcsPtr?$CI?$CFd?$CJ?5?9?5?$CF016lx?6?$AA@ 0000000000015348     Stm:StmInit.obj
+ 0002:00000f08       ??_C@_0BK@BFEDKPAB@CurrentVmcs?$CI?$CFd?$CJ?5?9?5?$CF016lx?6?$AA@ 0000000000015368     Stm:StmInit.obj
+ 0002:00000f28       ??_C@_0CA@HOFIOCPL@CurrentVmcs?5violation?5?9?5?$CF016lx?6?$AA@ 0000000000015388     Stm:StmInit.obj
+ 0002:00000f48       ??_C@_0CH@IEEPIKGA@ERROR?3?5AsmVmClear?$CI?$CFd?$CJ?5?9?5?$CF016lx?5?3@ 00000000000153a8     Stm:StmInit.obj
+ 0002:00000f70       ??_C@_0CJ@IFGKAKFB@ERROR?3?5AsmVmPtrLoad?$CI?$CFd?$CJ?5?9?5?$CF016lx@ 00000000000153d0     Stm:StmInit.obj
+ 0002:00000fa0       ??_C@_0CA@OPBFJPEP@ValidateBiosResourceList?5fail?$CB?6?$AA@ 0000000000015400     Stm:StmInit.obj
+ 0002:00000fc0       ??_C@_0BG@MFKMGOCB@?$CFld?5?$CB?$CB?$CBLaunchBack?$CB?$CB?$CB?6?$AA@ 0000000000015420     Stm:StmInit.obj
+ 0002:00000fd8       ??_C@_0BL@GMKKIJCC@?$CFld?5?$CB?$CB?$CBLaunchBack?5FAIL?$CB?$CB?$CB?6?$AA@ 0000000000015438     Stm:StmInit.obj
+ 0002:00000ff8       ??_C@_0BC@DEBGPAHJ@?$CFld?5Rflags?3?5?$CF08x?6?$AA@ 0000000000015458     Stm:StmInit.obj
+ 0002:00001010       ??_C@_0CL@NKMDPOA@?$CFld?5VMCS_32_RO_VM_INSTRUCTION_ER@ 0000000000015470     Stm:StmInit.obj
+ 0002:00001040       ??_C@_0BL@MPEJJAGH@?$CB?$CB?$CBUnknownHandlerSmi?5?9?5?$CFd?6?$AA@ 00000000000154a0     Stm:SmiHandler.obj
+ 0002:00001060       ??_C@_0BF@HMOPBGFM@?$CB?$CB?$CBUnknownReason?$CB?$CB?$CB?6?$AA@ 00000000000154c0     Stm:SmiHandler.obj
+ 0002:00001078       ??_C@_0CO@CHPMNHCJ@?$CFld?5StmHandlerSmi?5?9?5?$CB?$CB?$CBResumeGue@ 00000000000154d8     Stm:SmiHandler.obj
+ 0002:000010a8       ??_C@_0CC@JMFCDFMF@?$CFld?5StmHandlerSmi?5?9?5Rflags?3?5?$CF08x@ 0000000000015508     Stm:SmiHandler.obj
+ 0002:000010d0       ??_C@_0DL@GHOIAHKF@?$CFld?5StmHandlerSmi?5?9?5VMCS_32_RO_V@ 0000000000015530     Stm:SmiHandler.obj
+ 0002:00001110       ??_C@_0DH@LEFMCLNH@STM?5Page?5Fault?5at?50x?$CF016lx?0?5Rip?5@ 0000000000015570     Stm:Paging.obj
+ 0002:00001148       ??_C@_0BK@OCLPFBBC@No?5Log?5entries?5available?6?$AA@ 00000000000155a8     Stm:EventLog.obj
+ 0002:00001168       ??_C@_0CO@LBJKGGOB@AddEventLogForResource?5?9?5Invalid@ 00000000000155c8     Stm:EventLog.obj
+ 0002:00001198       ??_C@_0BM@DNOOAPPE@?5?5EventSerialNumber?5?3?5?$CF08x?6?$AA@ 00000000000155f8     Stm:EventLog.obj
+ 0002:000011b8       ??_C@_0BC@FPEMFBIF@EVT_LOG_STARTED?3?6?$AA@ 0000000000015618     Stm:EventLog.obj
+ 0002:000011d0       ??_C@_0BC@EGMIBAII@EVT_LOG_STOPPED?3?6?$AA@ 0000000000015630     Stm:EventLog.obj
+ 0002:000011e8       ??_C@_0CF@PBLOPJLO@EVT_LOG_INVALID_PARAMETER_DETECT@ 0000000000015648     Stm:EventLog.obj
+ 0002:00001210       ??_C@_0BM@EHFAHFLD@?5?5VmcallApiNumber?5?5?5?3?5?$CF08x?6?$AA@ 0000000000015670     Stm:EventLog.obj
+ 0002:00001230       ??_C@_0CD@LLECDPNC@EVT_HANDLED_PROTECTION_EXCEPTION@ 0000000000015690     Stm:EventLog.obj
+ 0002:00001258       ??_C@_0CI@BCBPNAAC@EVT_BIOS_ACCESS_TO_UNCLAIMED_RES@ 00000000000156b8     Stm:EventLog.obj
+ 0002:00001280       ??_C@_0CG@CDBMGKGF@EVT_MLE_RESOURCE_PROTECTION_GRAN@ 00000000000156e0     Stm:EventLog.obj
+ 0002:000012a8       ??_C@_0CF@OFHDNNLB@EVT_MLE_RESOURCE_PROTECTION_DENI@ 0000000000015708     Stm:EventLog.obj
+ 0002:000012d0       ??_C@_0BN@MOKKPHFM@EVT_MLE_RESOURCE_UNPROTECT?3?6?$AA@ 0000000000015730     Stm:EventLog.obj
+ 0002:000012f0       ??_C@_0CD@EDEOMDFP@EVT_MLE_RESOURCE_UNPROTECT_ERROR@ 0000000000015750     Stm:EventLog.obj
+ 0002:00001318       ??_C@_0BP@CDNCEHI@EVT_MLE_DOMAIN_TYPE_DEGRADED?3?6?$AA@ 0000000000015778     Stm:EventLog.obj
+ 0002:00001338       ??_C@_0CC@BPLNMKAL@?5?5VmcsPhysPointer?5?5?5?5?3?50x?$CF016lx?3@ 0000000000015798     Stm:EventLog.obj
+ 0002:00001360       ??_C@_0CA@CGKAMFPH@?5?5ExpectedDomainType?5?3?50x?$CF02x?3?6?$AA@ 00000000000157c0     Stm:EventLog.obj
+ 0002:00001380       ??_C@_0CA@NIBHHGPM@?5?5DegradedDomainType?5?3?50x?$CF02x?3?6?$AA@ 00000000000157e0     Stm:EventLog.obj
+ 0002:000013a0       ??_C@_0FD@BNIIBDOL@?$CFld?5LaunchPeVM?5?9?5VM?1PE?5heap?5spac@ 0000000000015800     Stm:PeLoadVm.obj
+ 0002:00001400       ??_C@_0EB@CGEIEPKK@?$CFld?5LaunchPeVm?5?9?5Clearing?5VM?1PE?5@ 0000000000015860     Stm:PeLoadVm.obj
+ 0002:00001448       ??_C@_0CP@LOCJFINH@?$CFld?5LaunchPeVm?5?9?5before?5check?5Pe@ 00000000000158a8     Stm:PeLoadVm.obj
+ 0002:00001480       ??_C@_0EF@IABPDPIN@?$CFld?5LaunchPeVM?5?9?5SMI?5being?5proce@ 00000000000158e0     Stm:PeLoadVm.obj
+ 0002:000014c8       ??_C@_0CM@CKJKJKCJ@?$CFld?5LaunchPeVm?9?5IntialStackPoint@ 0000000000015928     Stm:PeLoadVm.obj
+ 0002:000014f8       ??_C@_0DD@MGOJPEAG@?$CFld?5LaunchPeVm?9?5VMCS_N_GUEST_RFL@ 0000000000015958     Stm:PeLoadVm.obj
+ 0002:00001530       ??_C@_0CH@NMMHFOLB@?$CFld?5LaunchPeVm?9?5IA32_EFER_MSR?3?50@ 0000000000015990     Stm:PeLoadVm.obj
+ 0002:00001560       ??_C@_0EG@LCPMGDGG@?$CFld?5LaunchPeVm?9?5VMCS_32_CONTROL_@ 00000000000159c0     Stm:PeLoadVm.obj
+ 0002:000015b0       ??_C@_0IA@NBNGKFJP@?$CFld?5LaunchPeVm?9?5guest?5parameter?5@ 0000000000015a10     Stm:PeLoadVm.obj
+ 0002:00001630       ??_C@_0DC@HPKMAEGL@?$CFld?5LaunchPeVM?5?9?5Initiating?5PE?1V@ 0000000000015a90     Stm:PeLoadVm.obj
+ 0002:00001668       ??_C@_0DF@KPGPAPK@?$CFld?5LaunchPeVM?5?9?5SharedPageStm?50@ 0000000000015ac8     Stm:PeLoadVm.obj
+ 0002:000016a0       ??_C@_0FL@IPMLOADK@?$CFld?5LaunchPeVm?5?9?5?$CK?$CK?$CKDebug?$CK?$CK?$CK?5VmP@ 0000000000015b00     Stm:PeLoadVm.obj
+ 0002:00001700       ??_C@_0EM@MCGAICKD@?$CFld?5LaunchPeVM?5?9?5SMI?5detected?5du@ 0000000000015b60     Stm:PeLoadVm.obj
+ 0002:00001750       ??_C@_0DP@CLCBFMCM@?$CFld?5LaunchPeVM?5?9?5Warning?3?5Return@ 0000000000015bb0     Stm:PeLoadVm.obj
+ 0002:00001790       ??_C@_0EM@LJKPFII@?$CFld?5LaunchPeVM?5?9?5NMI?5detected?5du@ 0000000000015bf0     Stm:PeLoadVm.obj
+ 0002:000017e0       ??_C@_0DE@PDBEEGNJ@?$CFld?5LaunchPeVM?5?9?5Launching?5PE?1VM@ 0000000000015c40     Stm:PeLoadVm.obj
+ 0002:00001818       ??_C@_0BL@DNOLNCHG@?$CFld?5LaunchPeVm?5?9?5?$CISTM?$CJ?3o?$CI?6?$AA@ 0000000000015c78     Stm:PeLoadVm.obj
+ 0002:00001838       ??_C@_0DK@OOLMPLLG@?$CFld?5LaunchPeVm?5?9?5?$CB?$CB?$CBResumeGuestS@ 0000000000015c98     Stm:PeLoadVm.obj
+ 0002:00001878       ??_C@_0CB@BLKMDDJB@?$CFld?5LaunchPeVm?5?9?5Rflags?3?5?$CF08llx?6@ 0000000000015cd8     Stm:PeLoadVm.obj
+ 0002:000018a0       ??_C@_0DI@NCFCMAIP@?$CFld?5LaunchPeVm?5?9?5VMCS_32_RO_VM_I@ 0000000000015d00     Stm:PeLoadVm.obj
+ 0002:000018d8       ??_C@_0BH@DOIOFKFG@?$CFld?5RunPermVM?5entered?6?$AA@ 0000000000015d38     Stm:PeLoadVm.obj
+ 0002:000018f0       ??_C@_0CK@NGGBEJMG@?$CFld?5RunPermVM?5?9?5Can?5not?5run?5a?5Pe@ 0000000000015d50     Stm:PeLoadVm.obj
+ 0002:00001920       ??_C@_0EF@NOGBKOFG@?$CFld?5RunPermVM?5?9?5Attempting?5to?5ex@ 0000000000015d80     Stm:PeLoadVm.obj
+ 0002:00001970       ??_C@_0ED@JIHHIGGM@?$CFld?5RunPermVM?5?9?5Attempt?5to?5execu@ 0000000000015dd0     Stm:PeLoadVm.obj
+ 0002:000019b8       ??_C@_0CC@KBHIFLBA@?$CFld?5?9?5Error?5in?5configuring?5PE?5VM@ 0000000000015e18     Stm:PeLoadVm.obj
+ 0002:000019e0       ??_C@_0DC@HMIMDEKM@?$CFld?5PostPeVmProc?5?9?5Platform?5Data@ 0000000000015e40     Stm:PeLoadVm.obj
+ 0002:00001a20       ??_C@_0EI@EIBEINLM@?$CFld?5PostPeVmProc?5?9?5TSC?5Info?5?9?5St@ 0000000000015e80     Stm:PeLoadVm.obj
+ 0002:00001a70       ??_C@_0FB@CONMNPHA@?$CFld?5PostPeVmProc?5?9?5PeType?3?5?$CFd?5mo@ 0000000000015ed0     Stm:PeLoadVm.obj
+ 0002:00001ad0       ??_C@_0EC@MLGMCBCO@?$CFld?5PostPeVmProc?5?9?5Perm?5VM?5confi@ 0000000000015f30     Stm:PeLoadVm.obj
+ 0002:00001b18       ??_C@_0DI@LJFDMKLP@?$CFld?5PostPeVmProc?5?9?5Perm?5VM?5confi@ 0000000000015f78     Stm:PeLoadVm.obj
+ 0002:00001b50       ??_C@_0DM@NPAIONJE@?$CFld?5PostPeVmProc?5?9?5Perm?5VM?5being@ 0000000000015fb0     Stm:PeLoadVm.obj
+ 0002:00001b90       ??_C@_0DC@GLONCIFN@?$CFld?5PostPeVmProc?5?9?5PE?1VM?5suspend@ 0000000000015ff0     Stm:PeLoadVm.obj
+ 0002:00001bd0       ??_C@_0EH@MELNFOLE@?$CFld?5PostPeVmProc?5?9?5?$CB?$CBexiting?5to?5@ 0000000000016030     Stm:PeLoadVm.obj
+ 0002:00001c18       ??_C@_0DG@FIPGGPDF@?$CFld?5PostPeVmProc?5?9?5PE?1VM?5guest?5r@ 0000000000016078     Stm:PeLoadVm.obj
+ 0002:00001c50       ??_C@_0DF@DOIIKLKH@?$CFld?5PostPeVmProc?5?9?5PE?1VM?5Free?5?$CIA@ 00000000000160b0     Stm:PeLoadVm.obj
+ 0002:00001c88       ??_C@_0CN@NOEDMKPK@?$CFld?5PostPeVmProc?5?9?5PE?1VM?5Idle?5?9?5@ 00000000000160e8     Stm:PeLoadVm.obj
+ 0002:00001cb8       ??_C@_0DK@OMOJOKNA@?$CFld?5PostPeVmProc?5?9?5Unsucessful?5r@ 0000000000016118     Stm:PeLoadVm.obj
+ 0002:00001cf8       ??_C@_0DF@DPMJDFEH@?$CFld?5PostPeVmProc?5?9?5sucessfully?5c@ 0000000000016158     Stm:PeLoadVm.obj
+ 0002:00001d30       ??_C@_0BN@FKHPFMP@?$CFld?5PostPeVmProc?5?9?5?$CISTM?$CJ?3o?$CI?6?$AA@ 0000000000016190     Stm:PeLoadVm.obj
+ 0002:00001d50       ??_C@_0DC@OGOBPDED@?$CFld?5PostPeVmProc?5?9?5?$CB?$CB?$CBPePostVmPr@ 00000000000161b0     Stm:PeLoadVm.obj
+ 0002:00001d88       ??_C@_0CB@KOICMEAB@?$CFld?5PostPeVmProc?5?9?5Rflags?3?5?$CF08x?6@ 00000000000161e8     Stm:PeLoadVm.obj
+ 0002:00001db0       ??_C@_0DK@OBLLLALF@?$CFld?5PostPeVmProc?5?9?5VMCS_32_RO_VM@ 0000000000016210     Stm:PeLoadVm.obj
+ 0002:00001df0       ??_C@_0CA@LLBJHMGE@?$CFld?5PostPeVmProc?5?9?5CpuDeadLoop?6?$AA@ 0000000000016250     Stm:PeLoadVm.obj
+ 0002:00001e10       ??_C@_0CN@MMDBLGAP@?$CFld?5save_Inter_PeVm?5?9?5sucessfull@ 0000000000016270     Stm:PeLoadVm.obj
+ 0002:00001e40       ??_C@_0DE@HLNGEOHM@?$CFld?5RestoreInterPeVm?5?9?5setup?5don@ 00000000000162a0     Stm:PeLoadVm.obj
+ 0002:00001e78       ??_C@_0BG@FOCENOKB@?$CFld?5?9?5No?5region?5list?6?$AA@ 00000000000162d8     Stm:PeLoadVm.obj
+ 0002:00001e90       ??_C@_0BK@KPOOKHAA@?$CFld?5?9?9?9?5Region?5List?5?9?9?9?5?6?$AA@ 00000000000162f0     Stm:PeLoadVm.obj
+ 0002:00001eb0       ??_C@_0DF@JBHPNOPG@?$CFld?5Finish?5scanning?5Region?5List?5@ 0000000000016310     Stm:PeLoadVm.obj
+ 0002:00001ee8       ??_C@_0DF@KLAMAJHA@?$CFld?5region?5set?5at?50x?$CF016llx?3?$CF016@ 0000000000016348     Stm:PeLoadVm.obj
+ 0002:00001f20       ??_C@_0BE@NGAADBID@NMI?5handler?5active?6?$AA@ 0000000000016380     Stm:PeLoadVm.obj
+ 0002:00001f38       ??_C@_0BH@DNAPJIMO@?$CK?$CK?$CKNMI?$CK?$CK?$CKHappened?$CK?$CK?$CK?$CK?6?$AA@ 0000000000016398     Stm:PeLoadVm.obj
+ 0002:00001f50       ??_C@_0DG@GPIJDKIG@?$CFld?5enable_nmi?5?9?5Return?5from?5non@ 00000000000163b0     Stm:PeLoadVm.obj
+ 0002:00001f88       ??_C@_0CE@HGFINHJO@InitPe?5?9?5Starting?5PE?5initiaizati@ 00000000000163e8     Stm:PeLoadVm.obj
+ 0002:00001fb0       ??_C@_0CF@HAJMHBBH@InitPe?5?9?5PE?5initialization?5compl@ 0000000000016410     Stm:PeLoadVm.obj
+ 0002:00001fd8       ??_C@_0BJ@LBCNKAIH@BaseAddress?5?$DM?50x00100000?$AA@ 0000000000016438     Stm:EptInit.obj
+ 0002:00002000       ??_C@_0EA@NDGPCBA@z?3?2stm_reference?2stmpegit?2stm?9pe@ 0000000000016460     Stm:EptInit.obj
+ 0002:00002040       ??_C@_0BC@FEDIJHFF@?$CI?$CIBOOLEAN?$CJ?$CI0?$DN?$DN1?$CJ?$CJ?$AA@ 00000000000164a0     Stm:EptInit.obj
+ 0002:00002058       ??_C@_0M@CCPLJHBF@Count?5?$DM?$DN?532?$AA@ 00000000000164b8     Stm:EptInit.obj
+ 0002:00002068       ??_C@_0CH@JCHJJPLE@MTRR?5error?5for?50x?$CF016lx?3?5?$CF02x?5VS@ 00000000000164c8     Stm:EptInit.obj
+ 0002:00002090       ??_C@_0BC@DOPPIEGO@EptDumpPageTable?6?$AA@ 00000000000164f0     Stm:EptInit.obj
+ 0002:000020a8       ??_C@_0BH@NKNIDDFL@EptPointer?5?9?50x?$CF016lx?6?$AA@ 0000000000016508     Stm:EptInit.obj
+ 0002:000020c0       ??_C@_0CA@PNDIPLAP@?5?5L4PageTable?$CI0x?$CFx?$CJ?5?9?50x?$CF016lx?6?$AA@ 0000000000016520     Stm:EptInit.obj
+ 0002:000020e0       ??_C@_0CC@HEKOPJFG@?5?5?5?5L3PageTable?$CI0x?$CFx?$CJ?5?9?50x?$CF016lx@ 0000000000016540     Stm:EptInit.obj
+ 0002:00002108       ??_C@_0CE@LKGJLEOC@?5?5?5?5?5?5L2PageTable?$CI0x?$CFx?$CJ?5?9?50x?$CF016@ 0000000000016568     Stm:EptInit.obj
+ 0002:00002130       ??_C@_0CG@JJECKPAJ@?5?5?5?5?5?5?5?5L1PageTable?$CI0x?$CFx?$CJ?5?9?50x?$CF0@ 0000000000016590     Stm:EptInit.obj
+ 0002:00002158       ??_C@_0CE@CMJLDLKK@ExecutionDisableOutsideSmrr?5?9?5?$CF0@ 00000000000165b8     Stm:EptInit.obj
+ 0002:00002180       ??_C@_0BJ@BMIMDHII@SMRR_PHYS_BASE?5?9?5?$CF016lx?6?$AA@ 00000000000165e0     Stm:EptInit.obj
+ 0002:000021a0       ??_C@_0BJ@KBDFCHAL@SMRR_PHYS_MASK?5?9?5?$CF016lx?6?$AA@ 0000000000016600     Stm:EptInit.obj
+ 0002:000021c0       ??_C@_0BB@MIIIGEJC@SmrrBase?5?9?5?$CF08x?6?$AA@ 0000000000016620     Stm:EptInit.obj
+ 0002:000021d8       ??_C@_0BD@MLEMEMLI@SmrrLength?5?9?5?$CF08x?6?$AA@ 0000000000016638     Stm:EptInit.obj
+ 0002:000021f0       ??_C@_0BC@KLBEGLJA@StmHeader?5?9?5?$CF08x?6?$AA@ 0000000000016650     Stm:EptInit.obj
+ 0002:00002208       ??_C@_0BA@CDMHKBHD@StmSize?5?9?5?$CF08x?6?$AA@ 0000000000016668     Stm:EptInit.obj
+ 0002:00002218       ??_C@_0BE@POFMEFDP@GuestCr3?$CI0?$CJ?5?9?5?$CF08x?6?$AA@ 0000000000016678     Stm:EptInit.obj
+ 0002:00002230       ??_C@_0CA@IBILHBNO@SMM?5NonOverlayed?5Base?5?5?5?9?5?$CF08x?6?$AA@ 0000000000016690     Stm:EptInit.obj
+ 0002:00002250       ??_C@_0CA@CPEOFHHJ@SMM?5NonOverlayed?5Length?5?9?5?$CF08x?6?$AA@ 00000000000166b0     Stm:EptInit.obj
+ 0002:00002270       ??_C@_0BB@BDMNBCLI@TsegBase?5?9?5?$CF08x?6?$AA@ 00000000000166d0     Stm:EptInit.obj
+ 0002:00002288       ??_C@_0BD@BNEBIPNM@TsegLength?5?9?5?$CF08x?6?$AA@ 00000000000166e8     Stm:EptInit.obj
+ 0002:000022a0       ??_C@_0P@EEKLGKEO@TsegBase?5?$DN?$DN?50?6?$AA@ 0000000000016700     Stm:EptInit.obj
+ 0002:000022b0       ??_C@_0BG@DMIMEDIM@TsegBase?5?$CB?$DN?5SmrrBase?6?$AA@ 0000000000016710     Stm:EptInit.obj
+ 0002:000022c8       ??_C@_0BK@CBKNGNJD@TsegLength?5?$CB?$DN?5SmrrLength?6?$AA@ 0000000000016728     Stm:EptInit.obj
+ 0002:000022e8       ??_C@_0O@JNNIPFKI@Protect?5MSEG?6?$AA@ 0000000000016748     Stm:EptInit.obj
+ 0002:000022f8       ??_C@_0BC@FPLJOMJE@ApicToIndex?5fail?6?$AA@ 0000000000016758     Stm:SmmMp.obj
+ 0002:00002310       ??_C@_0DN@CJNGLCOI@AllocatePages?$CI0x?$CFx?$CJ?5fail?5?9?5no?5fr@ 0000000000016770     Stm:Memory.obj
+ 0002:00002350       ??_C@_0BP@IKFHMEIG@SmmStmSetupRip?5start?5?$CI?$CFd?$CJ?5?4?4?4?6?$AA@ 00000000000167b0     Stm:SmmSetup.obj
+ 0002:00002370       ??_C@_0BL@GJNCBFDM@New?5HostStack?5?$CI?$CFd?$CJ?5?9?5?$CF08x?6?$AA@ 00000000000167d0     Stm:SmmSetup.obj
+ 0002:00002390       ??_C@_0BF@DBFEFNMA@?$CB?$CB?$CBSmmSetup?5FAIL?$CB?$CB?$CB?6?$AA@ 00000000000167f0     Stm:SmmSetup.obj
+ 0002:000023a8       ??_C@_0O@LIECFPOF@Rflags?3?5?$CF08x?6?$AA@ 0000000000016808     Stm:SmmSetup.obj
+ 0002:000023b8       ??_C@_0CH@NBLGDKII@VMCS_32_RO_VM_INSTRUCTION_ERROR?3@ 0000000000016818     Stm:SmmSetup.obj
+ 0002:000023e0       ??_C@_0BJ@EDGHMNLL@SmmStmSetupRip?5end?5?$CI?$CFd?$CJ?6?$AA@ 0000000000016840     Stm:SmmSetup.obj
+ 0002:00002400       ??_C@_0BI@ICMDGJKE@?5?5RscType?5?5?5?5?5?5?5?3?5?$CF08x?6?$AA@ 0000000000016860     Stm:StmResource.obj
+ 0002:00002418       ??_C@_0BI@EHHMPJJP@?5?5RscLength?5?5?5?5?5?3?5?$CF04x?6?$AA@ 0000000000016878     Stm:StmResource.obj
+ 0002:00002430       ??_C@_0BI@NIOHFIEG@?5?5ReturnStatus?5?5?3?5?$CF04x?6?$AA@ 0000000000016890     Stm:StmResource.obj
+ 0002:00002448       ??_C@_0BI@NOAELGOA@?5?5IgnoreResource?3?5?$CF04x?6?$AA@ 00000000000168a8     Stm:StmResource.obj
+ 0002:00002460       ??_C@_0BD@KHFDMIJ@END_OF_RESOURCES?3?6?$AA@ 00000000000168c0     Stm:StmResource.obj
+ 0002:00002478       ??_C@_0CF@CIBPOML@?5?5ResourceListContinuation?5?3?5?$CF01@ 00000000000168d8     Stm:StmResource.obj
+ 0002:000024a0       ??_C@_0M@BOHBHNGE@MEM_RANGE?3?6?$AA@ 0000000000016900     Stm:StmResource.obj
+ 0002:000024b0       ??_C@_0BK@NELIBIJO@?5?5Base?5?5?5?5?5?5?5?5?5?5?3?5?$CF016lx?6?$AA@ 0000000000016910     Stm:StmResource.obj
+ 0002:000024d0       ??_C@_0BK@NGFHFMNI@?5?5Length?5?5?5?5?5?5?5?5?3?5?$CF016lx?6?$AA@ 0000000000016930     Stm:StmResource.obj
+ 0002:000024f0       ??_C@_0BI@LLLFICFH@?5?5RWXAttributes?5?3?5?$CF08x?6?$AA@ 0000000000016950     Stm:StmResource.obj
+ 0002:00002508       ??_C@_0L@KOAAPOAD@IO_RANGE?3?6?$AA@ 0000000000016968     Stm:StmResource.obj
+ 0002:00002518       ??_C@_0BI@LODNAKFP@?5?5Base?5?5?5?5?5?5?5?5?5?5?3?5?$CF04x?6?$AA@ 0000000000016978     Stm:StmResource.obj
+ 0002:00002530       ??_C@_0BI@GBIFAIAJ@?5?5Length?5?5?5?5?5?5?5?5?3?5?$CF04x?6?$AA@ 0000000000016990     Stm:StmResource.obj
+ 0002:00002548       ??_C@_0N@JOJOEOKG@MMIO_RANGE?3?6?$AA@ 00000000000169a8     Stm:StmResource.obj
+ 0002:00002558       ??_C@_0M@IOJHKJIJ@MSR_RANGE?3?6?$AA@ 00000000000169b8     Stm:StmResource.obj
+ 0002:00002568       ??_C@_0BI@LMKCMAII@?5?5MsrIndex?5?5?5?5?5?5?3?5?$CF08x?6?$AA@ 00000000000169c8     Stm:StmResource.obj
+ 0002:00002580       ??_C@_0BI@MLDJOEEG@?5?5KernelModeProc?3?5?$CF08x?6?$AA@ 00000000000169e0     Stm:StmResource.obj
+ 0002:00002598       ??_C@_0BK@CGCJNMFL@?5?5ReadMask?5?5?5?5?5?5?3?5?$CF016lx?6?$AA@ 00000000000169f8     Stm:StmResource.obj
+ 0002:000025b8       ??_C@_0BK@KEJPNBNI@?5?5WriteMask?5?5?5?5?5?3?5?$CF016lx?6?$AA@ 0000000000016a18     Stm:StmResource.obj
+ 0002:000025d8       ??_C@_0BA@DMCEOGBN@PCI_CFG_RANGE?3?6?$AA@ 0000000000016a38     Stm:StmResource.obj
+ 0002:000025e8       ??_C@_0BI@HKFNGCDG@?5?5RWAttributes?5?5?3?5?$CF04x?6?$AA@ 0000000000016a48     Stm:StmResource.obj
+ 0002:00002600       ??_C@_0BI@LADLNOOA@?5?5OriginatingBus?3?5?$CF02x?6?$AA@ 0000000000016a60     Stm:StmResource.obj
+ 0002:00002618       ??_C@_0BI@KJAMHDMO@?5?5LastNodeIndex?5?3?5?$CF02x?6?$AA@ 0000000000016a78     Stm:StmResource.obj
+ 0002:00002630       ??_C@_0BI@IBOPBDBC@?5?5Type?5?5?5?5?5?5?5?5?5?5?3?5?$CF02x?6?$AA@ 0000000000016a90     Stm:StmResource.obj
+ 0002:00002648       ??_C@_0BI@EPIIKFJE@?5?5Subtype?5?5?5?5?5?5?5?3?5?$CF02x?6?$AA@ 0000000000016aa8     Stm:StmResource.obj
+ 0002:00002660       ??_C@_0BI@OAENAANC@?5?5PciDevice?5?5?5?5?5?3?5?$CF02x?6?$AA@ 0000000000016ac0     Stm:StmResource.obj
+ 0002:00002678       ??_C@_0BI@JJBBHPM@?5?5PciFunction?5?5?5?3?5?$CF02x?6?$AA@ 0000000000016ad8     Stm:StmResource.obj
+ 0002:00002690       ??_C@_0BD@FDLGDOIG@TRAPPED_IO_RANGE?3?6?$AA@ 0000000000016af0     Stm:StmResource.obj
+ 0002:000026a8       ??_C@_0BI@HLAGCJFK@?5?5In?5?5?5?5?5?5?5?5?5?5?5?5?3?5?$CF04x?6?$AA@ 0000000000016b08     Stm:StmResource.obj
+ 0002:000026c0       ??_C@_0BI@IHCMAKMJ@?5?5Out?5?5?5?5?5?5?5?5?5?5?5?3?5?$CF04x?6?$AA@ 0000000000016b20     Stm:StmResource.obj
+ 0002:000026d8       ??_C@_0BI@JHCKFMOE@?5?5Api?5?5?5?5?5?5?5?5?5?5?5?3?5?$CF04x?6?$AA@ 0000000000016b38     Stm:StmResource.obj
+ 0002:000026f0       ??_C@_0BA@MHEFIHCE@ALL_RESOURCES?3?6?$AA@ 0000000000016b50     Stm:StmResource.obj
+ 0002:00002700       ??_C@_0BF@OLCDFIAO@REGISTER_VIOLATION?3?6?$AA@ 0000000000016b60     Stm:StmResource.obj
+ 0002:00002718       ??_C@_0BI@NCDABBHD@?5?5RegisterType?5?5?3?5?$CF08x?6?$AA@ 0000000000016b78     Stm:StmResource.obj
+ 0002:00002730       ??_C@_0DC@IDGFPKBA@IsPciResourceNodeValid?5?9?5PCI_VEN@ 0000000000016b90     Stm:StmResource.obj
+ 0002:00002768       ??_C@_0DC@ELMLKOFP@IsPciResourceNodeValid?5?9?5PCI_DEV@ 0000000000016bc8     Stm:StmResource.obj
+ 0002:000027a0       ??_C@_0EO@CPPHMPFA@IsPciResourceNodeValid?5?9?5HEADER_@ 0000000000016c00     Stm:StmResource.obj
+ 0002:000027f0       ??_C@_0DE@OIAMOIFH@IsPciResourceNodeValid?5?9?5BRIDGE_@ 0000000000016c50     Stm:StmResource.obj
+ 0002:00002828       ??_C@_0CC@BJNHMINM@IsPciResourceNodeValid?5?9?5fail?$CB?$CB?$CB@ 0000000000016c88     Stm:StmResource.obj
+ 0002:00002850       ??_C@_0DD@GCKBEKFC@Resource?5invalid?5?$CIFromMle?5?9?5?$CFx?0?5@ 0000000000016cb0     Stm:StmResource.obj
+ 0002:00002888       ??_C@_0P@IFFGPOLN@ResourceNode?3?6?$AA@ 0000000000016ce8     Stm:StmResource.obj
+ 0002:00002898       ??_C@_0BD@BENCDDNN@Resource?5overlap?3?6?$AA@ 0000000000016cf8     Stm:StmResource.obj
+ 0002:000028b0       ??_C@_0BA@LMNABDNE@ResourceNode1?3?6?$AA@ 0000000000016d10     Stm:StmResource.obj
+ 0002:000028c0       ??_C@_0BA@KOGFLMDK@ResourceNode2?3?6?$AA@ 0000000000016d20     Stm:StmResource.obj
+ 0002:000028d0       ??_C@_0BO@HOFJDIEH@Resource?9?$DOHeader?4RscType?5?$DN?$DN?50?$AA@ 0000000000016d30     Stm:StmResource.obj
+ 0002:000028f0       ??_C@_0DP@OKPHGIFI@z?3?2stm_reference?2stmpegit?2stm?9pe@ 0000000000016d50     Stm:StmResource.obj
+ 0002:00002930       ??_C@_0BL@ELADJOJN@?$CB?$CB?$CBUnknownHandlerSmm?5?9?5?$CFd?6?$AA@ 0000000000016d90     Stm:SmmHandler.obj
+ 0002:00002950       ??_C@_0DG@EADPFFJJ@Guest?5Instr?3?5?$CF02x?5?$CF02x?5?$CF02x?5?$CF02x@ 0000000000016db0     Stm:SmmHandler.obj
+ 0002:00002988       ??_C@_0CA@FBHHMDEE@?$CB?$CB?$CBResumeGuestSmm?5FAIL?$CB?$CB?$CB?5?9?5?$CFd?6?$AA@ 0000000000016de8     Stm:SmmHandler.obj
+ 0002:000029a8       ??_C@_0DK@NLOONIGG@RelocBase?5?$CB?$DN?5?$CI?$CIvoid?5?$CK?$CJ?50?$CJ?5?$CG?$CG?5Rel@ 0000000000016e08     Stm:Relocate.obj
+ 0002:000029f0       ??_C@_0EB@IEPCCMKM@z?3?2stm_reference?2stmpegit?2stm?9pe@ 0000000000016e50     Stm:Relocate.obj
+ 0002:00002a38       ??_C@_0CH@JELJINOM@?$CB?$CB?$CB?$CB?5X64?5Exception?5Type?5?9?5?$CF016lx@ 0000000000016e98     Stm:StmExceptionHandler.obj
+ 0002:00002a60       ??_C@_0CM@PGGCDKDJ@RIP?5?9?5?$CF016lx?0?5CS?5?9?5?$CF016lx?0?5RFLAG@ 0000000000016ec0     Stm:StmExceptionHandler.obj
+ 0002:00002a90       ??_C@_0BI@ODOACFIJ@ExceptionData?5?9?5?$CF016lx?6?$AA@ 0000000000016ef0     Stm:StmExceptionHandler.obj
+ 0002:00002aa8       ??_C@_0CK@NBMALAIC@RAX?5?9?5?$CF016lx?0?5RCX?5?9?5?$CF016lx?0?5RDX?5@ 0000000000016f08     Stm:StmExceptionHandler.obj
+ 0002:00002ad8       ??_C@_0CK@JPDNCIOK@RBX?5?9?5?$CF016lx?0?5RSP?5?9?5?$CF016lx?0?5RBP?5@ 0000000000016f38     Stm:StmExceptionHandler.obj
+ 0002:00002b08       ??_C@_0BM@KNHDBJOO@RSI?5?9?5?$CF016lx?0?5RDI?5?9?5?$CF016lx?6?$AA@ 0000000000016f68     Stm:StmExceptionHandler.obj
+ 0002:00002b28       ??_C@_0CI@JFLMIKLJ@R8?5?9?5?$CF016lx?0?5R9?5?9?5?$CF016lx?0?5R10?5?9?5@ 0000000000016f88     Stm:StmExceptionHandler.obj
+ 0002:00002b50       ??_C@_0CK@GEMBNJEM@R11?5?9?5?$CF016lx?0?5R12?5?9?5?$CF016lx?0?5R13?5@ 0000000000016fb0     Stm:StmExceptionHandler.obj
+ 0002:00002b80       ??_C@_0BM@JBEHEACO@R14?5?9?5?$CF016lx?0?5R15?5?9?5?$CF016lx?6?$AA@ 0000000000016fe0     Stm:StmExceptionHandler.obj
+ 0002:00002ba0       ??_C@_0CH@CEKCAEKK@DS?5?9?5?$CF016lx?0?5ES?5?9?5?$CF016lx?0?5FS?5?9?5?$CF@ 0000000000017000     Stm:StmExceptionHandler.obj
+ 0002:00002bc8       ??_C@_0BK@CIHDJABP@GS?5?9?5?$CF016lx?0?5SS?5?9?5?$CF016lx?6?$AA@ 0000000000017028     Stm:StmExceptionHandler.obj
+ 0002:00002be8       ??_C@_0CF@MGIBIPBB@GDTR?5?9?5?$CF016lx?5?$CF016lx?0?5LDTR?5?9?5?$CF01@ 0000000000017048     Stm:StmExceptionHandler.obj
+ 0002:00002c10       ??_C@_0CD@JBICKGGA@IDTR?5?9?5?$CF016lx?5?$CF016lx?0?5TR?5?9?5?$CF016l@ 0000000000017070     Stm:StmExceptionHandler.obj
+ 0002:00002c38       ??_C@_0CK@GACEBAAD@CR0?5?9?5?$CF016lx?0?5CR2?5?9?5?$CF016lx?0?5CR3?5@ 0000000000017098     Stm:StmExceptionHandler.obj
+ 0002:00002c68       ??_C@_0BM@PAFINGPL@CR4?5?9?5?$CF016lx?0?5CR8?5?9?5?$CF016lx?6?$AA@ 00000000000170c8     Stm:StmExceptionHandler.obj
+ 0002:00002c88       ??_C@_0CK@LJFMHKAP@DR0?5?9?5?$CF016lx?0?5DR1?5?9?5?$CF016lx?0?5DR2?5@ 00000000000170e8     Stm:StmExceptionHandler.obj
+ 0002:00002cb8       ??_C@_0CK@NDIAMGLB@DR3?5?9?5?$CF016lx?0?5DR6?5?9?5?$CF016lx?0?5DR7?5@ 0000000000017118     Stm:StmExceptionHandler.obj
+ 0002:00002ce4       ??_C@_03DICHKKNL@R15?$AA@  0000000000017144     Stm:Dump.obj
+ 0002:00002ce8       ??_C@_03CBDMJLJK@R14?$AA@  0000000000017148     Stm:Dump.obj
+ 0002:00002cec       ??_C@_03GOHNANFN@R13?$AA@  000000000001714c     Stm:Dump.obj
+ 0002:00002cf0       ??_C@_03HHGGDMBM@R12?$AA@  0000000000017150     Stm:Dump.obj
+ 0002:00002cf4       ??_C@_03FMELGPNP@R11?$AA@  0000000000017154     Stm:Dump.obj
+ 0002:00002cf8       ??_C@_03EFFAFOJO@R10?$AA@  0000000000017158     Stm:Dump.obj
+ 0002:00002cfc       ??_C@_03BIBBNHH@R9?5?$AA@  000000000001715c     Stm:Dump.obj
+ 0002:00002d00       ??_C@_03EDHHEA@R8?5?$AA@   0000000000017160     Stm:Dump.obj
+ 0002:00002d04       ??_C@_03OJJHDGJK@RDI?$AA@  0000000000017164     Stm:Dump.obj
+ 0002:00002d08       ??_C@_03PAPOIDGP@RSI?$AA@  0000000000017168     Stm:Dump.obj
+ 0002:00002d0c       ??_C@_03HGBKODDA@RBP?$AA@  000000000001716c     Stm:Dump.obj
+ 0002:00002d10       ??_C@_03GLPOCKHH@RSP?$AA@  0000000000017170     Stm:Dump.obj
+ 0002:00002d14       ??_C@_03LOMDGJDI@RBX?$AA@  0000000000017174     Stm:Dump.obj
+ 0002:00002d18       ??_C@_03LKEOBFIK@RDX?$AA@  0000000000017178     Stm:Dump.obj
+ 0002:00002d1c       ??_C@_03LPABADAP@RCX?$AA@  000000000001717c     Stm:Dump.obj
+ 0002:00002d20       ??_C@_03LMIFNHGB@RAX?$AA@  0000000000017180     Stm:Dump.obj
+ 0002:00002d28       ??_C@_0DB@CCEHOEOM@VMCS_N_HOST_RIP?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5@ 0000000000017188     Stm:Dump.obj
+ 0002:00002d60       ??_C@_0DB@ECDGJIPF@VMCS_N_HOST_RSP?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5@ 00000000000171c0     Stm:Dump.obj
+ 0002:00002d98       ??_C@_0DB@NAFPFAJE@VMCS_N_HOST_IA32_SYSENTER_EIP?5?5?5@ 00000000000171f8     Stm:Dump.obj
+ 0002:00002dd0       ??_C@_0DB@OOLLPFFF@VMCS_N_HOST_IA32_SYSENTER_ESP?5?5?5@ 0000000000017230     Stm:Dump.obj
+ 0002:00002e08       ??_C@_0DB@IGHHHADG@VMCS_N_HOST_IDTR_BASE?5?5?5?5?5?5?5?5?5?5?5@ 0000000000017268     Stm:Dump.obj
+ 0002:00002e40       ??_C@_0DB@OOBDKDII@VMCS_N_HOST_GDTR_BASE?5?5?5?5?5?5?5?5?5?5?5@ 00000000000172a0     Stm:Dump.obj
+ 0002:00002e78       ??_C@_0DB@BHJOPFDC@VMCS_N_HOST_TR_BASE?5?5?5?5?5?5?5?5?5?5?5?5?5@ 00000000000172d8     Stm:Dump.obj
+ 0002:00002eb0       ??_C@_0DB@LKLDECHK@VMCS_N_HOST_GS_BASE?5?5?5?5?5?5?5?5?5?5?5?5?5@ 0000000000017310     Stm:Dump.obj
+ 0002:00002ee8       ??_C@_0DB@DKEDFFGF@VMCS_N_HOST_FS_BASE?5?5?5?5?5?5?5?5?5?5?5?5?5@ 0000000000017348     Stm:Dump.obj
+ 0002:00002f20       ??_C@_0DB@MGHMMLJL@VMCS_N_HOST_CR4?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5@ 0000000000017380     Stm:Dump.obj
+ 0002:00002f58       ??_C@_0DB@MFDFKGCA@VMCS_N_HOST_CR3?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5@ 00000000000173b8     Stm:Dump.obj
+ 0002:00002f90       ??_C@_0DB@EOOGJIDJ@VMCS_N_HOST_CR0?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5@ 00000000000173f0     Stm:Dump.obj
+ 0002:00002fc8       ??_C@_0DB@CMCGAIAE@VMCS_32_HOST_IA32_SYSENTER_CS?5?5?5@ 0000000000017428     Stm:Dump.obj
+ 0002:00003000       ??_C@_0DB@KMIOLLGG@VMCS_64_HOST_IA32_PERF_GLOBAL_CT@ 0000000000017460     Stm:Dump.obj
+ 0002:00003038       ??_C@_0DB@CMOJCIC@VMCS_64_HOST_IA32_EFER?5?5?5?5?5?5?5?5?5?5@ 0000000000017498     Stm:Dump.obj
+ 0002:00003070       ??_C@_0DB@MKNBGGBE@VMCS_64_HOST_IA32_PAT?5?5?5?5?5?5?5?5?5?5?5@ 00000000000174d0     Stm:Dump.obj
+ 0002:000030a8       ??_C@_0DB@MNLDOIKD@VMCS_16_HOST_TR?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5@ 0000000000017508     Stm:Dump.obj
+ 0002:000030e0       ??_C@_0DB@IHIMOGMJ@VMCS_16_HOST_GS?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5@ 0000000000017540     Stm:Dump.obj
+ 0002:00003118       ??_C@_0DB@BCPMDCFM@VMCS_16_HOST_FS?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5@ 0000000000017578     Stm:Dump.obj
+ 0002:00003150       ??_C@_0DB@ODGMJNDH@VMCS_16_HOST_DS?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5@ 00000000000175b0     Stm:Dump.obj
+ 0002:00003188       ??_C@_0DB@FOJNNMAC@VMCS_16_HOST_SS?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5@ 00000000000175e8     Stm:Dump.obj
+ 0002:000031c0       ??_C@_0DB@LPNMLOFO@VMCS_16_HOST_CS?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5@ 0000000000017620     Stm:Dump.obj
+ 0002:000031f8       ??_C@_0DB@HGBMEJKC@VMCS_16_HOST_ES?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5@ 0000000000017658     Stm:Dump.obj
+ 0002:00003230       ??_C@_0DB@OAAPKBKL@VMCS_N_GUEST_IA32_SYSENTER_EIP?5?5@ 0000000000017690     Stm:Dump.obj
+ 0002:00003268       ??_C@_0DB@GKNNLLEM@VMCS_N_GUEST_IA32_SYSENTER_ESP?5?5@ 00000000000176c8     Stm:Dump.obj
+ 0002:000032a0       ??_C@_0DB@EDGBIGGJ@VMCS_N_GUEST_PENDING_DEBUG_EXCEP@ 0000000000017700     Stm:Dump.obj
+ 0002:000032d8       ??_C@_0DB@JGDAPOHD@VMCS_N_GUEST_RFLAGS?5?5?5?5?5?5?5?5?5?5?5?5?5@ 0000000000017738     Stm:Dump.obj
+ 0002:00003310       ??_C@_0DB@JKLLJHPI@VMCS_N_GUEST_RIP?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5@ 0000000000017770     Stm:Dump.obj
+ 0002:00003348       ??_C@_0DB@FLEJFLGH@VMCS_N_GUEST_RSP?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5@ 00000000000177a8     Stm:Dump.obj
+ 0002:00003380       ??_C@_0DB@JOGNDLEH@VMCS_N_GUEST_DR7?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5@ 00000000000177e0     Stm:Dump.obj
+ 0002:000033b8       ??_C@_0DB@HLOLCAJO@VMCS_N_GUEST_IDTR_BASE?5?5?5?5?5?5?5?5?5?5@ 0000000000017818     Stm:Dump.obj
+ 0002:000033f0       ??_C@_0DB@MCILGGEM@VMCS_N_GUEST_GDTR_BASE?5?5?5?5?5?5?5?5?5?5@ 0000000000017850     Stm:Dump.obj
+ 0002:00003428       ??_C@_0DB@PGACLDNA@VMCS_N_GUEST_TR_BASE?5?5?5?5?5?5?5?5?5?5?5?5@ 0000000000017888     Stm:Dump.obj
+ 0002:00003460       ??_C@_0DB@NGMLKMJM@VMCS_N_GUEST_LDTR_BASE?5?5?5?5?5?5?5?5?5?5@ 00000000000178c0     Stm:Dump.obj
+ 0002:00003498       ??_C@_0DB@LMDNLNLK@VMCS_N_GUEST_GS_BASE?5?5?5?5?5?5?5?5?5?5?5?5@ 00000000000178f8     Stm:Dump.obj
+ 0002:000034d0       ??_C@_0DB@CJENGJCP@VMCS_N_GUEST_FS_BASE?5?5?5?5?5?5?5?5?5?5?5?5@ 0000000000017930     Stm:Dump.obj
+ 0002:00003508       ??_C@_0DB@NINNMGEE@VMCS_N_GUEST_DS_BASE?5?5?5?5?5?5?5?5?5?5?5?5@ 0000000000017968     Stm:Dump.obj
+ 0002:00003540       ??_C@_0DB@GFCMIHHB@VMCS_N_GUEST_SS_BASE?5?5?5?5?5?5?5?5?5?5?5?5@ 00000000000179a0     Stm:Dump.obj
+ 0002:00003578       ??_C@_0DB@IEGNOFCN@VMCS_N_GUEST_CS_BASE?5?5?5?5?5?5?5?5?5?5?5?5@ 00000000000179d8     Stm:Dump.obj
+ 0002:000035b0       ??_C@_0DB@ENKNBCNB@VMCS_N_GUEST_ES_BASE?5?5?5?5?5?5?5?5?5?5?5?5@ 0000000000017a10     Stm:Dump.obj
+ 0002:000035e8       ??_C@_0DB@KPFLOLHE@VMCS_N_GUEST_CR4?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5@ 0000000000017a48     Stm:Dump.obj
+ 0002:00003620       ??_C@_0DB@FANEFMPG@VMCS_N_GUEST_CR3?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5@ 0000000000017a80     Stm:Dump.obj
+ 0002:00003658       ??_C@_0DB@DNFCKPKM@VMCS_N_GUEST_CR0?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5@ 0000000000017ab8     Stm:Dump.obj
+ 0002:00003690       ??_C@_0DB@PECNIEGK@VMCS_32_GUEST_VMX_PREEMPTION_TIM@ 0000000000017af0     Stm:Dump.obj
+ 0002:000036c8       ??_C@_0DB@MHOJGKFP@VMCS_32_GUEST_IA32_SYSENTER_CS?5?5@ 0000000000017b28     Stm:Dump.obj
+ 0002:00003700       ??_C@_0DB@LGCJFNAC@VMCS_32_GUEST_SMBASE?5?5?5?5?5?5?5?5?5?5?5?5@ 0000000000017b60     Stm:Dump.obj
+ 0002:00003738       ??_C@_0DB@GJEDDCDH@VMCS_32_GUEST_ACTIVITY_STATE?5?5?5?5@ 0000000000017b98     Stm:Dump.obj
+ 0002:00003770       ??_C@_0DB@KPDIJDGC@VMCS_32_GUEST_INTERRUPTIBILITY_S@ 0000000000017bd0     Stm:Dump.obj
+ 0002:000037a8       ??_C@_0DB@BOBEGAAG@VMCS_32_GUEST_TR_ACCESS_RIGHT?5?5?5@ 0000000000017c08     Stm:Dump.obj
+ 0002:000037e0       ??_C@_0DB@LPDOMAGM@VMCS_32_GUEST_LDTR_ACCESS_RIGHT?5@ 0000000000017c40     Stm:Dump.obj
+ 0002:00003818       ??_C@_0DB@POLPELGC@VMCS_32_GUEST_GS_ACCESS_RIGHT?5?5?5@ 0000000000017c78     Stm:Dump.obj
+ 0002:00003850       ??_C@_0DB@DBCBFMKK@VMCS_32_GUEST_FS_ACCESS_RIGHT?5?5?5@ 0000000000017cb0     Stm:Dump.obj
+ 0002:00003888       ??_C@_0DB@HFGMHFHL@VMCS_32_GUEST_DS_ACCESS_RIGHT?5?5?5@ 0000000000017ce8     Stm:Dump.obj
+ 0002:000038c0       ??_C@_0DB@DJNPFMIL@VMCS_32_GUEST_SS_ACCESS_RIGHT?5?5?5@ 0000000000017d20     Stm:Dump.obj
+ 0002:000038f8       ??_C@_0DB@HGCFBIMA@VMCS_32_GUEST_CS_ACCESS_RIGHT?5?5?5@ 0000000000017d58     Stm:Dump.obj
+ 0002:00003930       ??_C@_0DB@LKPCGCLD@VMCS_32_GUEST_ES_ACCESS_RIGHT?5?5?5@ 0000000000017d90     Stm:Dump.obj
+ 0002:00003968       ??_C@_0DB@BKCEEBGK@VMCS_32_GUEST_IDTR_LIMIT?5?5?5?5?5?5?5?5@ 0000000000017dc8     Stm:Dump.obj
+ 0002:000039a0       ??_C@_0DB@BMLGJKBM@VMCS_32_GUEST_GDTR_LIMIT?5?5?5?5?5?5?5?5@ 0000000000017e00     Stm:Dump.obj
+ 0002:000039d8       ??_C@_0DB@DMFCJAIM@VMCS_32_GUEST_TR_LIMIT?5?5?5?5?5?5?5?5?5?5@ 0000000000017e38     Stm:Dump.obj
+ 0002:00003a10       ??_C@_0DB@FNCAAFAA@VMCS_32_GUEST_LDTR_LIMIT?5?5?5?5?5?5?5?5@ 0000000000017e70     Stm:Dump.obj
+ 0002:00003a48       ??_C@_0DB@NMPJLLOI@VMCS_32_GUEST_GS_LIMIT?5?5?5?5?5?5?5?5?5?5@ 0000000000017ea8     Stm:Dump.obj
+ 0002:00003a80       ??_C@_0DB@BDGHKMCA@VMCS_32_GUEST_FS_LIMIT?5?5?5?5?5?5?5?5?5?5@ 0000000000017ee0     Stm:Dump.obj
+ 0002:00003ab8       ??_C@_0DB@FHCKIFPB@VMCS_32_GUEST_DS_LIMIT?5?5?5?5?5?5?5?5?5?5@ 0000000000017f18     Stm:Dump.obj
+ 0002:00003af0       ??_C@_0DB@BLJJKMAB@VMCS_32_GUEST_SS_LIMIT?5?5?5?5?5?5?5?5?5?5@ 0000000000017f50     Stm:Dump.obj
+ 0002:00003b28       ??_C@_0DB@FEGDOIEK@VMCS_32_GUEST_CS_LIMIT?5?5?5?5?5?5?5?5?5?5@ 0000000000017f88     Stm:Dump.obj
+ 0002:00003b60       ??_C@_0DB@JILEJCDJ@VMCS_32_GUEST_ES_LIMIT?5?5?5?5?5?5?5?5?5?5@ 0000000000017fc0     Stm:Dump.obj
+ 0002:00003b98       ??_C@_0DB@MMDEAANJ@VMCS_64_GUEST_PDPTE3?5?5?5?5?5?5?5?5?5?5?5?5@ 0000000000017ff8     Stm:Dump.obj
+ 0002:00003bd0       ??_C@_0DB@PAFEODNB@VMCS_64_GUEST_PDPTE2?5?5?5?5?5?5?5?5?5?5?5?5@ 0000000000018030     Stm:Dump.obj
+ 0002:00003c08       ??_C@_0DB@LEPFMGMJ@VMCS_64_GUEST_PDPTE1?5?5?5?5?5?5?5?5?5?5?5?5@ 0000000000018068     Stm:Dump.obj
+ 0002:00003c40       ??_C@_0DB@IIJFCFMB@VMCS_64_GUEST_PDPTE0?5?5?5?5?5?5?5?5?5?5?5?5@ 00000000000180a0     Stm:Dump.obj
+ 0002:00003c78       ??_C@_0DB@DBPGBHML@VMCS_64_GUEST_IA32_PERF_GLOBAL_C@ 00000000000180d8     Stm:Dump.obj
+ 0002:00003cb0       ??_C@_0DB@KALFLJCD@VMCS_64_GUEST_IA32_EFER?5?5?5?5?5?5?5?5?5@ 0000000000018110     Stm:Dump.obj
+ 0002:00003ce8       ??_C@_0DB@GIBAKPBB@VMCS_64_GUEST_IA32_PAT?5?5?5?5?5?5?5?5?5?5@ 0000000000018148     Stm:Dump.obj
+ 0002:00003d20       ??_C@_0DB@ILIOFJOA@VMCS_64_GUEST_IA32_DEBUGCTL?5?5?5?5?5@ 0000000000018180     Stm:Dump.obj
+ 0002:00003d58       ??_C@_0DB@CKGOKMCC@VMCS_64_GUEST_VMCS_LINK_PTR?5?5?5?5?5@ 00000000000181b8     Stm:Dump.obj
+ 0002:00003d90       ??_C@_0DB@KIKNIMPA@VMCS_16_GUEST_TR?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5@ 00000000000181f0     Stm:Dump.obj
+ 0002:00003dc8       ??_C@_0DB@CMKNADC@VMCS_16_GUEST_LDTR?5?5?5?5?5?5?5?5?5?5?5?5?5?5@ 0000000000018228     Stm:Dump.obj
+ 0002:00003e00       ??_C@_0DB@EIAGKHJE@VMCS_16_GUEST_GS?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5@ 0000000000018260     Stm:Dump.obj
+ 0002:00003e38       ??_C@_0DB@IHJILAFM@VMCS_16_GUEST_FS?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5@ 0000000000018298     Stm:Dump.obj
+ 0002:00003e70       ??_C@_0DB@MDNFJJIN@VMCS_16_GUEST_DS?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5@ 00000000000182d0     Stm:Dump.obj
+ 0002:00003ea8       ??_C@_0DB@IPGGLAHN@VMCS_16_GUEST_SS?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5@ 0000000000018308     Stm:Dump.obj
+ 0002:00003ee0       ??_C@_0DB@MAJMPEDG@VMCS_16_GUEST_CS?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5@ 0000000000018340     Stm:Dump.obj
+ 0002:00003f18       ??_C@_0DB@MELIOEF@VMCS_16_GUEST_ES?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5@ 0000000000018378     Stm:Dump.obj
+ 0002:00003f50       ??_C@_0DB@DCIDAPPN@VMCS_N_RO_GUEST_LINEAR_ADDR?5?5?5?5?5@ 00000000000183b0     Stm:Dump.obj
+ 0002:00003f88       ??_C@_0DB@EODOKGIJ@VMCS_N_RO_IO_RIP?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5@ 00000000000183e8     Stm:Dump.obj
+ 0002:00003fc0       ??_C@_0DB@DNCIIEIC@VMCS_N_RO_IO_RDI?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5@ 0000000000018420     Stm:Dump.obj
+ 0002:00003ff8       ??_C@_0DB@HBJLKNHC@VMCS_N_RO_IO_RSI?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5@ 0000000000018458     Stm:Dump.obj
+ 0002:00004030       ??_C@_0DB@DPFFKBKM@VMCS_N_RO_IO_RCX?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5@ 0000000000018490     Stm:Dump.obj
+ 0002:00004068       ??_C@_0DB@JLMGCLBH@VMCS_N_RO_EXIT_QUALIFICATION?5?5?5?5@ 00000000000184c8     Stm:Dump.obj
+ 0002:000040a0       ??_C@_0DB@HIIHGKJB@VMCS_32_RO_VMEXIT_INSTRUCTION_IN@ 0000000000018500     Stm:Dump.obj
+ 0002:000040d8       ??_C@_0DB@BNHNGKEE@VMCS_32_RO_VMEXIT_INSTRUCTION_LE@ 0000000000018538     Stm:Dump.obj
+ 0002:00004110       ??_C@_0DB@OBHDCMIJ@VMCS_32_RO_IDT_VECTORING_ERROR_C@ 0000000000018570     Stm:Dump.obj
+ 0002:00004148       ??_C@_0DB@LEAHGCBN@VMCS_32_RO_IDT_VECTORING_INFO?5?5?5@ 00000000000185a8     Stm:Dump.obj
+ 0002:00004180       ??_C@_0DB@MKDKEDMC@VMCS_32_RO_VMEXIT_INTERRUPTION_E@ 00000000000185e0     Stm:Dump.obj
+ 0002:000041b8       ??_C@_0DB@KCABNLED@VMCS_32_RO_VMEXIT_INTERRUPTION_I@ 0000000000018618     Stm:Dump.obj
+ 0002:000041f0       ??_C@_0DB@HIOLGANH@VMCS_32_RO_EXIT_REASON?5?5?5?5?5?5?5?5?5?5@ 0000000000018650     Stm:Dump.obj
+ 0002:00004228       ??_C@_0DB@BDPEEIFJ@VMCS_32_RO_VM_INSTRUCTION_ERROR?5@ 0000000000018688     Stm:Dump.obj
+ 0002:00004260       ??_C@_0DB@KJHGKNAD@VMCS_64_RO_GUEST_PHYSICAL_ADDR?5?5@ 00000000000186c0     Stm:Dump.obj
+ 0002:00004298       ??_C@_0DB@KGNMEEHB@VMCS_N_CONTROL_CR3_TARGET_VALUE3@ 00000000000186f8     Stm:Dump.obj
+ 0002:000042d0       ??_C@_0DB@EJIOPCJA@VMCS_N_CONTROL_CR3_TARGET_VALUE2@ 0000000000018730     Stm:Dump.obj
+ 0002:00004308       ??_C@_0DB@KDAICPPC@VMCS_N_CONTROL_CR3_TARGET_VALUE1@ 0000000000018768     Stm:Dump.obj
+ 0002:00004340       ??_C@_0DB@EMFKJJBD@VMCS_N_CONTROL_CR3_TARGET_VALUE0@ 00000000000187a0     Stm:Dump.obj
+ 0002:00004378       ??_C@_0DB@BMNDIHMJ@VMCS_N_CONTROL_CR4_READ_SHADOW?5?5@ 00000000000187d8     Stm:Dump.obj
+ 0002:000043b0       ??_C@_0DB@GNFJJNOD@VMCS_N_CONTROL_CR0_READ_SHADOW?5?5@ 0000000000018810     Stm:Dump.obj
+ 0002:000043e8       ??_C@_0DB@HEKOBEKA@VMCS_N_CONTROL_CR4_GUEST_HOST_MA@ 0000000000018848     Stm:Dump.obj
+ 0002:00004420       ??_C@_0DB@FCEAOIK@VMCS_N_CONTROL_CR0_GUEST_HOST_MA@ 0000000000018880     Stm:Dump.obj
+ 0002:00004458       ??_C@_0DB@BKDHKOGF@VMCS_32_CONTROL_PLE_WINDOW?5?5?5?5?5?5@ 00000000000188b8     Stm:Dump.obj
+ 0002:00004490       ??_C@_0DB@KPEFFMGD@VMCS_32_CONTROL_PLE_GAP?5?5?5?5?5?5?5?5?5@ 00000000000188f0     Stm:Dump.obj
+ 0002:000044c8       ??_C@_0DB@MNIMNAFJ@VMCS_32_CONTROL_2ND_PROCESSOR_BA@ 0000000000018928     Stm:Dump.obj
+ 0002:00004500       ??_C@_0DB@ICPHLAAF@VMCS_32_CONTROL_TPR_THRESHOLD?5?5?5@ 0000000000018960     Stm:Dump.obj
+ 0002:00004538       ??_C@_0DB@IODHICLP@VMCS_32_CONTROL_VMENTRY_INSTRUCT@ 0000000000018998     Stm:Dump.obj
+ 0002:00004570       ??_C@_0DB@HIOEEBLP@VMCS_32_CONTROL_VMENTRY_EXCEPTIO@ 00000000000189d0     Stm:Dump.obj
+ 0002:000045a8       ??_C@_0DB@PIIFKLGM@VMCS_32_CONTROL_VMENTRY_INTERRUP@ 0000000000018a08     Stm:Dump.obj
+ 0002:000045e0       ??_C@_0DB@EKNKDNHD@VMCS_32_CONTROL_VMENTRY_MSR_LOAD@ 0000000000018a40     Stm:Dump.obj
+ 0002:00004618       ??_C@_0DB@DBNHNLPI@VMCS_32_CONTROL_VMENTRY_CONTROLS@ 0000000000018a78     Stm:Dump.obj
+ 0002:00004650       ??_C@_0DB@DFIPHPLG@VMCS_32_CONTROL_VMEXIT_MSR_LOAD_@ 0000000000018ab0     Stm:Dump.obj
+ 0002:00004688       ??_C@_0DB@HIDCOLGM@VMCS_32_CONTROL_VMEXIT_MSR_STORE@ 0000000000018ae8     Stm:Dump.obj
+ 0002:000046c0       ??_C@_0DB@EPJOCIPI@VMCS_32_CONTROL_VMEXIT_CONTROLS?5@ 0000000000018b20     Stm:Dump.obj
+ 0002:000046f8       ??_C@_0DB@FBNGBJNN@VMCS_32_CONTROL_CR3_TARGET_COUNT@ 0000000000018b58     Stm:Dump.obj
+ 0002:00004730       ??_C@_0DB@NLEABDJ@VMCS_32_CONTROL_PAGE_FAULT_ERROR@ 0000000000018b90     Stm:Dump.obj
+ 0002:00004768       ??_C@_0DB@CGJHFMH@VMCS_32_CONTROL_PAGE_FAULT_ERROR@ 0000000000018bc8     Stm:Dump.obj
+ 0002:000047a0       ??_C@_0DB@GFKBLMCH@VMCS_32_CONTROL_EXCEPTION_BITMAP@ 0000000000018c00     Stm:Dump.obj
+ 0002:000047d8       ??_C@_0DB@LPJGOKFI@VMCS_32_CONTROL_PROCESSOR_BASED_@ 0000000000018c38     Stm:Dump.obj
+ 0002:00004810       ??_C@_0DB@HEDMPOPJ@VMCS_32_CONTROL_PIN_BASED_VM_EXE@ 0000000000018c70     Stm:Dump.obj
+ 0002:00004848       ??_C@_0DB@IKPCCKIK@VMCS_64_CONTROL_EPT_PTR?5?5?5?5?5?5?5?5?5@ 0000000000018ca8     Stm:Dump.obj
+ 0002:00004880       ??_C@_0DB@LDDDNFIA@VMCS_64_CONTROL_APIC_ACCESS_ADDR@ 0000000000018ce0     Stm:Dump.obj
+ 0002:000048b8       ??_C@_0DB@CHGDGBKK@VMCS_64_CONTROL_VIRTUAL_APIC_ADD@ 0000000000018d18     Stm:Dump.obj
+ 0002:000048f0       ??_C@_0DB@BPDGIHNM@VMCS_64_CONTROL_TSC_OFFSET?5?5?5?5?5?5@ 0000000000018d50     Stm:Dump.obj
+ 0002:00004928       ??_C@_0DB@HKDMLBHB@VMCS_64_CONTROL_EXECUTIVE_VMCS_P@ 0000000000018d88     Stm:Dump.obj
+ 0002:00004960       ??_C@_0DB@JINHCHCC@VMCS_64_CONTROL_VMENTRY_MSR_LOAD@ 0000000000018dc0     Stm:Dump.obj
+ 0002:00004998       ??_C@_0DB@FOANOIIM@VMCS_64_CONTROL_VMEXIT_MSR_LOAD?5@ 0000000000018df8     Stm:Dump.obj
+ 0002:000049d0       ??_C@_0DB@KKDPPBDN@VMCS_64_CONTROL_VMEXIT_MSR_STORE@ 0000000000018e30     Stm:Dump.obj
+ 0002:00004a08       ??_C@_0DB@DOBCHHGP@VMCS_64_CONTROL_MSR_BITMAP?5?5?5?5?5?5@ 0000000000018e68     Stm:Dump.obj
+ 0002:00004a40       ??_C@_0DB@MOJAANIJ@VMCS_64_CONTROL_IO_BITMAP_B?5?5?5?5?5@ 0000000000018ea0     Stm:Dump.obj
+ 0002:00004a78       ??_C@_0DB@LIHFDELE@VMCS_64_CONTROL_IO_BITMAP_A?5?5?5?5?5@ 0000000000018ed8     Stm:Dump.obj
+ 0002:00004ab0       ??_C@_0DB@NCEFFFG@VMCS_16_CONTROL_VPID?5?5?5?5?5?5?5?5?5?5?5?5@ 0000000000018f10     Stm:Dump.obj
+ 0002:00004ae8       ??_C@_0BK@ILEDFJFJ@VMX_EPT_VPID_CAP_MSR?5?5?5?5?5?$AA@ 0000000000018f48     Stm:Dump.obj
+ 0002:00004b08       ??_C@_0BK@PHKDABDD@VMX_PROCBASED_CTLS2_MSR?5?5?$AA@ 0000000000018f68     Stm:Dump.obj
+ 0002:00004b28       ??_C@_0BK@DGFNJIKK@VMX_VMCS_ENUM_MSR?5?5?5?5?5?5?5?5?$AA@ 0000000000018f88     Stm:Dump.obj
+ 0002:00004b48       ??_C@_0BK@NIIGIENJ@VMX_CR4_FIXED1_MSR?5?5?5?5?5?5?5?$AA@ 0000000000018fa8     Stm:Dump.obj
+ 0002:00004b68       ??_C@_0BK@FBAFNFM@VMX_CR4_FIXED0_MSR?5?5?5?5?5?5?5?$AA@ 0000000000018fc8     Stm:Dump.obj
+ 0002:00004b88       ??_C@_0BK@JGGLGPIA@VMX_CR0_FIXED1_MSR?5?5?5?5?5?5?5?$AA@ 0000000000018fe8     Stm:Dump.obj
+ 0002:00004ba8       ??_C@_0BK@ELPNLGAF@VMX_CR0_FIXED0_MSR?5?5?5?5?5?5?5?$AA@ 0000000000019008     Stm:Dump.obj
+ 0002:00004bc8       ??_C@_0BK@OJLCKLAO@VMX_MISC_MSR?5?5?5?5?5?5?5?5?5?5?5?5?5?$AA@ 0000000000019028     Stm:Dump.obj
+ 0002:00004be8       ??_C@_0BK@LKJNFHPI@VMX_ENTRY_CTLS_MSR?5?5?5?5?5?5?5?$AA@ 0000000000019048     Stm:Dump.obj
+ 0002:00004c08       ??_C@_0BK@FHKHBDGB@VMX_EXIT_CTLS_MSR?5?5?5?5?5?5?5?5?$AA@ 0000000000019068     Stm:Dump.obj
+ 0002:00004c28       ??_C@_0BK@IJIGBLPC@VMX_PROCBASED_CTLS_MSR?5?5?5?$AA@ 0000000000019088     Stm:Dump.obj
+ 0002:00004c48       ??_C@_0BK@BBIPMADM@VMX_PINBASED_CTLS_MSR?5?5?5?5?$AA@ 00000000000190a8     Stm:Dump.obj
+ 0002:00004c68       ??_C@_0BK@OIKHOJNB@VMX_BASIC_MSR?5?5?5?5?5?5?5?5?5?5?5?5?$AA@ 00000000000190c8     Stm:Dump.obj
+ 0002:00004c88       ??_C@_0M@EBINIFEF@?$CFa?3?5?$CF016lx?6?$AA@ 00000000000190e8     Stm:Dump.obj
+ 0002:00004c98       ??_C@_09MKNCOEE@?$CFa?3?5?$CF04x?6?$AA@ 00000000000190f8     Stm:Dump.obj
+ 0002:00004ca8       ??_C@_09EGHLJBPM@?$CFa?3?5?$CF08x?6?$AA@ 0000000000019108     Stm:Dump.obj
+ 0002:00004cc0       ??_C@_0EJ@DJDFLMKA@SmiEventHandler?5?9?5ExecutiveVmcsP@ 0000000000019120     Stm:SmiEventHandler.obj
+ 0002:00004d10       ??_C@_0EE@PNEMAMAF@SmiEventHandler?5?9?5VmcsLinkPtr?5vi@ 0000000000019170     Stm:SmiEventHandler.obj
+ 0002:00004d58       ??_C@_0BG@KCCBIGGH@?$CB?$CB?$CBResumeSmm?5FAIL?$CB?$CB?$CB?6?$AA@ 00000000000191b8     Stm:SmiEventHandler.obj
+ 0002:00004d70       ??_C@_0BG@GPPHLGPI@?$CB?$CB?$CBLaunchSmm?5FAIL?$CB?$CB?$CB?6?$AA@ 00000000000191d0     Stm:SmiEventHandler.obj
+ 0002:00004d88       ??_C@_0CA@IELJOJAG@STM_API_INITIALIZE_PROTECTION?3?6?$AA@ 00000000000191e8     Stm:SmiVmcallHandler.obj
+ 0002:00004da8       ??_C@_0BE@LELADDBE@?$CFld?5STM_API_START?3?6?$AA@ 0000000000019208     Stm:SmiVmcallHandler.obj
+ 0002:00004dc0       ??_C@_0CP@EDAGCNGE@?$CFd?5STM_API_START?5?9?9?5Error?5STM?5al@ 0000000000019220     Stm:SmiVmcallHandler.obj
+ 0002:00004df0       ??_C@_0P@CKFLOHBB@STM_API_STOP?3?6?$AA@ 0000000000019250     Stm:SmiVmcallHandler.obj
+ 0002:00004e00       ??_C@_0N@BHENNNLL@CpuDeadLoop?6?$AA@ 0000000000019260     Stm:SmiVmcallHandler.obj
+ 0002:00004e10       ??_C@_0BL@DPGGPFMB@STM_API_PROTECT_RESOURCE?3?6?$AA@ 0000000000019270     Stm:SmiVmcallHandler.obj
+ 0002:00004e30       ??_C@_0BL@GOAKMGOL@IsResourceListValid?5fail?$CB?6?$AA@ 0000000000019290     Stm:SmiVmcallHandler.obj
+ 0002:00004e50       ??_C@_0BL@EICOKHPF@IsResourceListValid?5pass?$CB?6?$AA@ 00000000000192b0     Stm:SmiVmcallHandler.obj
+ 0002:00004e70       ??_C@_0BN@KNDBGFA@IsResourceListOverlap?5fail?$CB?6?$AA@ 00000000000192d0     Stm:SmiVmcallHandler.obj
+ 0002:00004e90       ??_C@_0BN@CMPHHHEO@IsResourceListOverlap?5pass?$CB?6?$AA@ 00000000000192f0     Stm:SmiVmcallHandler.obj
+ 0002:00004eb0       ??_C@_0BM@OJIENIPD@AddProtectedResource?5fail?$CB?6?$AA@ 0000000000019310     Stm:SmiVmcallHandler.obj
+ 0002:00004ed0       ??_C@_0BN@JNNBDOPD@STM_API_UNPROTECT_RESOURCE?3?6?$AA@ 0000000000019330     Stm:SmiVmcallHandler.obj
+ 0002:00004ef0       ??_C@_0BN@GCKFPKMD@STM_API_GET_BIOS_RESOURCES?3?6?$AA@ 0000000000019350     Stm:SmiVmcallHandler.obj
+ 0002:00004f10       ??_C@_0BF@POPBJPAC@Security?5Violation?$CB?6?$AA@ 0000000000019370     Stm:SmiVmcallHandler.obj
+ 0002:00004f28       ??_C@_0DC@BMEMBOJA@BiosResource?5?$CI?$CFd?$CJ?5?9?5?$CF016lx?$CI?$CF08x?$CJ@ 0000000000019388     Stm:SmiVmcallHandler.obj
+ 0002:00004f60       ??_C@_0FB@BDIGLBKL@SmiVmcallGetBiosResourcesHandler@ 00000000000193c0     Stm:SmiVmcallHandler.obj
+ 0002:00004fb8       ??_C@_0BP@FLDODHN@STM_API_MANAGE_VMCS_DATABASE?3?6?$AA@ 0000000000019418     Stm:SmiVmcallHandler.obj
+ 0002:00004fd8       ??_C@_0BN@GPNDBCDA@VMCS?5Database?5?$CI?$CFd?$CJ?5?9?5?$CF016lx?6?$AA@ 0000000000019438     Stm:SmiVmcallHandler.obj
+ 0002:00004ff8       ??_C@_0BJ@EIJNBONP@NEW_LOG?3?5PageCount?5?9?5?$CFx?6?$AA@ 0000000000019458     Stm:SmiVmcallHandler.obj
+ 0002:00005018       ??_C@_0BB@OIMEALCL@Page?$CI?$CFx?$CJ?5?9?5?$CF08x?6?$AA@ 0000000000019478     Stm:SmiVmcallHandler.obj
+ 0002:0000502c       ??_C@_01EEMJAFIK@?6?$AA@   000000000001948c     Stm:SmiVmcallHandler.obj
+ 0002:00005030       ??_C@_0CE@EJIKLEFB@CONFIGURE_LOG?3?5EventEnables?5?9?5?$CI?$CF@ 0000000000019490     Stm:SmiVmcallHandler.obj
+ 0002:00005058       ??_C@_0M@FJGMJDAB@START_LOG?3?6?$AA@ 00000000000194b8     Stm:SmiVmcallHandler.obj
+ 0002:00005068       ??_C@_0L@DDKCJIIN@STOP_LOG?3?6?$AA@ 00000000000194c8     Stm:SmiVmcallHandler.obj
+ 0002:00005078       ??_C@_0M@BLIIIMDK@CLEAR_LOG?3?6?$AA@ 00000000000194d8     Stm:SmiVmcallHandler.obj
+ 0002:00005088       ??_C@_0N@GNAJGNAG@DELETE_LOG?3?6?$AA@ 00000000000194e8     Stm:SmiVmcallHandler.obj
+ 0002:00005098       ??_C@_0BL@KLICFFKK@STM_API_MANAGE_EVENT_LOG?3?6?$AA@ 00000000000194f8     Stm:SmiVmcallHandler.obj
+ 0002:000050b8       ??_C@_0CK@BDFJFKPF@GetSmiVmcallEventLogHandlerByInd@ 0000000000019518     Stm:SmiVmcallHandler.obj
+ 0002:000050e8       ??_C@_0BG@DELLENOI@STM_API_ADD_TEMP_VM?3?6?$AA@ 0000000000019548     Stm:SmiVmcallHandler.obj
+ 0002:00005100       ??_C@_0BG@JOMCDDBL@STM_API_ADD_PERM_VM?3?6?$AA@ 0000000000019560     Stm:SmiVmcallHandler.obj
+ 0002:00005120       ??_C@_0EE@OFICDHKA@?$CFld?5SmiVmcallAddPermPeVmNoRunHan@ 0000000000019580     Stm:SmiVmcallHandler.obj
+ 0002:00005168       ??_C@_0DM@CMLMEFDB@?$CFld?5SmiVmcallAddPermPeVmNoRunHan@ 00000000000195c8     Stm:SmiVmcallHandler.obj
+ 0002:000051a8       ??_C@_0BL@CEANBCPC@?5?$CFld?5STM_API_RUN_PERM_VM?3?6?$AA@ 0000000000019608     Stm:SmiVmcallHandler.obj
+ 0002:000051c8       ??_C@_0BK@JNDJEAPF@?5?$CFld?5Security?5Violation?$CB?6?$AA@ 0000000000019628     Stm:SmiVmcallHandler.obj
+ 0002:000051e8       ??_C@_0BG@LNDBNKCG@STM_API_END_PERM_VM?3?6?$AA@ 0000000000019648     Stm:SmiVmcallHandler.obj
+ 0002:00005200       ??_C@_0CH@EIBBMKMA@STM_API_END_PERM_VM?5?9?5not?5implem@ 0000000000019660     Stm:SmiVmcallHandler.obj
+ 0002:00005228       ??_C@_0DJ@IBHBILBI@?$CFld?5SmiVmcallHandler?5?9?5GetSmiVmc@ 0000000000019688     Stm:SmiVmcallHandler.obj
+ 0002:00005268       ??_C@_0DA@CHPAIPKE@?$CFld?5SmiVmcallHandler?5?9?5?$CK?$CK?$CKError?$CK@ 00000000000196c8     Stm:SmiVmcallHandler.obj
+ 0002:00005298       ??_C@_0CI@DFODMIJP@?5?$CFld?5SmiVmcallHandler?5done?0?5Stat@ 00000000000196f8     Stm:SmiVmcallHandler.obj
+ 0002:000052c0       ??_C@_0CP@KEIPENEJ@StartTimer?5?9?5smi_en?3?50x?$CF08lx?5smi@ 0000000000019720     Stm:PePciHandler.obj
+ 0002:000052f0       ??_C@_0CO@DJMGJNDK@SetEndOfSmi?5smi_en?3?50x?$CF08lx?5smi_@ 0000000000019750     Stm:PePciHandler.obj
+ 0002:00005320       ??_C@_0CN@JKHFJGOF@AckTimer?5?9?5smi_en?3?50x?$CF08lx?5smi_s@ 0000000000019780     Stm:PePciHandler.obj
+ 0002:00005350       ??_C@_0DA@BGJIKNOH@StopSwTimer?5?9?5smi_en?3?50x?$CF08lx?5sm@ 00000000000197b0     Stm:PePciHandler.obj
+ 0002:00005380       ??_C@_0CO@HGHHHBGL@?$CFld?5CheckTimerSTS?5?9?5Timer?5Interr@ 00000000000197e0     Stm:PePciHandler.obj
+ 0002:000053b0       ??_C@_0EJ@MFILAOLJ@?$CFld?5PeEPTViolationHandler?5?9?5PE?5E@ 0000000000019810     Stm:PeEptHandler.obj
+ 0002:00005400       ??_C@_0GG@DIFGOCAM@?$CFld?5PeEPTViolationHandler?5?9?5Prot@ 0000000000019860     Stm:PeEptHandler.obj
+ 0002:00005468       ??_C@_0CJ@HMONFPGP@PeEPTViolationHandler?5?9?5Access?5A@ 00000000000198c8     Stm:PeEptHandler.obj
+ 0002:00005498       ??_C@_0DN@MGAPFKFK@PeEPTViolationHandler?5?9?5Access?5A@ 00000000000198f8     Stm:PeEptHandler.obj
+ 0002:000054d8       ??_C@_05HNPPNPM@Valid?$AA@ 0000000000019938     Stm:PeEptHandler.obj
+ 0002:000054e0       ??_C@_07DJMIGIHO@Invalid?$AA@ 0000000000019940     Stm:PeEptHandler.obj
+ 0002:000054e8       ??_C@_0CL@JINMGGDL@PeEPTViolationHandler?5?9?5Linear?5a@ 0000000000019948     Stm:PeEptHandler.obj
+ 0002:00005518       ??_C@_0BO@JHNHBNMN@Guest?5Physical?5EPT?5violation?5?$AA@ 0000000000019978     Stm:PeEptHandler.obj
+ 0002:00005538       ??_C@_0BH@MMKAGBNJ@Paging?5structure?5error?$AA@ 0000000000019998     Stm:PeEptHandler.obj
+ 0002:00005550       ??_C@_0ED@OFNLNLAB@?$CFld?5PeEPTMisconfigurationHandler@ 00000000000199b0     Stm:PeEptHandler.obj
+ 0002:00005598       ??_C@_0CP@ONBHECHB@ld?5PeEPTMisconfigurationHandler?5@ 00000000000199f8     Stm:PeEptHandler.obj
+ 0002:000055d0       ??_C@_0EB@MJFBEDCF@?$CFld?5PeInvEPTHandler?5?9?5PE?5?9?5Inval@ 0000000000019a30     Stm:PeEptHandler.obj
+ 0002:00005618       ??_C@_0CD@CNMNEOKH@?$CFld?5PeInvEPTHandler?5?9?5CpuDeadLoo@ 0000000000019a78     Stm:PeEptHandler.obj
+ 0002:00005640       ??_C@_0BJ@EBFHJBJC@PeEptFree?5Entered?3?5?$CFllx?6?$AA@ 0000000000019aa0     Stm:PeEptHandler.obj
+ 0002:00005660       ??_C@_0BL@MANFPCPD@PeEptFreeL3?5Entered?3?5?$CFllx?6?$AA@ 0000000000019ac0     Stm:PeEptHandler.obj
+ 0002:00005680       ??_C@_0BL@EHHDDJLA@PeEptFreeL2?5Entered?3?5?$CFllx?6?$AA@ 0000000000019ae0     Stm:PeEptHandler.obj
+ 0002:000056a0       ??_C@_0DE@IHNCAGGP@PeEptFreeL2?5?9?5L1Table?3?50x?$CF016llx@ 0000000000019b00     Stm:PeEptHandler.obj
+ 0002:000056d8       ??_C@_0DJ@HGHCBCIM@PeInitStmHandlerSmm?5?9?5initilizat@ 0000000000019b38     Stm:PeSmmHandler.obj
+ 0002:00005718       ??_C@_0DH@IOLFOMDF@PeInitStmHandlerSmm?5?9?5PeSmmHandl@ 0000000000019b78     Stm:PeSmmHandler.obj
+ 0002:00005750       ??_C@_0DA@PEMAMFOJ@PeInitStmHandlerSmm?5?9?5CpuReadySy@ 0000000000019bb0     Stm:PeSmmHandler.obj
+ 0002:00005780       ??_C@_0ED@IDJBNDPK@?$CFld?5PeStmHandlerSmm?5?9?5Warning?5SM@ 0000000000019be0     Stm:PeSmmHandler.obj
+ 0002:000057c8       ??_C@_0DD@IKLFMNMF@?$CFld?5PeStmHandlerSmm?5?9?5?$CB?$CB?$CBUnknown@ 0000000000019c28     Stm:PeSmmHandler.obj
+ 0002:00005800       ??_C@_0CD@NMKOOPBF@?$CFld?5PeStmHandlerSmm?5?9?5CpuDeadLoo@ 0000000000019c60     Stm:PeSmmHandler.obj
+ 0002:00005830       ??_C@_0FA@ICMHNPKB@?$CFld?5PeStmHandlerSmm?5?9?5?$CK?$CK?$CKWARNING@ 0000000000019c90     Stm:PeSmmHandler.obj
+ 0002:00005880       ??_C@_0DD@MMGKBBML@?$CFld?5PeStmHandlerSmm?5?9?5?$CB?$CB?$CBResumeP@ 0000000000019ce0     Stm:PeSmmHandler.obj
+ 0002:000058b8       ??_C@_0CE@IJOHDCDI@?$CFld?5PeStmHandlerSmm?5?9?5Rflags?3?5?$CF0@ 0000000000019d18     Stm:PeSmmHandler.obj
+ 0002:000058e0       ??_C@_0DN@KLKBPEBK@?$CFld?5PeStmHandlerSmm?5?9?5VMCS_32_RO@ 0000000000019d40     Stm:PeSmmHandler.obj
+ 0002:00005920       ??_C@_0DN@FAHGAFBH@?$CFld?5SetupProtExecVm?5?9?5CR3_Index?3@ 0000000000019d80     Stm:PeVmcsInit.obj
+ 0002:00005960       ??_C@_0EF@OOLKNGID@?$CFld?5SetupProtExecVm?5?9?5Failure?5al@ 0000000000019dc0     Stm:PeVmcsInit.obj
+ 0002:000059a8       ??_C@_0DJ@LACOONEE@?$CFld?5SetupProtExecVm?5?9?5Allocated?5@ 0000000000019e08     Stm:PeVmcsInit.obj
+ 0002:000059e8       ??_C@_0DF@JAMIIANM@?$CFld?5SetupProtExecVm?5?9?5VMCS?5regio@ 0000000000019e48     Stm:PeVmcsInit.obj
+ 0002:00005a20       ??_C@_0DJ@FCCFLDEP@?$CFld?5SetupProtExecVm?5?9?5ERROR?3?5Asm@ 0000000000019e80     Stm:PeVmcsInit.obj
+ 0002:00005a60       ??_C@_0DL@HLBNOHIN@?$CGld?5SetupProtExecVm?5?9?5ERROR?3?5Asm@ 0000000000019ec0     Stm:PeVmcsInit.obj
+ 0002:00005aa0       ??_C@_0CP@ECAKMEAE@?$CFld?5SetupProtExecVm?5?9?5WARNING?5?9?5@ 0000000000019f00     Stm:PeVmcsInit.obj
+ 0002:00005ad0       ??_C@_0CK@CGNCMBLP@?$CFld?5SetupProtExecVm?5?9?5guest_efer@ 0000000000019f30     Stm:PeVmcsInit.obj
+ 0002:00005b00       ??_C@_0CL@FCDOFMPG@?$CFld?5SetupProtExecVm?5?9?5Setting?564@ 0000000000019f60     Stm:PeVmcsInit.obj
+ 0002:00005b30       ??_C@_0CL@KACMEKAF@?$CFld?5SetupProtExecVm?5?9?5Setting?532@ 0000000000019f90     Stm:PeVmcsInit.obj
+ 0002:00005b60       ??_C@_0CL@MDHGMEDB@?$CFld?5SetupProtExecVm?5?9?5Setting?516@ 0000000000019fc0     Stm:PeVmcsInit.obj
+ 0002:00005b90       ??_C@_0DG@LACOGPJD@?$CFld?5SetupProtExecVm?5?9?5GCS_AR?3?50x@ 0000000000019ff0     Stm:PeVmcsInit.obj
+ 0002:00005bc8       ??_C@_0DP@PKGMIEOI@?$CFld?5SetupProtExecVm?5?9?5Setting?5GU@ 000000000001a028     Stm:PeVmcsInit.obj
+ 0002:00005c08       ??_C@_0DD@EJPBJHE@?$CFld?5SetupProtExecVm?5?9?5Guest?5CS?5a@ 000000000001a068     Stm:PeVmcsInit.obj
+ 0002:00005c40       ??_C@_0CG@IEACHAHI@?$CFld?5GetMultiProcessorState?5?9?5Sta@ 000000000001a0a0     Stm:PeVmxState.obj
+ 0002:00005c70       ??_C@_0EJ@EFADLEBD@?$CFld?5GetMultiProcessorState?5?9?5Sha@ 000000000001a0d0     Stm:PeVmxState.obj
+ 0002:00005cc0       ??_C@_0FC@MBEMEBPL@?$CFld?5GetMultiProcessorState?5?9?5Abo@ 000000000001a120     Stm:PeVmxState.obj
+ 0002:00005d18       ??_C@_0DJ@HGGAEDEO@?$CFld?5GetMultiProcessorState?5?9?5Com@ 000000000001a178     Stm:PeVmxState.obj
+ 0002:00005d60       ??_C@_0FJ@PEGAFFOA@?$CFld?5?9?5GetRootState?3?5ran?5out?5of?5m@ 000000000001a1c0     Stm:PeVmxState.obj
+ 0002:00005dc0       ??_C@_0EK@EABOGLED@?$CFld?5GetRootVmxState?5?9?5Flush?5nece@ 000000000001a220     Stm:PeVmxState.obj
+ 0002:00005e10       ??_C@_0EO@IJLLBICC@?$CFld?5PrintVmxState?5?$CI?$CFd?$CJ?3?5execVMCS@ 000000000001a270     Stm:PeVmxState.obj
+ 0002:00005e60       ??_C@_0HN@GBKOKKAE@?$CFld?5PrintVmxState?5?$CI?$CFd?$CJ?3?5execVMCS@ 000000000001a2c0     Stm:PeVmxState.obj
+ 0002:00005ee0       ??_C@_0FA@KIAEKDME@?$CFld?5PrintVmxState?5?$CI?$CFd?$CJ?3?5execVMCS@ 000000000001a340     Stm:PeVmxState.obj
+ 0002:00005f30       ??_C@_0IP@BJIPBNCA@?$CFld?5PrintVmxState?5?$CI?$CFd?$CJ?5HostRootV@ 000000000001a390     Stm:PeVmxState.obj
+ 0002:00005fc0       ??_C@_0HC@NEKIBBOD@?$CFld?5PrintVmxState?5?$CI?$CFd?$CJ?5?$CIcontrol?$CJ@ 000000000001a420     Stm:PeVmxState.obj
+ 0002:00006040       ??_C@_0HL@MMHHFOEP@?$CFld?5PrintVmxState?5?$CI?$CFd?$CJ?5?6?5H_CR0?5?$CF@ 000000000001a4a0     Stm:PeVmxState.obj
+ 0002:000060c0       ??_C@_0EB@BLJMBOEF@GetPageTableEntry?3?5replacing?5L1P@ 000000000001a520     Stm:SmmEptHandler.obj
+ 0002:00006108       ??_C@_0DD@HJBMMFDD@PageAttribute?5?$DN?$DN?5Page2M?5?$HM?$HM?5PageA@ 000000000001a568     Stm:SmmEptHandler.obj
+ 0002:00006140       ??_C@_0EJ@ECPDBO@z?3?2stm_reference?2stmpegit?2stm?9pe@ 000000000001a5a0     Stm:SmmEptHandler.obj
+ 0002:00006190       ??_C@_0BJ@GFKAPGLM@SplitAttribute?5?$DN?$DN?5Page4K?$AA@ 000000000001a5f0     Stm:SmmEptHandler.obj
+ 0002:000061b0       ??_C@_0O@ODLPFGFJ@Split?5?9?50x?$CFx?6?$AA@ 000000000001a610     Stm:SmmEptHandler.obj
+ 0002:000061c0       ??_C@_0DF@DLLPJNCF@SplitAttribute?5?$DN?$DN?5Page2M?5?$HM?$HM?5Spli@ 000000000001a620     Stm:SmmEptHandler.obj
+ 0002:00006200       ??_C@_0FO@BDILGKDJ@EPTSetPageAttributeRange?5?9?5Base?3@ 000000000001a660     Stm:SmmEptHandler.obj
+ 0002:00006260       ??_C@_0CO@DPLKKBOL@EPTSetPageAttributeRange?5?9?5PageE@ 000000000001a6c0     Stm:SmmEptHandler.obj
+ 0002:00006290       ??_C@_0DB@MHMIEGDG@EPTSetPageAttributeRange?5?9?5Split@ 000000000001a6f0     Stm:SmmEptHandler.obj
+ 0002:000062c8       ??_C@_0CA@PKOCELIA@?$CB?$CB?$CBEPTViolationHandler?5?$CI?$CFd?$CJ?$CB?$CB?$CB?6?$AA@ 000000000001a728     Stm:SmmEptHandler.obj
+ 0002:000062e8       ??_C@_0BI@EALJMCEM@Qualification?5?9?5?$CF016lx?6?$AA@ 000000000001a748     Stm:SmmEptHandler.obj
+ 0002:00006300       ??_C@_0BP@CHBOOCIN@GuestPhysicalAddress?5?9?5?$CF016lx?6?$AA@ 000000000001a760     Stm:SmmEptHandler.obj
+ 0002:00006320       ??_C@_0BA@BGBAHLJN@EPT?5violation?$CB?6?$AA@ 000000000001a780     Stm:SmmEptHandler.obj
+ 0002:00006330       ??_C@_0BI@EPCDJPBM@Add?5unclaimed?5MEM_RSC?$CB?6?$AA@ 000000000001a790     Stm:SmmEptHandler.obj
+ 0002:00006348       ??_C@_0BH@PKNCGMFL@EPT?5?$CIPCIE?$CJ?5violation?$CB?6?$AA@ 000000000001a7a8     Stm:SmmEptHandler.obj
+ 0002:00006360       ??_C@_0CC@IGHACDIG@?$CB?$CB?$CBEPTMisconfigurationHandler?$CB?$CB?$CB@ 000000000001a7c0     Stm:SmmEptHandler.obj
+ 0002:00006388       ??_C@_0BF@IFBDFDAE@?$CB?$CB?$CBInvEPTHandler?$CB?$CB?$CB?6?$AA@ 000000000001a7e8     Stm:SmmEptHandler.obj
+ 0002:000063a0       ??_C@_0CD@PPBDFKEC@IsGuestAddressValid?5?9?5Max?5?9?5?$CF16l@ 000000000001a800     Stm:SmmVmcallHandler.obj
+ 0002:000063c8       ??_C@_0CE@HCIKEGEH@IsGuestAddressValid?5?9?5Address?5?9?5@ 000000000001a828     Stm:SmmVmcallHandler.obj
+ 0002:000063f0       ??_C@_0CD@BALPBMEO@IsGuestAddressValid?5?9?5Length?5?9?5?$CF@ 000000000001a850     Stm:SmmVmcallHandler.obj
+ 0002:00006418       ??_C@_0CO@CIBNDFGO@IsGuestAddressValid?5?9?5Address?5?$CL?5@ 000000000001a878     Stm:SmmVmcallHandler.obj
+ 0002:00006448       ??_C@_0CJ@OJHNOPFM@IsGuestAddressValid?5?9?5Check?5max?5@ 000000000001a8a8     Stm:SmmVmcallHandler.obj
+ 0002:00006478       ??_C@_0CE@KENEMKAM@IsGuestAddressValid?5?9?5Overlap?5MS@ 000000000001a8d8     Stm:SmmVmcallHandler.obj
+ 0002:000064a0       ??_C@_0CE@IAANJJFP@IsGuestAddressValid?5?9?5Overlap?5TS@ 000000000001a900     Stm:SmmVmcallHandler.obj
+ 0002:000064c8       ??_C@_0CO@HEOHHHDB@IsGuestAddressValid?5?9?5MLE?5protec@ 000000000001a928     Stm:SmmVmcallHandler.obj
+ 0002:000064f8       ??_C@_0BM@OMFBENLD@STM_API_MAP_ADDRESS_RANGE?3?6?$AA@ 000000000001a958     Stm:SmmVmcallHandler.obj
+ 0002:00006518       ??_C@_0BO@CECEKLPI@STM_API_UNMAP_ADDRESS_RANGE?3?6?$AA@ 000000000001a978     Stm:SmmVmcallHandler.obj
+ 0002:00006538       ??_C@_0BJ@INFFGNLF@STM_API_ADDRESS_LOOKUP?3?6?$AA@ 000000000001a998     Stm:SmmVmcallHandler.obj
+ 0002:00006558       ??_C@_0CM@DCOMCFLF@?5?5InterruptedGuestVirtualAddress@ 000000000001a9b8     Stm:SmmVmcallHandler.obj
+ 0002:00006588       ??_C@_0CK@KPJDENHG@?5?5Length?3?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5@ 000000000001a9e8     Stm:SmmVmcallHandler.obj
+ 0002:000065b8       ??_C@_0CL@DAGGEPMD@?5?5InterruptedCr3?3?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5@ 000000000001aa18     Stm:SmmVmcallHandler.obj
+ 0002:000065e8       ??_C@_0CL@EBFFHFBO@?5?5InterruptedEptp?3?5?5?5?5?5?5?5?5?5?5?5?5?5?5@ 000000000001aa48     Stm:SmmVmcallHandler.obj
+ 0002:00006618       ??_C@_0CK@GONJKFMI@?5?5MapToSmmGuest?3?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5?5@ 000000000001aa78     Stm:SmmVmcallHandler.obj
+ 0002:00006648       ??_C@_0CK@MMNNNMLL@?5?5InterruptedCr4Pae?3?5?5?5?5?5?5?5?5?5?5?5?5@ 000000000001aaa8     Stm:SmmVmcallHandler.obj
+ 0002:00006678       ??_C@_0CK@EKMNNII@?5?5InterruptedCr4Pse?3?5?5?5?5?5?5?5?5?5?5?5?5@ 000000000001aad8     Stm:SmmVmcallHandler.obj
+ 0002:000066a8       ??_C@_0CK@CBBAIKNB@?5?5InterruptedIa32eMode?3?5?5?5?5?5?5?5?5?5@ 000000000001ab08     Stm:SmmVmcallHandler.obj
+ 0002:000066d8       ??_C@_0CM@HPAMLLIJ@?5?5PhysicalAddress?3?5?5?5?5?5?5?5?5?5?5?5?5?5?5@ 000000000001ab38     Stm:SmmVmcallHandler.obj
+ 0002:00006708       ??_C@_0CM@PDFNGPPG@?5?5SmmGuestVirtualAddress?3?5?5?5?5?5?5?5@ 000000000001ab68     Stm:SmmVmcallHandler.obj
+ 0002:00006738       ??_C@_0DJ@EIAGCLAH@?$CFld?5SmmVmcallHandler?5?9?5GetSmmVmc@ 000000000001ab98     Stm:SmmVmcallHandler.obj
+ 0002:00006780       ??_C@_0ED@OKPOPCN@?$CFld?5RsmHandler?5?9?5ExecutiveVmcsPt@ 000000000001abe0     Stm:SmmRsmHandler.obj
+ 0002:000067c8       ??_C@_0DO@GNIINBIE@?$CFld?5RsmHandler?5?9?5VmcsLinkPtr?5vio@ 000000000001ac28     Stm:SmmRsmHandler.obj
+ 0002:00006808       ??_C@_0DJ@KGHBIJOL@?$CFld?5RsmHandler?5?9?5VmPe?5Detected?5?9@ 000000000001ac68     Stm:SmmRsmHandler.obj
+ 0002:00006850       ??_C@_0EF@PAAFCLDN@?$CFld?5RsmHandler?5ERROR?5?9?5Failed?5to@ 000000000001acb0     Stm:SmmRsmHandler.obj
+ 0002:000068a0       ??_C@_0EM@MPOJKJFJ@?5?$CFld?5RsmHandler?5?9?5data?5structure@ 000000000001ad00     Stm:SmmRsmHandler.obj
+ 0002:000068f0       ??_C@_0DG@NGLLGBIE@?$CFld?5RsmHandler?5?9?5ERROR?3?5AsmVmPtr@ 000000000001ad50     Stm:SmmRsmHandler.obj
+ 0002:00006928       ??_C@_08GKOEEMCJ@?$CFld?5?3o?$CI?6?$AA@ 000000000001ad88     Stm:SmmRsmHandler.obj
+ 0002:00006938       ??_C@_0BL@KPFBNOFC@?$CFld?5?$CB?$CB?$CBRsmHandler?5FAIL?$CB?$CB?$CB?6?$AA@ 000000000001ad98     Stm:SmmRsmHandler.obj
+ 0002:00006958       ??_C@_0BN@KHEEKPLM@?$CFld?5RsmHandler?5Rflags?3?5?$CF08x?6?$AA@ 000000000001adb8     Stm:SmmRsmHandler.obj
+ 0002:00006978       ??_C@_0DG@MJHDCLEF@?$CFld?5RsmHandler?5VMCS_32_RO_VM_INS@ 000000000001add8     Stm:SmmRsmHandler.obj
+ 0002:000069b0       ??_C@_01GAPBHFFA@T?$AA@    000000000001ae10     Stm:SmmTaskSwitchHandler.obj
+ 0002:000069b8       ??_C@_0BL@KGEJGHOE@GdtEntry?9?$DOAttribute?5?$CG?50x02?$AA@ 000000000001ae18     Stm:SmmTaskSwitchHandler.obj
+ 0002:000069e0       ??_C@_0FA@DOLGJBIO@z?3?2stm_reference?2stmpegit?2stm?9pe@ 000000000001ae40     Stm:SmmTaskSwitchHandler.obj
+ 0002:00006a30       ??_C@_0CC@PDFOHLJN@?$CIGdtEntry?9?$DOAttribute?5?$CG?50x02?$CJ?5?$DN?$DN?5@ 000000000001ae90     Stm:SmmTaskSwitchHandler.obj
+ 0002:00006a58       ??_C@_0O@KKJECKMJ@?$CB?$CB?$CBOther?5TSS?6?$AA@ 000000000001aeb8     Stm:SmmTaskSwitchHandler.obj
+ 0002:00006a68       ??_C@_0BH@ENPOMFIC@RDMSR?5?$CI?$CFx?$CJ?5violation?$CB?6?$AA@ 000000000001aec8     Stm:SmmMsrHandler.obj
+ 0002:00006a80       ??_C@_0BH@NNHJOAE@WRMSR?5?$CI?$CFx?$CJ?5violation?$CB?6?$AA@ 000000000001aee0     Stm:SmmMsrHandler.obj
+ 0002:00006a98       ??_C@_0P@GCMFJHGC@IO?5violation?$CB?6?$AA@ 000000000001aef8     Stm:SmmIoHandler.obj
+ 0002:00006aa8       ??_C@_0BF@KGJBFMBG@IO?5?$CIPCI?$CJ?5violation?$CB?6?$AA@ 000000000001af08     Stm:SmmIoHandler.obj
+ 0002:00006ac0       ??_C@_0HJ@HDPHPNPB@Add?5unclaimed?5PCI_RSC?$CB?3?5Port?3?50x@ 000000000001af20     Stm:SmmIoHandler.obj
+ 0002:00006b40       ??_C@_0BB@IHOLODOI@?$CB?$CB?$CBIoHandler?$CB?$CB?$CB?6?$AA@ 000000000001afa0     Stm:SmmIoHandler.obj
+ 0002:00006b58       ??_C@_0P@NEICKGED@CR?5violation?$CB?6?$AA@ 000000000001afb8     Stm:SmmCrHandler.obj
+ 0002:00006b68       ??_C@_0BH@MGBMLFDI@?$CB?$CB?$CBCrAccessHandler?$CB?$CB?$CB?6?$AA@ 000000000001afc8     Stm:SmmCrHandler.obj
+ 0002:00006b80       ??_C@_0EO@CMKFEHJF@?$CFld?5CheckAndGetState?5?$CIdefault?$CJ?5E@ 000000000001afe0     Stm:PeSmiHandler.obj
+ 0002:00006bd0       ??_C@_0CB@LKBKICJL@Invalid?5VMCS_RECORD?5?$CF08x?5?9?5?$CF08x?6@ 000000000001b030     Stm:VmcsRecord.obj
+ 0002:00006bf8       ??_C@_0N@FIEHIFHK@VmcsRecord?3?6?$AA@ 000000000001b058     Stm:VmcsRecord.obj
+ 0002:00006c08       ??_C@_0BM@GCFLNDID@?5?5Index?5?5?5?5?5?5?5?5?5?5?5?5?5?3?5?$CF08x?6?$AA@ 000000000001b068     Stm:VmcsRecord.obj
+ 0002:00006c28       ??_C@_0BO@KHDDMHNI@?5?5VmcsPhysPointer?5?5?5?3?5?$CF016lx?6?$AA@ 000000000001b088     Stm:VmcsRecord.obj
+ 0002:00006c48       ??_C@_0BM@KJBFJGCM@?5?5DomainType?5?5?5?5?5?5?5?5?3?5?$CF08x?6?$AA@ 000000000001b0a8     Stm:VmcsRecord.obj
+ 0002:00006c68       ??_C@_0BM@PCILNHCO@?5?5XStatePolicy?5?5?5?5?5?5?3?5?$CF08x?6?$AA@ 000000000001b0c8     Stm:VmcsRecord.obj
+ 0002:00006c88       ??_C@_0BM@IMGAIMAI@?5?5DegradationPolicy?5?3?5?$CF08x?6?$AA@ 000000000001b0e8     Stm:VmcsRecord.obj
+ 0002:00006ca8       ??_C@_0BM@KHJOACM@?5?5Type?5?5?5?5?5?5?5?5?5?5?5?5?5?5?3?5?$CF08x?6?$AA@ 000000000001b108     Stm:VmcsRecord.obj
+ 0002:00006cc8       ??_C@_0CD@HPKPDIGO@?$CFld?5AddPeVm?5?9?5entered?0?5PeType?3?5?$CF@ 000000000001b128     Stm:PeSmiVmcallHandler.obj
+ 0002:00006cf0       ??_C@_0DN@GMEALDPB@?$CFld?5AddPeVm?5?9?5callerDataStructur@ 000000000001b150     Stm:PeSmiVmcallHandler.obj
+ 0002:00006d30       ??_C@_0DH@FLPLNGMB@?$CFld?5AddPeVm?5?9?5module_address?3?5ba@ 000000000001b190     Stm:PeSmiVmcallHandler.obj
+ 0002:00006d68       ??_C@_0CJ@PBDODLCI@?$CFld?5AddPeVm?5?9?5ModuleSize?3?5?$CFld?5?$CI0@ 000000000001b1c8     Stm:PeSmiVmcallHandler.obj
+ 0002:00006d98       ??_C@_0CJ@OJNOJGO@?$CFld?5AddPeVm?5?9?5module_entry_point@ 000000000001b1f8     Stm:PeSmiVmcallHandler.obj
+ 0002:00006dc8       ??_C@_0CH@GKIMMHJL@?$CFld?5AddPeVm?5?9?5ModuleLoadAddress?3@ 000000000001b228     Stm:PeSmiVmcallHandler.obj
+ 0002:00006df0       ??_C@_0CH@GMNHJFFI@?$CFld?5AddPeVm?5?9?5AddressSpaceStart?3@ 000000000001b250     Stm:PeSmiVmcallHandler.obj
+ 0002:00006e18       ??_C@_0CH@ENOOFFCC@?$CFld?5AddPeVm?5?9?5AddressSpaceSize?3?5@ 000000000001b278     Stm:PeSmiVmcallHandler.obj
+ 0002:00006e40       ??_C@_0CH@PJCFOAJH@?$CFld?5AddPeVm?5?9?5DoNotClearSize?3?50x@ 000000000001b2a0     Stm:PeSmiVmcallHandler.obj
+ 0002:00006e68       ??_C@_0BP@DALPPBJE@?$CFld?5AddPeVm?5?9?5CR3_LOAD?3?5?50x?$CFp?6?$AA@ 000000000001b2c8     Stm:PeSmiVmcallHandler.obj
+ 0002:00006e88       ??_C@_0CB@LGKILDAP@?$CFld?5AddPeVm?5?9?5VmConfig?3?50x?$CF08lx?6@ 000000000001b2e8     Stm:PeSmiVmcallHandler.obj
+ 0002:00006eb0       ??_C@_0CA@CJOMIICJ@?$CFld?5AddPeVm?5?9?5shared?5page?50x?$CFp?6?$AA@ 000000000001b310     Stm:PeSmiVmcallHandler.obj
+ 0002:00006ed0       ??_C@_0CH@LCCIENDE@?$CFld?5AddPeVm?5?9?5shared?5page?5size?50@ 000000000001b330     Stm:PeSmiVmcallHandler.obj
+ 0002:00006ef8       ??_C@_0CF@BCINHCHI@?$CFld?5stmApaAddVM?5?9?5segment?5page?50@ 000000000001b358     Stm:PeSmiVmcallHandler.obj
+ 0002:00006f20       ??_C@_0CD@GFBMDJEJ@?$CFld?5AddPeVm?5?9?5module_address?50x?$CF@ 000000000001b380     Stm:PeSmiVmcallHandler.obj
+ 0002:00006f48       ??_C@_0CG@HKJEIEME@?$CFld?5AddPeVm?5?9?5ModuleDataSection?5@ 000000000001b3a8     Stm:PeSmiVmcallHandler.obj
+ 0002:00006f70       ??_C@_0DJ@KGABMJCL@?$CFld?5AddPeVm?5?9?5module_address?3?5ba@ 000000000001b3d0     Stm:PeSmiVmcallHandler.obj
+ 0002:00006fb0       ??_C@_0CN@PIBHCPFI@?$CFld?5AddPeVm?5?9?5SmmBuffer?5at?3?5?$CFllx@ 000000000001b410     Stm:PeSmiVmcallHandler.obj
+ 0002:00006fe0       ??_C@_0DM@OINJFPJC@?$CFld?5AddPeVm?5?9?5failed?5to?5allocate@ 000000000001b440     Stm:PeSmiVmcallHandler.obj
+ 0002:00007020       ??_C@_0EK@DBGAHIIH@?$CFld?5AddPeVm?5?9?5Error?3?5ModuleLoadA@ 000000000001b480     Stm:PeSmiVmcallHandler.obj
+ 0002:00007070       ??_C@_0EK@IKPDONBF@?$CFld?5AddPeVm?5?9?5Error?3?5ModuleSize?5@ 000000000001b4d0     Stm:PeSmiVmcallHandler.obj
+ 0002:000070c0       ??_C@_0DN@JFJGJGNP@?$CFld?5AddPeVm?5?9?5destBuffer?3?5?$CFllx?5s@ 000000000001b520     Stm:PeSmiVmcallHandler.obj
+ 0002:00007100       ??_C@_0GA@DFBPEEMG@?$CFld?5AddPeVm?5?9?5?$CK?$CKloaded?5Module?5SM@ 000000000001b560     Stm:PeSmiVmcallHandler.obj
+ 0002:00007160       ??_C@_0FB@HLBHPLBO@?$CFld?5AddPeVm?5?9?5destBuffer?3?50x?$CF016@ 000000000001b5c0     Stm:PeSmiVmcallHandler.obj
+ 0002:000071b8       ??_C@_0CN@PFIMAMFP@?$CFld?5AddPeVm?5?9?5Unable?5to?5setup?5Mo@ 000000000001b618     Stm:PeSmiVmcallHandler.obj
+ 0002:000071f0       ??_C@_0EN@MGGHFIDM@?$CFld?5AddPeVm?5?9?5module?5pages?5suces@ 000000000001b650     Stm:PeSmiVmcallHandler.obj
+ 0002:00007240       ??_C@_0DL@KHLCDMAD@?$CFld?5AddPeVm?5?9?5Unable?5to?5map?5shar@ 000000000001b6a0     Stm:PeSmiVmcallHandler.obj
+ 0002:00007280       ??_C@_0DL@OCMPPLLP@?$CFld?5AddPeVm?5?9?5shared?5page?5sucess@ 000000000001b6e0     Stm:PeSmiVmcallHandler.obj
+ 0002:000072c0       ??_C@_0DO@MDNGDOPN@?$CFld?5AddPeVm?5?9?5region?5list?3?5bad?5p@ 000000000001b720     Stm:PeSmiVmcallHandler.obj
+ 0002:00007300       ??_C@_0EA@MBCLIBFA@?$CFld?5AddPeVm?5?9?5mapping?5region?5lis@ 000000000001b760     Stm:PeSmiVmcallHandler.obj
+ 0002:00007340       ??_C@_0DB@IHFJIBFE@?$CFld?5AddPeVm?5?9?5Couldn?8t?5Setup?5reg@ 000000000001b7a0     Stm:PeSmiVmcallHandler.obj
+ 0002:00007378       ??_C@_0DD@DHAKGGEK@?$CFld?5AddPeVm?5?9?5Setting?5up?5region?5@ 000000000001b7d8     Stm:PeSmiVmcallHandler.obj
+ 0002:000073b0       ??_C@_0DL@DJCLLIND@?$CFld?5AddPeVm?5?9?5Setting?5up?5region?5@ 000000000001b810     Stm:PeSmiVmcallHandler.obj
+ 0002:000073f0       ??_C@_0DL@HADJGBIC@?$CFld?5AddPeVm?5?9?5region?3?5bad?5physic@ 000000000001b850     Stm:PeSmiVmcallHandler.obj
+ 0002:00007430       ??_C@_0FF@MIKDBJDC@?$CFld?5AddPeVm?5?9?5?$CK?$CK?$CKWarning?$CK?$CK?$CK?5bad?5@ 000000000001b890     Stm:PeSmiVmcallHandler.obj
+ 0002:00007488       ??_C@_0CK@ONKKHDMG@?$CFld?5AddPeVm?5?9?5Couldn?8t?5Setup?5reg@ 000000000001b8e8     Stm:PeSmiVmcallHandler.obj
+ 0002:000074b8       ??_C@_0CK@PBMPJPFO@?$CFld?5AddPeVm?5?9?5No?5caller?5region?5r@ 000000000001b918     Stm:PeSmiVmcallHandler.obj
+ 0002:000074e8       ??_C@_0CF@GABHFEGC@?$CFld?5AddPeVm?5?9?5ShareModuleStm?5at?3@ 000000000001b948     Stm:PeSmiVmcallHandler.obj
+ 0002:00007510       ??_C@_0DL@JBOCPHD@?$CFld?5AddPeVm?5?9?5failed?5to?5allocate@ 000000000001b970     Stm:PeSmiVmcallHandler.obj
+ 0002:00007550       ??_C@_0DE@ECJCCHDD@?$CFd?5AddPeVm?3?5could?5not?5setup?5modu@ 000000000001b9b0     Stm:PeSmiVmcallHandler.obj
+ 0002:00007588       ??_C@_0CK@KLEEJENM@?$CFd?5AddPeVm?3?5module?9stm?5shared?5pa@ 000000000001b9e8     Stm:PeSmiVmcallHandler.obj
+ 0002:000075b8       ??_C@_0CK@PGJPBDCC@?$CFld?5AddPeVm?5?9?5Error?5in?5configuri@ 000000000001ba18     Stm:PeSmiVmcallHandler.obj
+ 0002:000075f0       ??_C@_0ED@CJNKBFJK@?$CFld?5AddPeVm?5?9?5sucessfully?5comple@ 000000000001ba50     Stm:PeSmiVmcallHandler.obj
+ 0002:00007638       ??_C@_0CE@EKPBFDFA@?$CFld?5AddPeVm?5?9?5VM?1PE?5Launch?5Failu@ 000000000001ba98     Stm:PeSmiVmcallHandler.obj
+ 0002:00007660       ??_C@_0CF@EMLPLLDI@?$CFld?5AddPeVm?5?9?5VM?5not?5run?5per?5opt@ 000000000001bac0     Stm:PeSmiVmcallHandler.obj
+ 0002:00007690       ??_C@_0EJ@DEFINEDD@?$CFld?5setModulepages?5?9?5entered?5Add@ 000000000001baf0     Stm:PeSmiVmcallHandler.obj
+ 0002:000076e0       ??_C@_0FM@BILNBEFJ@?$CFld?5setModulepages?5?9?5setting?5up?5@ 000000000001bb40     Stm:PeSmiVmcallHandler.obj
+ 0002:00007740       ??_C@_0DO@CMKGLPBP@?$CFld?5setModulepages?5?9?5failed?5to?5s@ 000000000001bba0     Stm:PeSmiVmcallHandler.obj
+ 0002:00007780       ??_C@_0DH@JCBNCLHD@?$CFld?5setModulepages?5?9?5no?5data?5spa@ 000000000001bbe0     Stm:PeSmiVmcallHandler.obj
+ 0002:000077b8       ??_C@_0DP@OIODHPFN@?$CFld?5setModulepages?3?5Module?5start@ 000000000001bc18     Stm:PeSmiVmcallHandler.obj
+ 0002:00007800       ??_C@_0EI@CGJKFCFJ@?$CFld?5setModulepages?3?5Setting?5up?5a@ 000000000001bc60     Stm:PeSmiVmcallHandler.obj
+ 0002:00007850       ??_C@_0EG@JAPOADF@?$CFd?5setModulepages?5?9?5could?5not?5se@ 000000000001bcb0     Stm:PeSmiVmcallHandler.obj
+ 0002:000078a0       ??_C@_0EK@MNMJAAGC@?$CFld?5setModulepages?5?9?5ModuleDataS@ 000000000001bd00     Stm:PeSmiVmcallHandler.obj
+ 0002:000078f0       ??_C@_0EC@OAFGKDKM@?$CFld?5setModulepages?5?9?5Setting?5up?5@ 000000000001bd50     Stm:PeSmiVmcallHandler.obj
+ 0002:00007940       ??_C@_0GC@HBPKOFGK@?$CFld?5setModulepages?5?9?5module_end?3@ 000000000001bda0     Stm:PeSmiVmcallHandler.obj
+ 0002:000079a8       ??_C@_0CK@IDOOPJJI@?$CFld?5setModulepages?5?9?5StartEndBlo@ 000000000001be08     Stm:PeSmiVmcallHandler.obj
+ 0002:000079d8       ??_C@_0CO@HOPDBEJC@?$CFd?5setModulepages?5?9?5Execute?5Heap@ 000000000001be38     Stm:PeSmiVmcallHandler.obj
+ 0002:00007a10       ??_C@_0EB@LIJIBLAN@?$CFd?5setModulepages?5?9?5Execute?5Heap@ 000000000001be70     Stm:PeSmiVmcallHandler.obj
+ 0002:00007a58       ??_C@_0DK@LHKIEFCN@?$CFd?5setModulepages?5?9?5could?5not?5se@ 000000000001beb8     Stm:PeSmiVmcallHandler.obj
+ 0002:00007a98       ??_C@_0CO@NMGJHNLM@?$CFd?5setModulepages?5?9?5end?5address?5@ 000000000001bef8     Stm:PeSmiVmcallHandler.obj
+ 0002:00007ac8       ??_C@_0DC@FNMBFAIL@?$CFd?5setModulepages?5?9?5no?5space?5aft@ 000000000001bf28     Stm:PeSmiVmcallHandler.obj
+ 0002:00007b00       ??_C@_0DP@BDMHMEGB@?$CFd?5setModulepages?5?9?5end?5of?5Modul@ 000000000001bf60     Stm:PeSmiVmcallHandler.obj
+ 0002:00007b40       ??_C@_0FH@MPCOJKIL@?$CFd?5setModulepages?5?9?5DoNotClearSi@ 000000000001bfa0     Stm:PeSmiVmcallHandler.obj
+ 0002:00007b98       ??_C@_0DA@MALBEFBD@?$CFd?5SetModulepages?5?9?5DoNotClearSi@ 000000000001bff8     Stm:PeSmiVmcallHandler.obj
+ 0002:00007bc8       ??_C@_0BC@NAKFOJLH@StmTeardown?5?9?5?$CFd?6?$AA@ 000000000001c028     Stm:StmTearDown.obj
+ 0002:00007be0       ??_C@_0BI@HKGHHPLL@?$CB?$CB?$CBStmTeardown?5FAIL?$CB?$CB?$CB?6?$AA@ 000000000001c040     Stm:StmTearDown.obj
+ 0002:00007bf8       ??_C@_0CC@CMDDNBC@SmmStmTeardownRip?5start?5?$CI?$CFd?$CJ?5?4?4?4@ 000000000001c058     Stm:SmmTearDown.obj
+ 0002:00007c20       ??_C@_0BI@GCBNDJGK@?$CB?$CB?$CBSmmTeardown?5FAIL?$CB?$CB?$CB?6?$AA@ 000000000001c080     Stm:SmmTearDown.obj
+ 0002:00007c38       ??_C@_0BM@ICEAGPNC@SmmStmTeardownRip?5end?5?$CI?$CFd?$CJ?6?$AA@ 000000000001c098     Stm:SmmTearDown.obj
+ 0002:00007c58       ??_C@_0DN@CCMIEDFA@?$CFld?5?9?5PE?1VM?5terminated?5because?5o@ 000000000001c0b8     Stm:PeSmmPreemptionTimerHandler.obj
+ 0002:00007c98       ??_C@_0CO@DGCGIJMP@?$CFld?5PeCrHandler?5?9?5CR?5Handler?5not@ 000000000001c0f8     Stm:PeSmmCrHandler.obj
+ 0002:00007cc8       ??_C@_0BP@CPIKCAFA@?$CFld?5PeCrHandler?5?9?5CpuDeadLoop?6?$AA@ 000000000001c128     Stm:PeSmmCrHandler.obj
+ 0002:00007cf0       ??_C@_0GN@GPGDHGCL@?$CFld?5PeBadGuestStateHandler?5?9?5PE?5@ 000000000001c150     Stm:PeSmmBadGuestStateHandler.obj
+ 0002:00007d60       ??_C@_0DF@KLLNIEIB@?$CFld?5PeBadGuestStateHandler?5?9?5Exi@ 000000000001c1c0     Stm:PeSmmBadGuestStateHandler.obj
+ 0002:00007d98       ??_C@_0CK@HGDJCGLG@?$CFld?5PeBadGuestStateHandler?5?9?5Cpu@ 000000000001c1f8     Stm:PeSmmBadGuestStateHandler.obj
+ 0002:00007dd0       ??_C@_0IM@DBGAPAOE@?$CFld?5PeIoHander?5?9?5?$CK?$CKERROR?$CK?$CK?5Reque@ 000000000001c230     Stm:PeSmmIoHandler.obj
+ 0002:00007e60       ??_C@_08FGHBKMPI@?$CIVM?1PE?$CJ?5?$AA@ 000000000001c2c0     Stm:PeSmmIoHandler.obj
+ 0002:00007e70       ??_C@_0CO@ODBBNKIB@?$CFld?5PeIoHandler?5?9?5IO?5Port?50x?$CFx?5n@ 000000000001c2d0     Stm:PeSmmIoHandler.obj
+ 0002:00007ea0       ??_C@_0EL@NMKBKOGB@?$CFld?5PeSmmVmcallMapAddressRangeHa@ 000000000001c300     Stm:PeSmmVmcallHandler.obj
+ 0002:00007ef0       ??_C@_0IN@PHDPCDPI@?$CFld?5PeSmmVmcallMapAddressRangeHa@ 000000000001c350     Stm:PeSmmVmcallHandler.obj
+ 0002:00007f80       ??_C@_0GP@KNFMJIGM@?$CFld?5PeSmmVmcallMapAddressRangeHa@ 000000000001c3e0     Stm:PeSmmVmcallHandler.obj
+ 0002:00007ff0       ??_C@_0FJ@HFMMALGN@?$CFld?5PeSmmVmcallMapAddressRangeHa@ 000000000001c450     Stm:PeSmmVmcallHandler.obj
+ 0002:00008050       ??_C@_0DN@BCLPDOCM@?$CFld?5PeSmmVmcallMapAddressRangeHa@ 000000000001c4b0     Stm:PeSmmVmcallHandler.obj
+ 0002:00008090       ??_C@_0EO@HIOBFFA@?$CFld?5PeSmmVmcallMapAddressRangeHa@ 000000000001c4f0     Stm:PeSmmVmcallHandler.obj
+ 0002:000080e0       ??_C@_0EO@MGLENBGG@?$CFld?5PeSmmVmcallMapAddressRangeHa@ 000000000001c540     Stm:PeSmmVmcallHandler.obj
+ 0002:00008130       ??_C@_0FK@CBBGEEPI@?$CFld?5PE?9STM_API_GET_VMCS_MAP?3?5Add@ 000000000001c590     Stm:PeSmmVmcallHandler.obj
+ 0002:00008190       ??_C@_0CN@BGFIKBAE@?$CFld?5Size?5of?5VMCSFIELDOFFSET?5buff@ 000000000001c5f0     Stm:PeSmmVmcallHandler.obj
+ 0002:000081c0       ??_C@_0EB@IJILPKLP@?$CFld?5PeSmmVmcallHandler?5?9?5GetPeSm@ 000000000001c620     Stm:PeSmmVmcallHandler.obj
+ 0002:00008208       ??_C@_0BN@OKIAMHFF@?$CB?$CB?$CBReadMsrHandler?50x?$CFllx?$CB?$CB?$CB?6?$AA@ 000000000001c668     Stm:PeSmmMsrHandler.obj
+ 0002:00008228       ??_C@_0CF@JNDOEBCI@?$CB?$CB?$CBWriteMsrHandler?$CB?$CB?$CB?50x?$CFllx?50x?$CF@ 000000000001c688     Stm:PeSmmMsrHandler.obj
+ 0002:00008250       ??_C@_0EB@PMAFOPDL@?$CB?$CB?$CBWriteMsrHandler?5?9?5VM?1PE?5has?5n@ 000000000001c6b0     Stm:PeSmmMsrHandler.obj
+ 0002:00008298       ??_C@_0DG@JMHAFEFJ@?$CFld?5PeRsmHandler?5?9?5ERROR?3?5AsmVmP@ 000000000001c6f8     Stm:PeSmmRsmHandler.obj
+ 0002:000082d0       ??_C@_0CA@KOMOPKOB@?$CFld?5PeRsmHandler?5?9?5CpuDeadLoop?6?$AA@ 000000000001c730     Stm:PeSmmRsmHandler.obj
+ 0002:000082f0       ??_C@_0BI@NCNMEAAE@?$CFld?5PeRsmHandler?5start?6?$AA@ 000000000001c750     Stm:PeSmmRsmHandler.obj
+ 0002:00008308       ??_C@_0BO@LJDAKBGL@?$CFld?5PeRsmHandler?5CpuDeadLoop?6?$AA@ 000000000001c768     Stm:PeSmmRsmHandler.obj
+ 0002:00008330       ??_C@_0FD@EBKNHFIN@?$CFld?5PeExceptionHandler?5VmexitInt@ 000000000001c790     Stm:PeSmmExceptionHandler.obj
+ 0002:00008388       ??_C@_0DM@GPBOGPKA@?$CFld?5PeExceptionHandler?5?9?5receive@ 000000000001c7e8     Stm:PeSmmExceptionHandler.obj
+ 0002:000083d0       ??_C@_0GM@PGGGMOHD@?$CFld?5PeExceptionHandler?5?9?5PE?1VM?5G@ 000000000001c830     Stm:PeSmmExceptionHandler.obj
+ 0002:00008440       ??_C@_0FO@POHOEADD@?$CFld?5PeExceptionHandler?5?9?5PE?1VM?5P@ 000000000001c8a0     Stm:PeSmmExceptionHandler.obj
+ 0002:000084a0       ??_C@_0CE@JGMHCOIO@?5?5?5?5?5INTERRUPTION_ERROR_CODE?3?50x@ 000000000001c900     Stm:PeSmmExceptionHandler.obj
+ 0002:000084c8       ??_C@_0CB@MCAIDBHG@Page?9level?5protection?5violation?6@ 000000000001c928     Stm:PeSmmExceptionHandler.obj
+ 0002:000084f0       ??_C@_0BC@PNGHBKGN@Non?9present?5page?6?$AA@ 000000000001c950     Stm:PeSmmExceptionHandler.obj
+ 0002:00008508       ??_C@_0BI@NDEGNLAE@Write?9access?5attempted?6?$AA@ 000000000001c968     Stm:PeSmmExceptionHandler.obj
+ 0002:00008520       ??_C@_0BH@CMMKJMBA@read?9access?5attempted?6?$AA@ 000000000001c980     Stm:PeSmmExceptionHandler.obj
+ 0002:00008538       ??_C@_0L@CMLGPEFM@USER?5mode?6?$AA@ 000000000001c998     Stm:PeSmmExceptionHandler.obj
+ 0002:00008548       ??_C@_0BB@KOBFBLFM@Supervisor?5mode?6?$AA@ 000000000001c9a8     Stm:PeSmmExceptionHandler.obj
+ 0002:00008560       ??_C@_0CH@FHOMKEBA@Reserved?5bit?5set?5in?5paging?5struc@ 000000000001c9c0     Stm:PeSmmExceptionHandler.obj
+ 0002:00008588       ??_C@_0BD@POPIPDEN@Instruction?5FETCH?6?$AA@ 000000000001c9e8     Stm:PeSmmExceptionHandler.obj
+ 0002:000085a0       ??_C@_0N@GABIOMNO@Data?5access?6?$AA@ 000000000001ca00     Stm:PeSmmExceptionHandler.obj
+ 0002:000085b0       ??_C@_0CD@LDAPKMNG@Pagetable?5Chain?5causing?5the?5erro@ 000000000001ca10     Stm:PeSmmExceptionHandler.obj
+ 0002:000085d8       ??_C@_0CF@FFJBOCPD@?5?5?5?5Pagetable?5Address?5?$CICR3?$CJ?3?50x?$CF@ 000000000001ca38     Stm:PeSmmExceptionHandler.obj
+ 0002:00008600       ??_C@_0CB@DCNNPDEE@?5?5?5?5CR3?5points?5out?5of?5VM?5region?6@ 000000000001ca60     Stm:PeSmmExceptionHandler.obj
+ 0002:00008628       ??_C@_0BI@ECBBPGMD@?5?5?5?5Pml4?$FL0x?$CFx?$FN?3?50x?$CFllx?6?$AA@ 000000000001ca88     Stm:PeSmmExceptionHandler.obj
+ 0002:00008640       ??_C@_0CD@BMMEPMLP@?5?5?5?5Pdpte?5points?5out?5of?5VM?5regio@ 000000000001caa0     Stm:PeSmmExceptionHandler.obj
+ 0002:00008668       ??_C@_0BJ@PEABHIOJ@?5?5?5?5Pdpte?$FL0x?$CFx?$FN?3?50x?$CFllx?6?$AA@ 000000000001cac8     Stm:PeSmmExceptionHandler.obj
+ 0002:00008688       ??_C@_0CB@HJMPDEJE@?5?5?5?5Pde?5points?5out?5of?5VM?5region?6@ 000000000001cae8     Stm:PeSmmExceptionHandler.obj
+ 0002:000086b0       ??_C@_0BJ@GEOODPNM@?5?5?5?5Pdpte?5Index?3?5?$FL0x?$CFx?$FN?6?$AA@ 000000000001cb10     Stm:PeSmmExceptionHandler.obj
+ 0002:000086d0       ??_C@_0BJ@JPIOFAEP@?5?5?5?5Pte?5?5?5Index?3?5?$FL0x?$CFx?$FN?6?$AA@ 000000000001cb30     Stm:PeSmmExceptionHandler.obj
+ 0002:000086f0       ??_C@_0BH@HKGJPJAC@?5?5?5?5Pde?$FL0x?$CFx?$FN?3?50x?$CFllx?6?$AA@ 000000000001cb50     Stm:PeSmmExceptionHandler.obj
+ 0002:00008708       ??_C@_0CB@GCJAOFEE@?5?5?5?5Pte?5points?5out?5of?5VM?5region?6@ 000000000001cb68     Stm:PeSmmExceptionHandler.obj
+ 0002:00008730       ??_C@_0BH@MECFOCCP@?5?5?5?5Pte?5Index?3?5?$FL0x?$CFx?$FN?6?$AA@ 000000000001cb90     Stm:PeSmmExceptionHandler.obj
+ 0002:00008748       ??_C@_0BH@FEMKKFBK@?5?5?5?5Pte?$FL0x?$CFx?$FN?3?50x?$CFllx?6?$AA@ 000000000001cba8     Stm:PeSmmExceptionHandler.obj
+ 0002:00008760       ??_C@_0GH@OHJGMFGG@?$CFld?5PeExceptionHandler?5?9?5PE?1VM?5U@ 000000000001cbc0     Stm:PeSmmExceptionHandler.obj
+ 0002:000087c8       ??_C@_0CG@DIBONBLN@?$CFld?5PeExceptionHandler?5?9?5CpuDead@ 000000000001cc28     Stm:PeSmmExceptionHandler.obj
+ 0002:000087f0       ??_C@_0HE@FDPMPEON@?$CFld?5PeExceptionHandler?5?9?5Warning@ 000000000001cc50     Stm:PeSmmExceptionHandler.obj
+ 0002:00008868       ??_C@_0CI@BMFNAOFC@?$CFld?5PE?5?9?5CPUID?5Handler?5not?5imple@ 000000000001ccc8     Stm:PeSmmCpuidHandler.obj
+ 0002:00008890       ??_C@_0CC@EIEAAHJM@?$CFld?5PeCpuidHandler?5?9?5CpuDeadLoop@ 000000000001ccf0     Stm:PeSmmCpuidHandler.obj
+ 0002:000088b8       ??_C@_0CL@PEDFDCLD@?$CFld?5InitPeGuestVmcs?5Starting?5?9?5V@ 000000000001cd18     Stm:PeVmcsInit.obj
+ 0002:000088e8       ??_C@_0DE@DHPKJHJN@?$CFld?5InitPeGuestVmcs?5?9?5PE?5Guest?5s@ 000000000001cd48     Stm:PeVmcsInit.obj
+ 0002:00008920       ??_C@_0BM@IENLLEPI@?$CFld?5InitPeGuestVmcs?5?9?5done?6?$AA@ 000000000001cd80     Stm:PeVmcsInit.obj
+ 0002:00008940       ??_C@_0BG@KHPNDMDD@VMCS_N_HOST_RIP_INDEX?$AA@ 000000000001cda0     Stm:VmcsMapper.obj
+ 0002:00008958       ??_C@_0BG@JOBDPENM@VMCS_N_HOST_RSP_INDEX?$AA@ 000000000001cdb8     Stm:VmcsMapper.obj
+ 0002:00008970       ??_C@_0CE@BIEPGLEL@VMCS_N_HOST_IA32_SYSENTER_EIP_IN@ 000000000001cdd0     Stm:VmcsMapper.obj
+ 0002:00008998       ??_C@_0CE@CBKBKDKE@VMCS_N_HOST_IA32_SYSENTER_ESP_IN@ 000000000001cdf8     Stm:VmcsMapper.obj
+ 0002:000089c0       ??_C@_0BM@GNEIFAAA@VMCS_N_HOST_IDTR_BASE_INDEX?$AA@ 000000000001ce20     Stm:VmcsMapper.obj
+ 0002:000089e0       ??_C@_0BM@ENMKKGKL@VMCS_N_HOST_GDTR_BASE_INDEX?$AA@ 000000000001ce40     Stm:VmcsMapper.obj
+ 0002:00008a00       ??_C@_0BK@OEOFOALF@VMCS_N_HOST_TR_BASE_INDEX?$AA@ 000000000001ce60     Stm:VmcsMapper.obj
+ 0002:00008a20       ??_C@_0BK@CDKACAIH@VMCS_N_HOST_GS_BASE_INDEX?$AA@ 000000000001ce80     Stm:VmcsMapper.obj
+ 0002:00008a40       ??_C@_0BK@LOKPMBPB@VMCS_N_HOST_FS_BASE_INDEX?$AA@ 000000000001cea0     Stm:VmcsMapper.obj
+ 0002:00008a60       ??_C@_0BG@BFKFKEAI@VMCS_N_HOST_CR4_INDEX?$AA@ 000000000001cec0     Stm:VmcsMapper.obj
+ 0002:00008a78       ??_C@_0BG@BPGAKNBB@VMCS_N_HOST_CR3_INDEX?$AA@ 000000000001ced8     Stm:VmcsMapper.obj
+ 0002:00008a90       ??_C@_0BG@JBOPKKPC@VMCS_N_HOST_CR0_INDEX?$AA@ 000000000001cef0     Stm:VmcsMapper.obj
+ 0002:00008aa8       ??_C@_0CF@OEGFJFHP@VMCS_N_GUEST_IA32_SYSENTER_EIP_I@ 000000000001cf08     Stm:VmcsMapper.obj
+ 0002:00008ad0       ??_C@_0CF@NNILFNJA@VMCS_N_GUEST_IA32_SYSENTER_ESP_I@ 000000000001cf30     Stm:VmcsMapper.obj
+ 0002:00008af8       ??_C@_0CM@HBADJJKN@VMCS_N_GUEST_PENDING_DEBUG_EXCEP@ 000000000001cf58     Stm:VmcsMapper.obj
+ 0002:00008b28       ??_C@_0BK@MPDDHDEF@VMCS_N_GUEST_RFLAGS_INDEX?$AA@ 000000000001cf88     Stm:VmcsMapper.obj
+ 0002:00008b48       ??_C@_0BH@MAGDBMKM@VMCS_N_GUEST_RIP_INDEX?$AA@ 000000000001cfa8     Stm:VmcsMapper.obj
+ 0002:00008b60       ??_C@_0BH@PJINNEED@VMCS_N_GUEST_RSP_INDEX?$AA@ 000000000001cfc0     Stm:VmcsMapper.obj
+ 0002:00008b78       ??_C@_0BH@BOGIJIAN@VMCS_N_GUEST_DR7_INDEX?$AA@ 000000000001cfd8     Stm:VmcsMapper.obj
+ 0002:00008b90       ??_C@_0BN@FALOJAKA@VMCS_N_GUEST_IDTR_BASE_INDEX?$AA@ 000000000001cff0     Stm:VmcsMapper.obj
+ 0002:00008bb0       ??_C@_0BN@HADMGGAL@VMCS_N_GUEST_GDTR_BASE_INDEX?$AA@ 000000000001d010     Stm:VmcsMapper.obj
+ 0002:00008bd0       ??_C@_0BL@FJPAEMI@VMCS_N_GUEST_TR_BASE_INDEX?$AA@ 000000000001d030     Stm:VmcsMapper.obj
+ 0002:00008bf0       ??_C@_0BN@CKOHENLG@VMCS_N_GUEST_LDTR_BASE_INDEX?$AA@ 000000000001d050     Stm:VmcsMapper.obj
+ 0002:00008c10       ??_C@_0BL@MCNKMEPK@VMCS_N_GUEST_GS_BASE_INDEX?$AA@ 000000000001d070     Stm:VmcsMapper.obj
+ 0002:00008c30       ??_C@_0BL@FPNFCFIM@VMCS_N_GUEST_FS_BASE_INDEX?$AA@ 000000000001d090     Stm:VmcsMapper.obj
+ 0002:00008c50       ??_C@_0BL@LOLLOBCB@VMCS_N_GUEST_DS_BASE_INDEX?$AA@ 000000000001d0b0     Stm:VmcsMapper.obj
+ 0002:00008c70       ??_C@_0BL@LNMEHHIN@VMCS_N_GUEST_SS_BASE_INDEX?$AA@ 000000000001d0d0     Stm:VmcsMapper.obj
+ 0002:00008c90       ??_C@_0BL@NLHGELOB@VMCS_N_GUEST_CS_BASE_INDEX?$AA@ 000000000001d0f0     Stm:VmcsMapper.obj
+ 0002:00008cb0       ??_C@_0BL@CDLEAAFH@VMCS_N_GUEST_ES_BASE_INDEX?$AA@ 000000000001d110     Stm:VmcsMapper.obj
+ 0002:00008cd0       ??_C@_0BH@HCDLIEJH@VMCS_N_GUEST_CR4_INDEX?$AA@ 000000000001d130     Stm:VmcsMapper.obj
+ 0002:00008ce8       ??_C@_0BH@HIPOINIO@VMCS_N_GUEST_CR3_INDEX?$AA@ 000000000001d148     Stm:VmcsMapper.obj
+ 0002:00008d00       ??_C@_0BH@PGHBIKGN@VMCS_N_GUEST_CR0_INDEX?$AA@ 000000000001d160     Stm:VmcsMapper.obj
+ 0002:00008d18       ??_C@_0CC@LBADBDDG@VMCS_N_RO_GUEST_LINEAR_ADDR_INDE@ 000000000001d178     Stm:VmcsMapper.obj
+ 0002:00008d40       ??_C@_0BH@DICHHCIE@VMCS_N_RO_IO_RIP_INDEX?$AA@ 000000000001d1a0     Stm:VmcsMapper.obj
+ 0002:00008d58       ??_C@_0BH@KKJMLPND@VMCS_N_RO_IO_RDI_INDEX?$AA@ 000000000001d1b8     Stm:VmcsMapper.obj
+ 0002:00008d70       ??_C@_0BH@GCDNJAGL@VMCS_N_RO_IO_RSI_INDEX?$AA@ 000000000001d1d0     Stm:VmcsMapper.obj
+ 0002:00008d88       ??_C@_0BH@HOOMODKP@VMCS_N_RO_IO_RCX_INDEX?$AA@ 000000000001d1e8     Stm:VmcsMapper.obj
+ 0002:00008da0       ??_C@_0CD@EJBOONGH@VMCS_N_RO_EXIT_QUALIFICATION_IND@ 000000000001d200     Stm:VmcsMapper.obj
+ 0002:00008dc8       ??_C@_0CH@JELPFKFK@VMCS_N_CONTROL_CR3_TARGET_VALUE3@ 000000000001d228     Stm:VmcsMapper.obj
+ 0002:00008df0       ??_C@_0CH@FIBFFKME@VMCS_N_CONTROL_CR3_TARGET_VALUE2@ 000000000001d250     Stm:VmcsMapper.obj
+ 0002:00008e18       ??_C@_0CH@NGJKFNCH@VMCS_N_CONTROL_CR3_TARGET_VALUE1@ 000000000001d278     Stm:VmcsMapper.obj
+ 0002:00008e40       ??_C@_0CH@BKDAFNLJ@VMCS_N_CONTROL_CR3_TARGET_VALUE0@ 000000000001d2a0     Stm:VmcsMapper.obj
+ 0002:00008e68       ??_C@_0CF@BJOGMLLN@VMCS_N_CONTROL_CR4_READ_SHADOW_I@ 000000000001d2c8     Stm:VmcsMapper.obj
+ 0002:00008e90       ??_C@_0CF@FHALCAOE@VMCS_N_CONTROL_CR0_READ_SHADOW_I@ 000000000001d2f0     Stm:VmcsMapper.obj
+ 0002:00008eb8       ??_C@_0CJ@OOOHDEKH@VMCS_N_CONTROL_CR4_GUEST_HOST_MA@ 000000000001d318     Stm:VmcsMapper.obj
+ 0002:00008ee8       ??_C@_0CJ@IHOBKKPI@VMCS_N_CONTROL_CR0_GUEST_HOST_MA@ 000000000001d348     Stm:VmcsMapper.obj
+ 0002:00008f18       ??_C@_0CE@BOECJBCH@VMCS_32_HOST_IA32_SYSENTER_CS_IN@ 000000000001d378     Stm:VmcsMapper.obj
+ 0002:00008f40       ??_C@_0CP@LNONPEGJ@VMCS_32_GUEST_VMX_PREEMPTION_TIM@ 000000000001d3a0     Stm:VmcsMapper.obj
+ 0002:00008f70       ??_C@_0CF@ENGPGFFB@VMCS_32_GUEST_IA32_SYSENTER_CS_I@ 000000000001d3d0     Stm:VmcsMapper.obj
+ 0002:00008f98       ??_C@_0BL@CCGDFLG@VMCS_32_GUEST_SMBASE_INDEX?$AA@ 000000000001d3f8     Stm:VmcsMapper.obj
+ 0002:00008fb8       ??_C@_0CD@GEHHOGJC@VMCS_32_GUEST_ACTIVITY_STATE_IND@ 000000000001d418     Stm:VmcsMapper.obj
+ 0002:00008fe0       ??_C@_0CL@OILJLPEL@VMCS_32_GUEST_INTERRUPTIBILITY_S@ 000000000001d440     Stm:VmcsMapper.obj
+ 0002:00009010       ??_C@_0CE@MMFFLDFB@VMCS_32_GUEST_TR_ACCESS_RIGHT_IN@ 000000000001d470     Stm:VmcsMapper.obj
+ 0002:00009038       ??_C@_0CG@IFLIIMME@VMCS_32_GUEST_LDTR_ACCESS_RIGHT_@ 000000000001d498     Stm:VmcsMapper.obj
+ 0002:00009060       ??_C@_0CE@MDAANHMO@VMCS_32_GUEST_GS_ACCESS_RIGHT_IN@ 000000000001d4c0     Stm:VmcsMapper.obj
+ 0002:00009088       ??_C@_0CE@NECILDAO@VMCS_32_GUEST_FS_ACCESS_RIGHT_IN@ 000000000001d4e8     Stm:VmcsMapper.obj
+ 0002:000090b0       ??_C@_0CE@PKHIHKIO@VMCS_32_GUEST_DS_ACCESS_RIGHT_IN@ 000000000001d510     Stm:VmcsMapper.obj
+ 0002:000090d8       ??_C@_0CE@DGFGAOIP@VMCS_32_GUEST_SS_ACCESS_RIGHT_IN@ 000000000001d538     Stm:VmcsMapper.obj
+ 0002:00009100       ??_C@_0CE@JPKBEEMO@VMCS_32_GUEST_CS_ACCESS_RIGHT_IN@ 000000000001d560     Stm:VmcsMapper.obj
+ 0002:00009128       ??_C@_0CE@ONFABOEO@VMCS_32_GUEST_ES_ACCESS_RIGHT_IN@ 000000000001d588     Stm:VmcsMapper.obj
+ 0002:00009150       ??_C@_0BP@BPOHBMDE@VMCS_32_GUEST_IDTR_LIMIT_INDEX?$AA@ 000000000001d5b0     Stm:VmcsMapper.obj
+ 0002:00009170       ??_C@_0BP@FOMDOEKC@VMCS_32_GUEST_GDTR_LIMIT_INDEX?$AA@ 000000000001d5d0     Stm:VmcsMapper.obj
+ 0002:00009190       ??_C@_0BN@FBHOIJKO@VMCS_32_GUEST_TR_LIMIT_INDEX?$AA@ 000000000001d5f0     Stm:VmcsMapper.obj
+ 0002:000091b0       ??_C@_0BP@OLEJPALI@VMCS_32_GUEST_LDTR_LIMIT_INDEX?$AA@ 000000000001d610     Stm:VmcsMapper.obj
+ 0002:000091d0       ??_C@_0BN@JJGOJNOO@VMCS_32_GUEST_GS_LIMIT_INDEX?$AA@ 000000000001d630     Stm:VmcsMapper.obj
+ 0002:000091f0       ??_C@_0BN@CAJFEGAG@VMCS_32_GUEST_FS_LIMIT_INDEX?$AA@ 000000000001d650     Stm:VmcsMapper.obj
+ 0002:00009210       ??_C@_0BN@IIBDPHJH@VMCS_32_GUEST_DS_LIMIT_INDEX?$AA@ 000000000001d670     Stm:VmcsMapper.obj
+ 0002:00009230       ??_C@_0BN@FHHAGHMC@VMCS_32_GUEST_SS_LIMIT_INDEX?$AA@ 000000000001d690     Stm:VmcsMapper.obj
+ 0002:00009250       ??_C@_0BN@BDBCPIIN@VMCS_32_GUEST_CS_LIMIT_INDEX?$AA@ 000000000001d6b0     Stm:VmcsMapper.obj
+ 0002:00009270       ??_C@_0BN@DBOICMHP@VMCS_32_GUEST_ES_LIMIT_INDEX?$AA@ 000000000001d6d0     Stm:VmcsMapper.obj
+ 0002:00009290       ??_C@_0CJ@BCGDMIOE@VMCS_32_RO_VMEXIT_INSTRUCTION_IN@ 000000000001d6f0     Stm:VmcsMapper.obj
+ 0002:000092c0       ??_C@_0CL@DAOAIDAD@VMCS_32_RO_VMEXIT_INSTRUCTION_LE@ 000000000001d720     Stm:VmcsMapper.obj
+ 0002:000092f0       ??_C@_0CK@ELLMOFNA@VMCS_32_RO_IDT_VECTORING_ERROR_C@ 000000000001d750     Stm:VmcsMapper.obj
+ 0002:00009320       ??_C@_0CE@BBJMPHHJ@VMCS_32_RO_IDT_VECTORING_INFO_IN@ 000000000001d780     Stm:VmcsMapper.obj
+ 0002:00009348       ??_C@_0DA@LFIIMFCE@VMCS_32_RO_VMEXIT_INTERRUPTION_E@ 000000000001d7a8     Stm:VmcsMapper.obj
+ 0002:00009378       ??_C@_0CK@LCDIALHC@VMCS_32_RO_VMEXIT_INTERRUPTION_I@ 000000000001d7d8     Stm:VmcsMapper.obj
+ 0002:000093a8       ??_C@_0BN@DOPGMGHH@VMCS_32_RO_EXIT_REASON_INDEX?$AA@ 000000000001d808     Stm:VmcsMapper.obj
+ 0002:000093c8       ??_C@_0CG@NIOPADFM@VMCS_32_RO_VM_INSTRUCTION_ERROR_@ 000000000001d828     Stm:VmcsMapper.obj
+ 0002:000093f0       ??_C@_0CB@NGMAIILL@VMCS_32_CONTROL_PLE_WINDOW_INDEX@ 000000000001d850     Stm:VmcsMapper.obj
+ 0002:00009418       ??_C@_0BO@OGDGDPDM@VMCS_32_CONTROL_PLE_GAP_INDEX?$AA@ 000000000001d878     Stm:VmcsMapper.obj
+ 0002:00009438       ??_C@_0DH@JGMAFJDJ@VMCS_32_CONTROL_2ND_PROCESSOR_BA@ 000000000001d898     Stm:VmcsMapper.obj
+ 0002:00009470       ??_C@_0CE@PHCHDJCN@VMCS_32_CONTROL_TPR_THRESHOLD_IN@ 000000000001d8d0     Stm:VmcsMapper.obj
+ 0002:00009498       ??_C@_0DB@IAFACPKC@VMCS_32_CONTROL_VMENTRY_INSTRUCT@ 000000000001d8f8     Stm:VmcsMapper.obj
+ 0002:000094d0       ??_C@_0DD@MBCIHEMK@VMCS_32_CONTROL_VMENTRY_EXCEPTIO@ 000000000001d930     Stm:VmcsMapper.obj
+ 0002:00009508       ??_C@_0DA@NCAMIIAI@VMCS_32_CONTROL_VMENTRY_INTERRUP@ 000000000001d968     Stm:VmcsMapper.obj
+ 0002:00009538       ??_C@_0CN@NPAONEIL@VMCS_32_CONTROL_VMENTRY_MSR_LOAD@ 000000000001d998     Stm:VmcsMapper.obj
+ 0002:00009568       ??_C@_0CH@MGDNAMLI@VMCS_32_CONTROL_VMENTRY_CONTROLS@ 000000000001d9c8     Stm:VmcsMapper.obj
+ 0002:00009590       ??_C@_0CM@MDKCLCFO@VMCS_32_CONTROL_VMEXIT_MSR_LOAD_@ 000000000001d9f0     Stm:VmcsMapper.obj
+ 0002:000095c0       ??_C@_0CN@FFDHJBAJ@VMCS_32_CONTROL_VMEXIT_MSR_STORE@ 000000000001da20     Stm:VmcsMapper.obj
+ 0002:000095f0       ??_C@_0CG@HEGCLLJA@VMCS_32_CONTROL_VMEXIT_CONTROLS_@ 000000000001da50     Stm:VmcsMapper.obj
+ 0002:00009618       ??_C@_0CH@PNHLFJEO@VMCS_32_CONTROL_CR3_TARGET_COUNT@ 000000000001da78     Stm:VmcsMapper.obj
+ 0002:00009640       ??_C@_0DC@MEOLLFLG@VMCS_32_CONTROL_PAGE_FAULT_ERROR@ 000000000001daa0     Stm:VmcsMapper.obj
+ 0002:00009678       ??_C@_0DB@MAONINK@VMCS_32_CONTROL_PAGE_FAULT_ERROR@ 000000000001dad8     Stm:VmcsMapper.obj
+ 0002:000096b0       ??_C@_0CH@IAMIGHDB@VMCS_32_CONTROL_EXCEPTION_BITMAP@ 000000000001db10     Stm:VmcsMapper.obj
+ 0002:000096d8       ??_C@_0DD@JBBDKMPD@VMCS_32_CONTROL_PROCESSOR_BASED_@ 000000000001db38     Stm:VmcsMapper.obj
+ 0002:00009710       ??_C@_0CN@IACIIOJO@VMCS_32_CONTROL_PIN_BASED_VM_EXE@ 000000000001db70     Stm:VmcsMapper.obj
+ 0002:00009740       ??_C@_0CJ@PGNNMIKE@VMCS_64_HOST_IA32_PERF_GLOBAL_CT@ 000000000001dba0     Stm:VmcsMapper.obj
+ 0002:00009770       ??_C@_0BN@EGBCKEJA@VMCS_64_HOST_IA32_EFER_INDEX?$AA@ 000000000001dbd0     Stm:VmcsMapper.obj
+ 0002:00009790       ??_C@_0BM@JMDGJMKA@VMCS_64_HOST_IA32_PAT_INDEX?$AA@ 000000000001dbf0     Stm:VmcsMapper.obj
+ 0002:000097b0       ??_C@_0BL@BNAJAFKF@VMCS_64_GUEST_PDPTE3_INDEX?$AA@ 000000000001dc10     Stm:VmcsMapper.obj
+ 0002:000097d0       ??_C@_0BL@NBKDAFDL@VMCS_64_GUEST_PDPTE2_INDEX?$AA@ 000000000001dc30     Stm:VmcsMapper.obj
+ 0002:000097f0       ??_C@_0BL@FPCMACNI@VMCS_64_GUEST_PDPTE1_INDEX?$AA@ 000000000001dc50     Stm:VmcsMapper.obj
+ 0002:00009810       ??_C@_0BL@JDIGACEG@VMCS_64_GUEST_PDPTE0_INDEX?$AA@ 000000000001dc70     Stm:VmcsMapper.obj
+ 0002:00009830       ??_C@_0CK@GONMMHDC@VMCS_64_GUEST_IA32_PERF_GLOBAL_C@ 000000000001dc90     Stm:VmcsMapper.obj
+ 0002:00009860       ??_C@_0BO@IGLECPMC@VMCS_64_GUEST_IA32_EFER_INDEX?$AA@ 000000000001dcc0     Stm:VmcsMapper.obj
+ 0002:00009880       ??_C@_0BN@IANBGDNP@VMCS_64_GUEST_IA32_PAT_INDEX?$AA@ 000000000001dce0     Stm:VmcsMapper.obj
+ 0002:000098a0       ??_C@_0CC@LCOILOIL@VMCS_64_GUEST_IA32_DEBUGCTL_INDE@ 000000000001dd00     Stm:VmcsMapper.obj
+ 0002:000098c8       ??_C@_0CC@NICBJLCC@VMCS_64_GUEST_VMCS_LINK_PTR_INDE@ 000000000001dd28     Stm:VmcsMapper.obj
+ 0002:000098f0       ??_C@_0CF@LEPFKHEC@VMCS_64_RO_GUEST_PHYSICAL_ADDR_I@ 000000000001dd50     Stm:VmcsMapper.obj
+ 0002:00009918       ??_C@_0CI@NBKPPLAO@VMCS_64_CONTROL_EPTP_LIST_ADDRES@ 000000000001dd78     Stm:VmcsMapper.obj
+ 0002:00009940       ??_C@_0BO@DCCMMBPI@VMCS_64_CONTROL_EPT_PTR_INDEX?$AA@ 000000000001dda0     Stm:VmcsMapper.obj
+ 0002:00009960       ??_C@_0CL@FOELFCKG@VMCS_64_CONTROL_VM_FUNCTION_CONT@ 000000000001ddc0     Stm:VmcsMapper.obj
+ 0002:00009990       ??_C@_0CH@DFBNKEPJ@VMCS_64_CONTROL_APIC_ACCESS_ADDR@ 000000000001ddf0     Stm:VmcsMapper.obj
+ 0002:000099b8       ??_C@_0CI@DKDNPCHC@VMCS_64_CONTROL_VIRTUAL_APIC_ADD@ 000000000001de18     Stm:VmcsMapper.obj
+ 0002:000099e0       ??_C@_0CB@KMEEGKOD@VMCS_64_CONTROL_TSC_OFFSET_INDEX@ 000000000001de40     Stm:VmcsMapper.obj
+ 0002:00009a08       ??_C@_0CJ@LFLOAIBP@VMCS_64_CONTROL_EXECUTIVE_VMCS_P@ 000000000001de68     Stm:VmcsMapper.obj
+ 0002:00009a38       ??_C@_0CH@EDDDEFMP@VMCS_64_CONTROL_VMENTRY_MSR_LOAD@ 000000000001de98     Stm:VmcsMapper.obj
+ 0002:00009a60       ??_C@_0CG@FFLPEBCD@VMCS_64_CONTROL_VMEXIT_MSR_LOAD_@ 000000000001dec0     Stm:VmcsMapper.obj
+ 0002:00009a88       ??_C@_0CH@PAJKNIGN@VMCS_64_CONTROL_VMEXIT_MSR_STORE@ 000000000001dee8     Stm:VmcsMapper.obj
+ 0002:00009ab0       ??_C@_0CB@ENJFPEM@VMCS_64_CONTROL_MSR_BITMAP_INDEX@ 000000000001df10     Stm:VmcsMapper.obj
+ 0002:00009ad8       ??_C@_0CC@BNOBOFDN@VMCS_64_CONTROL_IO_BITMAP_B_INDE@ 000000000001df38     Stm:VmcsMapper.obj
+ 0002:00009b00       ??_C@_0CC@JDGOOCNO@VMCS_64_CONTROL_IO_BITMAP_A_INDE@ 000000000001df60     Stm:VmcsMapper.obj
+ 0002:00009b28       ??_C@_0BG@MIAPCAFI@VMCS_16_HOST_TR_INDEX?$AA@ 000000000001df88     Stm:VmcsMapper.obj
+ 0002:00009b40       ??_C@_0BG@JBOIFOHC@VMCS_16_HOST_GS_INDEX?$AA@ 000000000001dfa0     Stm:VmcsMapper.obj
+ 0002:00009b58       ??_C@_0BG@IGJDEKDB@VMCS_16_HOST_FS_INDEX?$AA@ 000000000001dfb8     Stm:VmcsMapper.obj
+ 0002:00009b70       ??_C@_0BG@KIGFGCLH@VMCS_16_HOST_DS_INDEX?$AA@ 000000000001dfd0     Stm:VmcsMapper.obj
+ 0002:00009b88       ??_C@_0BG@GAMEENAP@VMCS_16_HOST_SS_INDEX?$AA@ 000000000001dfe8     Stm:VmcsMapper.obj
+ 0002:00009ba0       ??_C@_0BG@MMAEAPHO@VMCS_16_HOST_CS_INDEX?$AA@ 000000000001e000     Stm:VmcsMapper.obj
+ 0002:00009bb8       ??_C@_0BG@LPBOHGPE@VMCS_16_HOST_ES_INDEX?$AA@ 000000000001e018     Stm:VmcsMapper.obj
+ 0002:00009bd0       ??_C@_0BB@NDIELGDJ@VMCS_16_GUEST_TR?$AA@ 000000000001e030     Stm:VmcsMapper.obj
+ 0002:00009be8       ??_C@_0BD@OKFMCFDN@VMCS_16_GUEST_LDTR?$AA@ 000000000001e048     Stm:VmcsMapper.obj
+ 0002:00009c00       ??_C@_0BB@NEPPJKFB@VMCS_16_GUEST_GS?$AA@ 000000000001e060     Stm:VmcsMapper.obj
+ 0002:00009c18       ??_C@_0BB@NFDNPAGG@VMCS_16_GUEST_FS?$AA@ 000000000001e078     Stm:VmcsMapper.obj
+ 0002:00009c30       ??_C@_0BB@NGLJCEAI@VMCS_16_GUEST_DS?$AA@ 000000000001e090     Stm:VmcsMapper.obj
+ 0002:00009c48       ??_C@_0BB@MPNAJBPN@VMCS_16_GUEST_SS?$AA@ 000000000001e0a8     Stm:VmcsMapper.obj
+ 0002:00009c60       ??_C@_0BB@NHHLEODP@VMCS_16_GUEST_ES?$AA@ 000000000001e0c0     Stm:VmcsMapper.obj
+ 0002:00009c78       ??_C@_0BF@JLKAJIMP@VMCS_16_CONTROL_VPID?$AA@ 000000000001e0d8     Stm:VmcsMapper.obj
+ 0002:00009c90       ??_C@_09HPHGJJOM@MapVmcs?3?5?$AA@ 000000000001e0f0     Stm:VmcsMapper.obj
+ 0002:00009ca0       ??_C@_0CG@BDNKBNGF@?5?3?5?5?50x?$CF08x?5?3?50x?$CF08lx?5?3?5FV?50x?$CF01@ 000000000001e100     Stm:VmcsMapper.obj
+ 0002:00009cc8       ??_C@_0CD@HLAGBJK@MapVmcs?3?5?5Field?1Offset?5validatio@ 000000000001e128     Stm:VmcsMapper.obj
+ 0002:00009cf0       ??_C@_0CN@NFCFKJMP@?5?5VMREAD?3?50x?$CF016llx?5?5Offset?5read@ 000000000001e150     Stm:VmcsMapper.obj
+ 0002:00009d20       ??_C@_0CO@NCJDBBLH@GetVmcsOffset?5?9?5encoding?3?50x?$CFlx?5@ 000000000001e180     Stm:VmcsMapper.obj
+ 0002:00009d50       ??_C@_0DP@ONBAGKBG@GetVmcsOffset?5?9?5no?5VMCS?5offset?5f@ 000000000001e1b0     Stm:VmcsMapper.obj
+ 0002:00009d90       ??_C@_0DG@JMDIPIKO@?5?$CFld?5SignalPeVm?5?9?5APIC?5mode?5inva@ 000000000001e1f0     Stm:PeApicHandler.obj
+ 0002:00009dd0       ??_C@_0GF@EJCFKLOI@?$CFld?5SignalPeVm?5?9?5Sent?5NMI?5to?5Api@ 000000000001e230     Stm:PeApicHandler.obj
+ 0002:00009e40       ??_C@_0ED@BFFJNDAN@?$CFld?5SendSmiToOtherProcessors?5?9?5A@ 000000000001e2a0     Stm:PeApicHandler.obj
+ 0002:00009e90       ??_C@_0HA@KJGOKJKB@?$CFld?5SendSmiToOtherProcessors?5?9?5S@ 000000000001e2f0     Stm:PeApicHandler.obj
+ 0002:00009f00       ??_C@_0DE@CPMBIMOE@?$CB?$CB?$CBMapVirtualAddressToPhysicalAd@ 000000000001e360     Stm:PageTable.obj
+ 0002:00009f40       ??_C@_0GA@CMIFMFPI@?$CISuperPageSize?5?$DN?$DN?50x00001000?$CJ?5?$HM?$HM@ 000000000001e3a0     Stm:PageTable.obj
+ 0002:00009fa0       ??_C@_0EF@PALICNFC@z?3?2stm_reference?2stmpegit?2stm?9pe@ 000000000001e400     Stm:PageTable.obj
+ 0002:00009fe8       ??_C@_0BF@LAMFDCFD@SpeRip?5unsupported?$CB?6?$AA@ 000000000001e448     Stm:SmmException.obj
+ 0002:0000a000       ??_C@_0CD@MEGDGKLJ@ResumeToBiosExceptionHandler?5?9?5?$CF@ 000000000001e460     Stm:SmmException.obj
+ 0002:0000a028       ??_C@_0CJ@JGNJEHOG@?$CB?$CB?$CBResumeToBiosExceptionHandler?5@ 000000000001e488     Stm:SmmException.obj
+ 0002:0000a058       ??_C@_0CF@MKEJDDJ@ReturnFromBiosExceptionHandler?5?9@ 000000000001e4b8     Stm:SmmException.obj
+ 0002:0000a080       ??_C@_0CL@KLJJEIEL@?$CB?$CB?$CBReturnFromBiosExceptionHandle@ 000000000001e4e0     Stm:SmmException.obj
+ 0002:0000a0b0       ??_C@_0BH@LKMBFCBF@Format?5?$CB?$DN?5?$CI?$CIvoid?5?$CK?$CJ?50?$CJ?$AA@ 000000000001e510     MpSafDebugLibSerialPort:DebugLib.obj
+ 0002:0000a0d0       ??_C@_0FI@NMJGLIMP@z?3?2stm_reference?2stmpegit?2stm?9pe@ 000000000001e530     MpSafDebugLibSerialPort:DebugLib.obj
+ 0002:0000a128       ??_C@_06BCCOJNAF@?$CISTM?$CJ?5?$AA@ 000000000001e588     MpSafDebugLibSerialPort:DebugLib.obj
+ 0002:0000a130       ??_C@_0BD@OMEPNDED@ASSERT?5?$CFa?$CI?$CFd?$CJ?3?5?$CFa?6?$AA@ 000000000001e590     MpSafDebugLibSerialPort:DebugLib.obj
+ 0002:0000a148       ??_C@_0BH@IACGKAP@Buffer?5?$CB?$DN?5?$CI?$CIvoid?5?$CK?$CJ?50?$CJ?$AA@ 000000000001e5a8     MpSafDebugLibSerialPort:DebugLib.obj
+ 0002:0000a160       ??_C@_0BJ@FKJAAJLB@SpinLock?5?$CB?$DN?5?$CI?$CIvoid?5?$CK?$CJ?50?$CJ?$AA@ 000000000001e5c0     SimpleSynchronizationLib:SynchronizationMsc.obj
+ 0002:0000a180       ??_C@_0GC@BACIOKFE@z?3?2stm_reference?2stmpegit?2stm?9pe@ 000000000001e5e0     SimpleSynchronizationLib:SynchronizationMsc.obj
+ 0002:0000a1e8       ??_C@_0DF@GPAOIIHK@LockValue?5?$DN?$DN?5?$CI?$CIUINTN?$CJ?52?$CJ?5?$HM?$HM?5Lock@ 000000000001e648     SimpleSynchronizationLib:SynchronizationMsc.obj
+ 0002:0000a220       ??_C@_0BG@GJANEBOB@Value?5?$CB?$DN?5?$CI?$CIvoid?5?$CK?$CJ?50?$CJ?$AA@ 000000000001e680     SimpleSynchronizationLib:SynchronizationMsc.obj
+ 0002:0000a240       ??_C@_0FM@GGCKEIDP@z?3?2stm_reference?2stmpegit?2stm?9pe@ 000000000001e6a0     BaseIoLibIntrinsic:IoLib.obj
+ 0002:0000a2a0       ??_C@_0BD@KOOFJLFH@?$CIAddress?5?$CG?51?$CJ?5?$DN?$DN?50?$AA@ 000000000001e700     BaseIoLibIntrinsic:IoLib.obj
+ 0002:0000a2b8       ??_C@_0BD@OMMAJMCK@?$CIAddress?5?$CG?53?$CJ?5?$DN?$DN?50?$AA@ 000000000001e718     BaseIoLibIntrinsic:IoLib.obj
+ 0002:0000a2d0       ??_C@_0BD@GIIKJCNA@?$CIAddress?5?$CG?57?$CJ?5?$DN?$DN?50?$AA@ 000000000001e730     BaseIoLibIntrinsic:IoLib.obj
+ 0002:0000a2e8       ??_C@_0BA@DAGHIEBA@?$CIPort?5?$CG?51?$CJ?5?$DN?$DN?50?$AA@ 000000000001e748     BaseIoLibIntrinsic:IoLibMsc.obj
+ 0002:0000a300       ??_C@_0FP@HHDMEPAF@z?3?2stm_reference?2stmpegit?2stm?9pe@ 000000000001e760     BaseIoLibIntrinsic:IoLibMsc.obj
+ 0002:0000a360       ??_C@_0BA@HCECIDGN@?$CIPort?5?$CG?53?$CJ?5?$DN?$DN?50?$AA@ 000000000001e7c0     BaseIoLibIntrinsic:IoLibMsc.obj
+ 0002:0000a370       ??_C@_0ED@MKGCMJG@?$CILength?5?9?51?$CJ?5?$DM?$DN?5?$CI0xFFFFFFFFFFFFF@ 000000000001e7d0     BaseMemoryLib:CopyMemWrapper.obj
+ 0002:0000a3c0       ??_C@_0GA@KKENBGFN@z?3?2stm_reference?2stmpegit?2stm?9pe@ 000000000001e820     BaseMemoryLib:CopyMemWrapper.obj
+ 0002:0000a420       ??_C@_0DO@MAOBOFEG@?$CILength?5?9?51?$CJ?5?$DM?$DN?5?$CI0xFFFFFFFFFFFFF@ 000000000001e880     BaseMemoryLib:CopyMemWrapper.obj
+ 0002:0000a460       ??_C@_0CI@MNELLLEK@?$CB?$CIBuffer?5?$DN?$DN?5?$CI?$CIvoid?5?$CK?$CJ?50?$CJ?5?$CG?$CG?5Leng@ 000000000001e8c0     BaseMemoryLib:ZeroMemWrapper.obj
+ 0002:0000a490       ??_C@_0GA@BOOPHHJK@z?3?2stm_reference?2stmpegit?2stm?9pe@ 000000000001e8f0     BaseMemoryLib:ZeroMemWrapper.obj
+ 0002:0000a4f0       ??_C@_0DG@EEENIGGL@Length?5?$DM?$DN?5?$CI0xFFFFFFFFFFFFFFFFULL@ 000000000001e950     BaseMemoryLib:ZeroMemWrapper.obj
+ 0002:0000a528       ??_C@_0CC@JOEHDGKB@DestinationBuffer?5?$CB?$DN?5?$CI?$CIvoid?5?$CK?$CJ?50@ 000000000001e988     BaseMemoryLib:CompareMemWrapper.obj
+ 0002:0000a550       ??_C@_0GD@PIJJNKEB@z?3?2stm_reference?2stmpegit?2stm?9pe@ 000000000001e9b0     BaseMemoryLib:CompareMemWrapper.obj
+ 0002:0000a5b8       ??_C@_0BN@MDMCNBCC@SourceBuffer?5?$CB?$DN?5?$CI?$CIvoid?5?$CK?$CJ?50?$CJ?$AA@ 000000000001ea18     BaseMemoryLib:CompareMemWrapper.obj
+ 0002:0000a5d8       ??_C@_0L@MEMPDLHB@Count?5?$DM?564?$AA@ 000000000001ea38     BaseLib:RShiftU64.obj
+ 0002:0000a5f0       ??_C@_0FF@FDPDBMCL@z?3?2stm_reference?2stmpegit?2stm?9pe@ 000000000001ea50     BaseLib:RShiftU64.obj
+ 0002:0000a650       ??_C@_0FF@CHACEEBC@z?3?2stm_reference?2stmpegit?2stm?9pe@ 000000000001eab0     BaseLib:Unaligned.obj
+ 0002:0000a6b0       ??_C@_0FF@LGNKCCMJ@z?3?2stm_reference?2stmpegit?2stm?9pe@ 000000000001eb10     BaseLib:LShiftU64.obj
+ 0002:0000a710       ??_C@_0FC@POIDGAHH@z?3?2stm_reference?2stmpegit?2stm?9pe@ 000000000001eb70     BaseLib:String.obj
+ 0002:0000a768       ??_C@_0BH@MAAHKCPC@String?5?$CB?$DN?5?$CI?$CIvoid?5?$CK?$CJ?50?$CJ?$AA@ 000000000001ebc8     BaseLib:String.obj
+ 0002:0000a780       ??_C@_0CD@BDCLIGHD@?$CI?$CIUINTN?$CJ?5String?5?$CG?50x00000001?$CJ?5?$DN?$DN@ 000000000001ebe0     BaseLib:String.obj
+ 0002:0000a7a8       ??_C@_0DK@EOJCOAME@Length?5?$DM?5_gPcd_FixedAtBuild_PcdM@ 000000000001ec08     BaseLib:String.obj
+ 0002:0000a7e8       ??_C@_0DI@MDIKFADO@Length?5?$DM?5_gPcd_FixedAtBuild_PcdM@ 000000000001ec48     BaseLib:String.obj
+ 0002:0000a820       ??_C@_0N@KGHEHMDL@Divisor?5?$CB?$DN?50?$AA@ 000000000001ec80     BaseLib:DivU64x32.obj
+ 0002:0000a830       ??_C@_0FF@MMOFIFMJ@z?3?2stm_reference?2stmpegit?2stm?9pe@ 000000000001ec90     BaseLib:DivU64x32.obj
+ 0002:0000a888       ??_C@_0BL@CPGKAMND@JumpBuffer?5?$CB?$DN?5?$CI?$CIvoid?5?$CK?$CJ?50?$CJ?$AA@ 000000000001ece8     BaseLib:SetJump.obj
+ 0002:0000a8b0       ??_C@_0FD@HDPPKPNE@z?3?2stm_reference?2stmpegit?2stm?9pe@ 000000000001ed10     BaseLib:SetJump.obj
+ 0002:0000a908       ??_C@_0CD@OEHNCIHG@?$CI?$CIUINTN?$CJJumpBuffer?5?$CG?5?$CI8?5?9?51?$CJ?$CJ?5?$DN?$DN@ 000000000001ed68     BaseLib:SetJump.obj
+ 0002:0000a930       ??_C@_0BP@NMNOKPEO@ERROR?3?5AsmVmRead?$CI0x?$CFx?$CJ?5?3?5?$CF08x?6?$AA@ 000000000001ed90     StmLib:Vmx.obj
+ 0002:0000a950       ??_C@_0CJ@IAOLFKAK@ERROR?3?5AsmVmWrite?$CI0x?$CFx?5?9?50x?$CF04x?$CJ@ 000000000001edb0     StmLib:Vmx.obj
+ 0002:0000a980       ??_C@_0CJ@IFOBBHIL@ERROR?3?5AsmVmWrite?$CI0x?$CFx?5?9?50x?$CF08x?$CJ@ 000000000001ede0     StmLib:Vmx.obj
+ 0002:0000a9b0       ??_C@_0CL@PLBMLJFL@ERROR?3?5AsmVmWrite?$CI0x?$CFx?5?9?50x?$CF016l@ 000000000001ee10     StmLib:Vmx.obj
+ 0002:0000a9e0       ??_C@_0P@NCJHBCLM@Protocol?5Error?$AA@ 000000000001ee40     BasePrintLib:PrintLibInternal.obj
+ 0002:0000a9f0       ??_C@_0L@DJKNJKHM@TFTP?5Error?$AA@ 000000000001ee50     BasePrintLib:PrintLibInternal.obj
+ 0002:0000aa00       ??_C@_0L@LKIFCMNO@ICMP?5Error?$AA@ 000000000001ee60     BasePrintLib:PrintLibInternal.obj
+ 0002:0000aa10       ??_C@_07LCKDCBKK@Aborted?$AA@ 000000000001ee70     BasePrintLib:PrintLibInternal.obj
+ 0002:0000aa18       ??_C@_0BA@IGIBFFPH@Already?5started?$AA@ 000000000001ee78     BasePrintLib:PrintLibInternal.obj
+ 0002:0000aa28       ??_C@_0M@DCJFAFHJ@Not?5started?$AA@ 000000000001ee88     BasePrintLib:PrintLibInternal.obj
+ 0002:0000aa38       ??_C@_08PAFJCNGP@Time?5out?$AA@ 000000000001ee98     BasePrintLib:PrintLibInternal.obj
+ 0002:0000aa48       ??_C@_0L@IFPBNFC@No?5mapping?$AA@ 000000000001eea8     BasePrintLib:PrintLibInternal.obj
+ 0002:0000aa58       ??_C@_0M@ENKCBFEP@No?5Response?$AA@ 000000000001eeb8     BasePrintLib:PrintLibInternal.obj
+ 0002:0000aa68       ??_C@_0O@NFHOBIDO@Access?5Denied?$AA@ 000000000001eec8     BasePrintLib:PrintLibInternal.obj
+ 0002:0000aa78       ??_C@_09CFCBFJND@Not?5Found?$AA@ 000000000001eed8     BasePrintLib:PrintLibInternal.obj
+ 0002:0000aa88       ??_C@_0O@JNCJKCCD@Media?5changed?$AA@ 000000000001eee8     BasePrintLib:PrintLibInternal.obj
+ 0002:0000aa98       ??_C@_08KEGAJDNN@No?5Media?$AA@ 000000000001eef8     BasePrintLib:PrintLibInternal.obj
+ 0002:0000aaa8       ??_C@_0M@HDLEPOFA@Volume?5Full?$AA@ 000000000001ef08     BasePrintLib:PrintLibInternal.obj
+ 0002:0000aab8       ??_C@_0P@EIOJGIF@Volume?5Corrupt?$AA@ 000000000001ef18     BasePrintLib:PrintLibInternal.obj
+ 0002:0000aac8       ??_C@_0BB@GOILNEAA@Out?5of?5Resources?$AA@ 000000000001ef28     BasePrintLib:PrintLibInternal.obj
+ 0002:0000aae0       ??_C@_0BA@LNEDDFNB@Write?5Protected?$AA@ 000000000001ef40     BasePrintLib:PrintLibInternal.obj
+ 0002:0000aaf0       ??_C@_0N@HHEABDHO@Device?5Error?$AA@ 000000000001ef50     BasePrintLib:PrintLibInternal.obj
+ 0002:0000ab00       ??_C@_09NKFGCIPN@Not?5Ready?$AA@ 000000000001ef60     BasePrintLib:PrintLibInternal.obj
+ 0002:0000ab10       ??_C@_0BB@EGELJFOB@Buffer?5Too?5Small?$AA@ 000000000001ef70     BasePrintLib:PrintLibInternal.obj
+ 0002:0000ab28       ??_C@_0BA@FLNMPMCF@Bad?5Buffer?5Size?$AA@ 000000000001ef88     BasePrintLib:PrintLibInternal.obj
+ 0002:0000ab38       ??_C@_0M@BEECMOIL@Unsupported?$AA@ 000000000001ef98     BasePrintLib:PrintLibInternal.obj
+ 0002:0000ab48       ??_C@_0BC@HOFHKGJN@Invalid?5Parameter?$AA@ 000000000001efa8     BasePrintLib:PrintLibInternal.obj
+ 0002:0000ab60       ??_C@_0L@PLPBEPPC@Load?5Error?$AA@ 000000000001efc0     BasePrintLib:PrintLibInternal.obj
+ 0002:0000ab70       ??_C@_0BJ@ODIPDGHB@Warning?5Buffer?5Too?5Small?$AA@ 000000000001efd0     BasePrintLib:PrintLibInternal.obj
+ 0002:0000ab90       ??_C@_0BG@ECIJMOED@Warning?5Write?5Failure?$AA@ 000000000001eff0     BasePrintLib:PrintLibInternal.obj
+ 0002:0000aba8       ??_C@_0BH@GKKCJEPJ@Warning?5Delete?5Failure?$AA@ 000000000001f008     BasePrintLib:PrintLibInternal.obj
+ 0002:0000abc0       ??_C@_0BG@CFJMNNJK@Warning?5Unknown?5Glyph?$AA@ 000000000001f020     BasePrintLib:PrintLibInternal.obj
+ 0002:0000abd8       ??_C@_07PBILKAFL@Success?$AA@ 000000000001f038     BasePrintLib:PrintLibInternal.obj
+ 0002:0000abe0       mHexStr                    000000000001f040     BasePrintLib:PrintLibInternal.obj
+ 0002:0000abf0       ??_C@_0GB@LKIPCFB@z?3?2stm_reference?2stmpegit?2stm?9pe@ 000000000001f050     BasePrintLib:PrintLibInternal.obj
+ 0002:0000ac58       ??_C@_0CB@NIHAJGJE@StrSize?5?$CI?$CICHAR16?5?$CK?$CJ?5Format?$CJ?5?$CB?$DN?50@ 000000000001f0b8     BasePrintLib:PrintLibInternal.obj
+ 0002:0000ac80       ??_C@_0BL@BFEFANFD@AsciiStrSize?5?$CIFormat?$CJ?5?$CB?$DN?50?$AA@ 000000000001f0e0     BasePrintLib:PrintLibInternal.obj
+ 0002:0000aca0       ??_C@_0O@MLOLIMFM@?$DMnull?5string?$DO?$AA@ 000000000001f100     BasePrintLib:PrintLibInternal.obj
+ 0002:0000acb0       ??_C@_0M@BJJDNPHK@?$DMnull?5guid?$DO?$AA@ 000000000001f110     BasePrintLib:PrintLibInternal.obj
+ 0002:0000acc0       ??_C@_0DB@PMLHLBMO@?$CF08x?9?$CF04x?9?$CF04x?9?$CF02x?$CF02x?9?$CF02x?$CF02x@ 000000000001f120     BasePrintLib:PrintLibInternal.obj
+ 0002:0000acf8       ??_C@_0M@LHGBCIKM@?$DMnull?5time?$DO?$AA@ 000000000001f158     BasePrintLib:PrintLibInternal.obj
+ 0002:0000ad08       ??_C@_0BK@FCPKCIDD@?$CF02d?1?$CF02d?1?$CF04d?5?5?$CF02d?3?$CF02d?$AA@ 000000000001f168     BasePrintLib:PrintLibInternal.obj
+ 0002:0000ad24       ??_C@_04JIMNDDED@?$CF08X?$AA@ 000000000001f184     BasePrintLib:PrintLibInternal.obj
+ 0002:0000ad2c       ??_C@_02PCIJFNDE@?$AN?6?$AA@ 000000000001f18c     BasePrintLib:PrintLibInternal.obj
+ 0002:0000ad30       ??_C@_01LIIJDEN@?$AN?$AA@  000000000001f190     BasePrintLib:PrintLibInternal.obj
+ 0002:0000ad40       ??_C@_0EG@GCMPEMOL@?$CI?$CI?$CIFlags?5?$CG?50x40?$CJ?5?$DN?$DN?50?$CJ?$CJ?5?$HM?$HM?5?$CIStrS@ 000000000001f1a0     BasePrintLib:PrintLibInternal.obj
+ 0002:0000ad90       ??_C@_0EA@IOPPGIHC@?$CI?$CI?$CIFlags?5?$CG?50x40?$CJ?5?$CB?$DN?50?$CJ?$CJ?5?$HM?$HM?5?$CIAsci@ 000000000001f1f0     BasePrintLib:PrintLibInternal.obj
+ 0002:0000add0       ??_C@_0FO@PFFGHHAD@z?3?2stm_reference?2stmpegit?2stm?9pe@ 000000000001f230     BaseLib:DivU64x32Remainder.obj
+ 0002:0000ae30       ??_C@_0BO@BAKALPJK@?$CI?$CIAddress?$CJ?5?$CG?5?$HO0xfffffff?$CJ?5?$DN?$DN?50?$AA@ 000000000001f290     BasePciExpressLib:PciExpressLib.obj
+ 0002:0000ae50       ??_C@_0GD@HBDGNDB@z?3?2stm_reference?2stmpegit?2stm?9pe@ 000000000001f2b0     BasePciExpressLib:PciExpressLib.obj
+ 0003:00000000       mExceptionHandlerLength    000000000001f3a0     Stm:Exception.obj
+ 0003:00000004       mExternalVectorTablePtr    000000000001f3a4     Stm:Exception.obj
+ 0003:00000010       mInternalDebugLock         000000000001f3b0     MpSafDebugLibSerialPort:DebugLib.obj
+ 0003:00000018       gUartBase                  000000000001f3b8     PcAtSerialPortLib:SerialPortLib.obj
+ 0003:00000020       VmcsFieldOffsetTable       000000000001f3c0     Stm:VmcsMapper.obj
+ 0003:00000478       mErrorCodeFlag             000000000001f818     Stm:StmExceptionHandler.obj
+ 0003:00000480       VmcsFieldPrintTable        000000000001f820     Stm:VmcsMapper.obj
+ 0003:00000d30       mPeSmmVmcallHandler        00000000000200d0     Stm:PeSmmVmcallHandler.obj
+ 0003:00000d50       mSmmVmcallHandler          00000000000200f0     Stm:SmmVmcallHandler.obj
+ 0003:00000d90       mPageAttributeTable        0000000000020130     Stm:SmmEptHandler.obj
+ 0003:00000de0       mSmiVmcallEventLogHandler  0000000000020180     Stm:SmiVmcallHandler.obj
+ 0003:00000e40       mSmiVmcallHandler          00000000000201e0     Stm:SmiVmcallHandler.obj
+ 0003:00000f10       mMsrReadWriteExit          00000000000202b0     Stm:MsrInit.obj
+ 0003:00000f58       mMsrWriteExit              00000000000202f8     Stm:MsrInit.obj
+ 0003:00000f88       mMsrReadExit               0000000000020328     Stm:MsrInit.obj
+ 0003:00000fa0       mFixedMtrrStructInfo       0000000000020340     Stm:EptInit.obj
+ 0003:00001000       mVmxCapabilityMsrStr       00000000000203a0     Stm:Dump.obj
+ 0003:000010d0       mVmcs16ControlFiledStr     0000000000020470     Stm:Dump.obj
+ 0003:000010e0       mVmcs64ControlFiledStr     0000000000020480     Stm:Dump.obj
+ 0003:00001190       mVmcs32ControlFiledStr     0000000000020530     Stm:Dump.obj
+ 0003:000012b0       mVmcsNControlFiledStr      0000000000020650     Stm:Dump.obj
+ 0003:00001330       mVmcs64ReadOnlyFiledStr    00000000000206d0     Stm:Dump.obj
+ 0003:00001340       mVmcs32ReadOnlyFiledStr    00000000000206e0     Stm:Dump.obj
+ 0003:000013c0       mVmcsNReadOnlyFiledStr     0000000000020760     Stm:Dump.obj
+ 0003:00001420       mVmcs16GuestFiledStr       00000000000207c0     Stm:Dump.obj
+ 0003:000014a0       mVmcs64GuestFiledStr       0000000000020840     Stm:Dump.obj
+ 0003:00001530       mVmcs32GuestFiledStr       00000000000208d0     Stm:Dump.obj
+ 0003:000016a0       mVmcsNGuestFiledStr        0000000000020a40     Stm:Dump.obj
+ 0003:000017e0       mVmcs16HostFiledStr        0000000000020b80     Stm:Dump.obj
+ 0003:00001850       mVmcs64HostFiledStr        0000000000020bf0     Stm:Dump.obj
+ 0003:00001880       mVmcs32HostFiledStr        0000000000020c20     Stm:Dump.obj
+ 0003:00001890       mVmcsNHostFiledStr         0000000000020c30     Stm:Dump.obj
+ 0003:00001950       mX86RegisterStr            0000000000020cf0     Stm:Dump.obj
+ 0003:00001a50       mStatusString              0000000000020df0     BasePrintLib:PrintLibInternal.obj
+ 0003:000024a0       EndTimeStamp               0000000000021840     Stm:PeLoadVm.obj
+ 0003:000024b0       _gPcd_BinaryPatch_PcdPciExpressBaseAddress 0000000000021850     Stm:AutoGen.obj
+ 0003:00002558       mDefaultVmcsRecord         00000000000218f8     Stm:SmmStateSync.obj
+ 0003:00002570       StmVmPeNmiExCount          0000000000021910     Stm:PeSmmExceptionHandler.obj
+ 0003:00002578       GetMPState                 0000000000021918     <common>
+ 0003:00002580       mStmHandlerPeVm            0000000000021920     <common>
+ 0003:00002760       mExternalVectorTable       0000000000021b00     <common>
+ 0003:00002860       mStmHandlerSmm             0000000000021c00     <common>
+ 0003:00002a40       mCpuInitStatus             0000000000021de0     <common>
+ 0003:00002a60       mMtrrInfo                  0000000000021e00     <common>
+ 0003:00002ce0       PeSmiControl               0000000000022080     <common>
+ 0003:00002d00       PeVmData                   00000000000220a0     <common>
+ 0003:000046e0       mStmHandlerSmi             0000000000023a80     <common>
+ 0003:000048c0       mGuestContextCommonSmm     0000000000023c60     <common>
+ 0003:00004a00       mHostContextCommon         0000000000023da0     <common>
+ 0003:00004b48       mIsBspInitialized          0000000000023ee8     <common>
+ 0003:00004b60       mGuestContextCommonSmi     0000000000023f00     <common>
+
+ entry point at        0001:00013a10
+
+ Static symbols
+
+ 0001:0000ee90       setupModulepages           000000000000f150 f    CIL library: CIL module

@@ -13,6 +13,7 @@
 **/
 
 #include "StmRuntime.h"
+#include "PeStm.h"
 
 extern volatile BOOLEAN         mIsBspInitialized;
 extern volatile BOOLEAN         *mCpuInitStatus;
@@ -35,7 +36,7 @@ RestoreStmData (
   ZeroMem (&mMtrrInfo, sizeof(mMtrrInfo));
   ZeroMem (&mStmHandlerSmm, sizeof(mStmHandlerSmm));
   ZeroMem (&mStmHandlerSmi, sizeof(mStmHandlerSmi));
-  ZeroMem (&mGuestContextCommonSmm, sizeof(mGuestContextCommonSmm));
+  ZeroMem (&mGuestContextCommonSmm, sizeof(mGuestContextCommonSmm[NUM_PE_TYPE]));
   ZeroMem (&mHostContextCommon, sizeof(mHostContextCommon));
   ZeroMem (&mGuestContextCommonSmi, sizeof(mGuestContextCommonSmi));
   mIsBspInitialized = FALSE;
