@@ -28,7 +28,7 @@
 **/
 VOID
 PeReadMsrHandler (
-  IN UINT32 Index
+  IN UINT32 CpuIndex
   )
 {
   UINT64            Data64;
@@ -37,11 +37,13 @@ PeReadMsrHandler (
   STM_SMM_CPU_STATE *SmmCpuState;
   UINT32			VmType = PE_PERM;
 
+  UINT32 Index = 0;   // PE/VM only has index as 0
+
   SmmCpuState = mGuestContextCommonSmi.GuestContextPerCpu[Index].SmmCpuState;
   Reg = &mGuestContextCommonSmm[VmType].GuestContextPerCpu[Index].Register;
   MsrIndex = ReadUnaligned32 ((UINT32 *)&Reg->Rcx);
 
-  DEBUG ((EFI_D_INFO, "!!!ReadMsrHandler 0x%llx!!!\n", MsrIndex));
+  DEBUG ((EFI_D_INFO, "%ld ReadMsrHandler - 0x%llx\n", CpuIndex, MsrIndex));
 
   switch (MsrIndex) {
   case IA32_EFER_MSR_INDEX:
@@ -89,7 +91,7 @@ PeReadMsrHandler (
 **/
 VOID
 PeWriteMsrHandler (
-  IN UINT32 Index
+  IN UINT32 CpuIndex
   )
 {
   UINT64            Data64;
@@ -98,6 +100,8 @@ PeWriteMsrHandler (
   X86_REGISTER      *Reg;
   STM_SMM_CPU_STATE *SmmCpuState;
   UINT32			VmType = PE_PERM;
+  
+  UINT32 Index = 0;        // PE VM only Index = 0
 
   SmmCpuState = mGuestContextCommonSmi.GuestContextPerCpu[Index].SmmCpuState;
 
@@ -105,17 +109,17 @@ PeWriteMsrHandler (
   MsrIndex = ReadUnaligned32 ((UINT32 *)&Reg->Rcx);
 
   Data64 = LShiftU64 ((UINT64)ReadUnaligned32 ((UINT32 *)&Reg->Rdx), 32) | (UINT64)ReadUnaligned32 ((UINT32 *)&Reg->Rax);
-  DEBUG ((EFI_D_INFO, "!!!WriteMsrHandler!!! 0x%llx 0x%llx\n", MsrIndex, Data64));
+  DEBUG ((EFI_D_INFO, "%ld WriteMsrHandler - 0x%llx 0x%llx\n", CpuIndex, MsrIndex, Data64));
 
   switch (MsrIndex) {
   case IA32_EFER_MSR_INDEX:
 #if 0
   AcquireSpinLock (&mHostContextCommon.DebugLock);
     if ((Data64 & IA32_EFER_MSR_SCE) != 0) {
-      DEBUG ((EFI_D_INFO, "!!!WriteMsrHandler - SCE!!!\n"));
+      DEBUG ((EFI_D_INFO, "%ld WriteMsrHandler - SCE\n", CpuIndex,));
     }
     if ((Data64 & IA32_EFER_MSR_XDE) != 0) {
-      DEBUG ((EFI_D_INFO, "!!!WriteMsrHandler - XDE!!!\n"));
+      DEBUG ((EFI_D_INFO, "%ld WriteMsrHandler - XDE\n", CpuIndex,));
     }
   ReleaseSpinLock (&mHostContextCommon.DebugLock);
 #endif
@@ -176,7 +180,7 @@ PeWriteMsrHandler (
 #endif
  
   default:
-    DEBUG ((EFI_D_INFO, "!!!WriteMsrHandler - VM/PE has no access to this MSR - ignoring\n"));
+    DEBUG ((EFI_D_INFO, "%ldWriteMsrHandler - VM/PE has no access to this MSR - ignoring\n", CpuIndex));
     break;
   }
 

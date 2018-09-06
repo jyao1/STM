@@ -654,6 +654,6 @@ EptInit (
     0,
     EptPageAttributeSet
     );
-  EptDumpPageTable (&mGuestContextCommonSmm[SMI_HANDLER].EptPointer);
+ // EptDumpPageTable (&mGuestContextCommonSmm[SMI_HANDLER].EptPointer);
   return ;
 }

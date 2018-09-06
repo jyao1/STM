@@ -72,7 +72,7 @@ SmiVmcallStartHandler (
 
     if(Index == 0)
     {
-		EptDumpPageTable (&mGuestContextCommonSmm[0].EptPointer);  // **DEBUG** Dump the SMI Handler EPT tables
+		//EptDumpPageTable (&mGuestContextCommonSmm[0].EptPointer);  // **DEBUG** Dump the SMI Handler EPT tables
 		// sync the BSP CPU once the API is ready
         CpuReadySync(Index);
 

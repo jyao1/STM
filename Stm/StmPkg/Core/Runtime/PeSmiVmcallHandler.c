@@ -343,7 +343,7 @@ STM_STATUS AddPeVm(UINT32 CpuIndex, PE_MODULE_INFO * callerDataStructure, UINT32
 		DEBUG((EFI_D_ERROR, "%d AddPeVm: could not setup module-stm shared page\n", CpuIndex));
 	}
 	DEBUG((EFI_D_ERROR, "%d AddPeVm: module-stm shared page setup\n", CpuIndex));
-    EptDumpPageTable (&mGuestContextCommonSmm[PeType].EptPointer);
+    //EptDumpPageTable (&mGuestContextCommonSmm[PeType].EptPointer);
 	///link the PT with the allocated space
 
 	/// somehow have the STM's PT mark these as R/O or invisable... (TODO)
