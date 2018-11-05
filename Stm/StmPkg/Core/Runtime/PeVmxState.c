@@ -65,9 +65,7 @@ int GetMultiProcessorState(UINT32 CpuIndex)
 
 	if(InterlockedCompareExchange32(&PeSmiControl.PeSmiState, PESMINULL, PESMIPSMI) != PESMINULL) //&PeSmiControl.PeSmiState = 1;
 	{
-		DEBUG((EFI_D_ERROR, "%ld GetMultiProcessorState - Aborting, SMI handler already there. PeSmiState %ld\n", CpuIndex, PeSmiControl.PeSmiState));
-		//InterlockedCompareExchange32(&PeSmiControl.PeSmiState, 2, 0);   
-		//CpuReadySync(CpuIndex);   //synch up 
+		DEBUG((EFI_D_ERROR, "%ld x - Aborting, SMI handler already there. PeSmiState %ld\n", CpuIndex, PeSmiControl.PeSmiState));
 		return -1;                   // need to tell about smi handler is already there
 	}
 

@@ -392,7 +392,7 @@ STM_STATUS AddPeVm(UINT32 CpuIndex, PE_MODULE_INFO * callerDataStructure, UINT32
 	{
 		DEBUG((EFI_D_ERROR, "%ld AddPeVm - VM not run per option\n", CpuIndex));
 		rc = STM_SUCCESS;
-		PeVmData[PeType].PeVmState = PE_VM_IDLE;  //  not there anymore
+		PeVmData[PeType].PeVmState = PE_VM_IDLE;  //  waiting for action
 		PeSmiControl.PeExec = 0; // make sure
 	}
 	//setPEerrorCode(PE_VM_BAD_PHYSICAL_ADDRESS, StmVmm);

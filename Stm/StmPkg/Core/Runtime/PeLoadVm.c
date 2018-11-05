@@ -485,8 +485,6 @@ UINT32  PostPeVmProc(UINT32 rc, UINT32 CpuIndex, UINT32 mode)
 			Rflags = AsmVmLaunch (&mGuestContextCommonSmi.GuestContextPerCpu[CpuIndex].Register);
 			mGuestContextCommonSmi.GuestContextPerCpu[CpuIndex].Launched = FALSE;
 		}
-
-
 	}
 	else
 	{
@@ -653,12 +651,19 @@ UINT32 RestoreInterPeVm(UINT32 CpuIndex, UINT32 PeType)
 		if(GetMultiProcessorState(CpuIndex) == -1)
 		{
 			GetMPState = 1; // Indicate that we still need to get the processor state
+			return 1;         // in this case there is an SMI in process and we need to let it be processed.
 		}
 		else
 		{
 			//Success - got the processor state
 			GetMPState = 0;
 		}
+	}
+
+	if(PeSmiControl.PeSmiState == PESMIHSMI)
+	{
+		DEBUG((EFI_D_ERROR, "%ld RestoreInterPeVm - SMI in progress - aborting PE/VM restart\n", CpuIndex));
+		return 1;
 	}
 
 	// need to think about locking here in case there are two smi's in a row...
