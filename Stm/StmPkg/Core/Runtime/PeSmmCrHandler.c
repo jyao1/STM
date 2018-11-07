@@ -3,11 +3,15 @@
 
 extern UINT64 EndTimeStamp;
 
+VOID
+SmmCrHandler (
+  IN UINT32 Index
+  );
+
 void PeCrHandler( IN UINT32 CpuIndex)
 {
-	EndTimeStamp = AsmReadTsc();
-	DEBUG((EFI_D_ERROR, "%ld PeCrHandler - CR Handler not implemented\n", CpuIndex));
-	DEBUG((EFI_D_ERROR, "%ld PeCrHandler - CpuDeadLoop\n", CpuIndex));
-	CpuDeadLoop();
+	DEBUG((EFI_D_ERROR, "%ld PeCrHandler - Entered\n", CpuIndex));
+	SmmCrHandler(CpuIndex);   // use the intel handler since it provides the necessary functionality
+	DEBUG((EFI_D_ERROR, "%ld PeCrHander - done\n", CpuIndex));
 	return;
 }

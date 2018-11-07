@@ -807,8 +807,14 @@ Ia32PAESync (
     UINTN              Cr0;
     UINTN              Cr3;
     UINTN              Cr4;
-    UINT32			 VmType = SMI_HANDLER;
+    UINT32			   VmType;
     
+    DEBUG ((EFI_D_INFO, "%ld Ia32PAESync\n", Index));
+	  
+    VmType = mHostContextCommon.HostContextPerCpu[Index].GuestVmType;  // any VmType other than SMI_HANDLER is a PeVm
+
+    if(SMI_HANDLER != VmType)
+	    Index = 0;      // PE VM index is always 0
     //
     // If EPT is enabled and Guest is in IA32 PAE Mode, we need to write PDPTR.
     //

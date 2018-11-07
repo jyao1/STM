@@ -140,7 +140,6 @@ UINT32  SetupProtExecVm(UINT32 CpuIndex, UINT32 VM_Configuration, UINT32 mode, U
 		// enabled bits in the IA32_PERF_GLOBAL_CTRL MSR
 		PeVmData[PeType].GuestState.GuestContextPerCpu.VmEntryCtrls.Bits.LoadIA32_PERF_GLOBAL_CTRL = 0;
 
-
 		PeVmData[PeType].GuestState.GuestContextPerCpu.VmEntryCtrls.Uint32 &= (UINT32)RShiftU64 (Data64, 32);
 
 		// VMEXIT CONTROLS SETUP
@@ -164,8 +163,9 @@ UINT32  SetupProtExecVm(UINT32 CpuIndex, UINT32 VM_Configuration, UINT32 mode, U
 			PeVmData[PeType].GuestState.GuestContextPerCpu.VmEntryCtrls.Bits.Ia32eGuest = 1;
 		}
 		else
+
 		{
-			tr_access = 3;
+			tr_access = 11;   // 32-bit busy TSS in non IA-32e mode and 64 bit busy TSS for IA-32e mode (3 = 16 bit tss)
 			//PeVmData[PeType].GuestState.GuestContextPerCpu.VmExitCtrls.Bits.Ia32eHost =1;
 			PeVmData[PeType].GuestState.GuestContextPerCpu.VmEntryCtrls.Bits.Ia32eGuest = 0;
 			DEBUG((EFI_D_ERROR, "%ld SetupProtExecVm - WARNING - No IA32e Host\n", CpuIndex));

@@ -70,7 +70,7 @@ VOID
 	{
 		PeType = mHostContextCommon.HostContextPerCpu[Index].NonSmiHandler;
 		//PeType = mHostContextCommon.HostContextPerCpu[Index].GuestVmType;
-		DEBUG((EFI_D_ERROR, "%ld RsmHandler - VmPe Detected - PeType: %ld State: %ld\n", Index, PeType, PeVmData[PeType].PeVmState));
+		DEBUG((EFI_D_ERROR, "%ld RsmHandler - VmPe Detected - PeType: %ld PeVmState: %ld\n", Index, PeType, PeVmData[PeType].PeVmState));
 
 		switch(PeVmData[PeType].PeVmState)
 		{
@@ -85,7 +85,7 @@ VOID
 				// while doing the processor state gathering.
 				// we will come out and let it return so that the SMI can get fired and
 				// when the SMI handler is done will reattempt to regather the processor info
-				DEBUG((EFI_D_ERROR, "%ld RsmHandler ERROR - Failed to restart PE/VM after SMI, type: %ld\n", Index, PeType));
+				DEBUG((EFI_D_ERROR, "%ld RsmHandler ERROR - Failed to restart PE/VM after SMI, PeType: %ld\n", Index, PeType));
 				break;
 			}
 		case PE_VM_IDLE:
