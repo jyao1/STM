@@ -30,25 +30,24 @@ UINT32 PeSmiHandler(UINT32 CpuIndex)
 	UINT32 PeType = PE_PERM;
 	UINT32 CpuNum;
 
-	if(CpuIndex == 0)
-	{
-		InterlockedCompareExchange32(&PeSmiControl.PeSmiState, PESMINULL, PESMIHSMI);
+	InterlockedCompareExchange32(&PeSmiControl.PeSmiState, PESMINULL, PESMIHSMI);
 		//DEBUG((EFI_D_ERROR, "%ld PeSmiHandler - CurrPeSmiState %ld\n", CpuIndex, PeSmiControl.PeSmiState));
-	}
 
-	if(PeSmiControl.PeCpuIndex == (INT32)CpuIndex )
+	if(PeSmiControl.PeCpuIndex == (INT32)CpuIndex )  // when the pe/vm comes in...
 	{
-		//DEBUG((EFI_D_ERROR, "%ld PeSmiHandler - VM/PE responded to SMI, CurrPeSmiState %ld\n", CpuIndex, PeSmiControl.PeSmiState)); 
+		//DEBUG((EFI_D_ERROR, "%ld PeSmiHandler - VM/PE responded to SMI, CurrPeSmiState %ld\n", CpuIndex, PeSmiControl.PeSmiState));
+		InterlockedCompareExchange32(&PeSmiControl.PeSmiState, PESMIPNMI2, PESMINULL);
 	}
 
-	if(PESMIPNMI == PeSmiControl.PeSmiState)
+	if(InterlockedCompareExchange32(&PeSmiControl.PeSmiState, PESMIPNMI, PESMIPNMI2) == PESMIPNMI)
+		///PESMIPNMI == PeSmiControl.PeSmiState)
 	{
 		// eventually the VM/PE will be started (or at least built) and this will cause one of the processors
 		// to send a NMI to the VM/PE processor causing it to drop out and process the SMI
 		// when it does, all processors will exit this loop and process the SMI as usual
 
 		SignalPeVm(CpuIndex);  // make sure that the PE/VM processes this SMI as well
-		PeSmiControl.PeSmiState = PESMINULL;
+		//PeSmiControl.PeSmiState = PESMINULL;
 
 	}
 
@@ -148,8 +147,8 @@ UINT32 PeSmiHandler(UINT32 CpuIndex)
 		{
 			if(CpuIndex == 0)
 			{
-				PeSmiControl.PeSmiState = PESMINULL;
-				//InterlockedCompareExchange32(&PeSmiControl.PeSmiState, PESMIHSMI, PESMINULL); // one of these will work	
+				//PeSmiControl.PeSmiState = PESMINULL;
+				InterlockedCompareExchange32(&PeSmiControl.PeSmiState, PESMIHSMI, PESMINULL); // one of these will work	
 			}
 			retvalue = 0;
 		}

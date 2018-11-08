@@ -4,11 +4,12 @@
 
 // VM/PE PeSmiControl.PeSmiState state definitions
 
-#define PESMINULL 0      // nothing happening
-#define PESMIPSMI 1      // SMI sent by VM/PE startup to get cpu state
-#define PESMIHSMI 2      // normal SMI processing
-#define PESMIPNMI 3      // VM/PE needs an NMI sent for it to help process the host SMI
-#define PESMIHTMR 4      // smi handler has detected an SMI timer
+#define PESMINULL  0      // nothing happening
+#define PESMIPSMI  1      // SMI sent by VM/PE startup to get cpu state
+#define PESMIHSMI  2      // normal SMI processing
+#define PESMIPNMI  3      // VM/PE needs an NMI sent for it to help process the host SMI
+#define PESMIHTMR  4      // smi handler has detected an SMI timer
+#define PESMIPNMI2 5      // NMI has been sent to the VM/PE, now waiting for its entry
 
 #define OFFSET_BITMASK_IA32_4K    0x00000FFF
 #define OFFSET_BITMASK_IA32E_4K   0x0000000000000FFF

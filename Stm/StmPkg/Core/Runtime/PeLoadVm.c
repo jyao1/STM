@@ -384,6 +384,7 @@ UINT32  PostPeVmProc(UINT32 rc, UINT32 CpuIndex, UINT32 mode)
 	// indicate that we are not running
 
 	PeSmiControl.PeExec = 0;
+	// bug - think about this one....
 	PeSmiControl.PeSmiState = PESMINULL;   // indicate that we are out of it
 
 	if(mode == PRESERVE_VM)
@@ -660,7 +661,7 @@ UINT32 RestoreInterPeVm(UINT32 CpuIndex, UINT32 PeType)
 		}
 	}
 
-	if(PeSmiControl.PeSmiState == PESMIHSMI)
+	if(InterlockedCompareExchange32(&PeSmiControl.PeSmiState, PESMIHSMI, PESMIHSMI) == PESMIHSMI)
 	{
 		DEBUG((EFI_D_ERROR, "%ld RestoreInterPeVm - SMI in progress - aborting PE/VM restart\n", CpuIndex));
 		return 1;
