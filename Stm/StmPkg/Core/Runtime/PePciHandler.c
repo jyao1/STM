@@ -1,3 +1,17 @@
+/** @file
+
+PE PCI Handler
+
+This program and the accompanying materials
+are licensed and made available under the terms and conditions of the BSD License
+which accompanies this distribution.  The full text of the license may be found at
+http://opensource.org/licenses/bsd-license.php.
+
+THE PROGRAM IS DISTRIBUTED UNDER THE BSD LICENSE ON AN "AS IS" BASIS,
+WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
+
+**/
+
 #include "StmRuntime.h"
 #include "PeStm.h"
 
@@ -44,23 +58,16 @@ static UINT16 pmbase = 0x0;
 
 static UINT16 read16(UINTN addr)
 {
-	//UINTN addrN = addr;
-	//volatile UINT16 * addr16 = (volatile UINT16 *) addrN;
-
 	return *((volatile UINT16 *) (addr));
 }
 
 static void write16(UINTN addr, UINT16 Reg16)
 {
-
 	*((volatile UINT16 *) (addr)) = Reg16;
 }
 
 static UINT32 read32(UINTN addr)
 {
-	//UINTN addrN = addr;
-	//volatile UINT16 * addr16 = (volatile UINT16 *) addrN;
-
 	return *((volatile UINT32 *) (addr));
 }
 
@@ -84,11 +91,9 @@ static UINT32 pcie_read_config32(device_t dev, unsigned int whereat)
 
 static void pcie_write_config16(device_t dev, unsigned int whereat, UINT16 Reg16)
 {
-
 	UINTN addr;
 
 	addr = ((UINTN) mHostContextCommon.PciExpressBaseAddress) | dev | whereat;
-
 	write16(addr, Reg16);
 	return;
 }
@@ -98,6 +103,7 @@ static device_t get_pcu_dev(void)
 	//DEBUG((EFI_D_ERROR, "get_pcu_dev - return %x\n", PCI_DEV(0, PCU_DEV, 0)));
 	return PCI_DEV(0, PCU_DEV, 0);
 }
+
 UINT16 get_pmbase(void)
 {
 	return pcie_read_config16(get_pcu_dev(), D31F0_PMBASE ) & 0xFFF8;
@@ -108,14 +114,13 @@ void StartTimer(void)
 	UINT16 pmbase = get_pmbase();
 	UINT32 smi_en = IoRead32(pmbase + SMI_EN);
 	UINT32 smi_sts = IoRead32(pmbase + SMI_STS);
-	// UINT32 smi_en = inl(pmbase + SMI_EN);
+
 	smi_en |= PERIODIC_EN;
 
 	//DEBUG((EFI_D_ERROR, "-- StartSwTimer pmbase: %x smi_en: %x \n", pmbase, smi_en));
 	DEBUG((EFI_D_ERROR, "StartTimer - smi_en: 0x%08lx smi_sts: 0x%08lx\n", smi_en, smi_sts));
 	IoWrite32(pmbase + SMI_STS, PERIODIC_STS);
 	IoWrite32(pmbase + SMI_EN, smi_en);
-	//outl(smi_en, pmbase + SMI_EN);
 }
 
 void SetEndOfSmi(void)
@@ -123,13 +128,11 @@ void SetEndOfSmi(void)
 
 	UINT16 pmbase = get_pmbase();
 	UINT32 smi_en = IoRead32(pmbase + SMI_EN);
-	//UINT32 smi_sts = IoRead32(pmbase + SMI_STS);
-	// UINT32 smi_en = inl(pmbase + SMI_EN);
 	smi_en |= EOS_EN;  // set the bit
 
 	//DEBUG((EFI_D_ERROR, "-- StartSwTimer pmbase: %x smi_en: %x \n", pmbase, smi_en));
 	//DEBUG((EFI_D_ERROR, "-- SW Timer Started - smi_en: 0x%08lx smi_sts: 0x%08lx\n", smi_en, smi_sts));
-	//IoWrite32(pmbase + SMI_STS, SWSMI_TMR_STS);
+
 	IoWrite32(pmbase + SMI_EN, smi_en);
 	DEBUG((EFI_D_ERROR, "SetEndOfSmi smi_en: 0x%08lx smi_sts: 0x%08lx\n", IoRead32(pmbase + SMI_EN), IoRead32(pmbase + SMI_STS)));
 
@@ -138,15 +141,9 @@ void SetEndOfSmi(void)
 void AckTimer(void)
 {
 	UINT16 pmbase = get_pmbase();
-	//UINT32 smi_en = IoRead32(pmbase + SMI_EN);
-	//UINT32 smi_sts = IoRead32(pmbase + SMI_STS);
-	// UINT32 smi_en = inl(pmbase + SMI_EN);
-	//smi_en |= SWSMI_TMR_EN;
-
-	//DEBUG((EFI_D_ERROR, "-- StartSwTimer pmbase: %x smi_en: %x \n", pmbase, smi_en));
-	//DEBUG((EFI_D_ERROR, "-- SW Timer Acked - smi_en: 0x%08lx smi_sts: 0x%08lx\n", smi_en, smi_sts));
+	
 	IoWrite32(pmbase + SMI_STS, PERIODIC_STS);
-	//IoWrite32(pmbase + SMI_EN, smi_en);
+	
 	DEBUG((EFI_D_ERROR, "AckTimer - smi_en: 0x%08lx smi_sts: 0x%08lx\n", IoRead32(pmbase + SMI_EN), IoRead32(pmbase + SMI_STS)));
 }
 
@@ -154,11 +151,10 @@ void StopSwTimer(void)
 {
 	UINT16 pmbase = get_pmbase();
 	UINT32 smi_en = IoRead32(pmbase + SMI_EN);
-	// UINT32 pre_smi_en = inl(pmbase + SMI_EN);
-	//UINT32 post_smi_en = pre_smi_en;
+
 	smi_en &= ~PERIODIC_EN;
 	IoWrite32(pmbase + SMI_EN, smi_en);
-	// outl(post_smi_en, pmbase + SMI_EN);
+	
 	//DEBUG((EFI_D_ERROR, "-- SW Timer Stopped - pre-smi_en %x post-smi_en: %x\n", pre_smi_en, post_smi_en));
 	DEBUG((EFI_D_ERROR, "StopSwTimer - smi_en: 0x%08lx smi_sts: 0x%08lx\n", IoRead32(pmbase + SMI_EN), IoRead32(pmbase + SMI_STS)));
 }
@@ -167,7 +163,6 @@ int CheckTimerSTS(UINT32 Index)
 {
 	UINT16 pmbase = get_pmbase();
 	UINT32 smi_sts = IoRead32(pmbase + SMI_STS);
-	//UINT32 smi_sts = inl(pmbase + SMI_STS);
 
 	//DEBUG((EFI_D_ERROR, "%ld CheckTimerSTS - 0x%08lx\n", Index, smi_sts));
 
@@ -186,7 +181,6 @@ int CheckTimerSTS(UINT32 Index)
 void ClearTimerSTS()
 {
 	UINT16 pmbase = get_pmbase();
-	//UINT32 smi_sts = IoRead32(pmbase + SMI_STS);
 
 	IoWrite32(pmbase + SMI_STS, PERIODIC_STS);  // just want to clear the  status - do not touch the rest
 }

@@ -1,13 +1,24 @@
+/** @file
+
+VM/PE setup, load and VM breakdown functions
+
+This program and the accompanying materials
+are licensed and made available under the terms and conditions of the BSD License
+which accompanies this distribution.  The full text of the license may be found at
+http://opensource.org/licenses/bsd-license.php.
+
+THE PROGRAM IS DISTRIBUTED UNDER THE BSD LICENSE ON AN "AS IS" BASIS,
+WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
+
+**/
+
 #define VMCALL_C 1
 
 #include "StmRuntime.h"
 #include "PeStm.h"
 #include "PeLoadVm.h"
-#include "StmApi.h"
+#include "StmApi.h" 
 #include "CpuDef.h"
-
-//extern UINT32  __stdcall inl (UINT16);
-//extern void    __stdcall outl (UINT32, UINT16);
 
 extern VOID InitCpuReadySync();
 extern VOID CpuReadySync(UINT32 Index);
@@ -16,9 +27,7 @@ extern VOID AsmHostEntrypointSmmPe (VOID);
 extern RETURN_STATUS RegisterExceptionHandler(IN EFI_EXCEPTION_TYPE ExceptionType, 
 	IN EFI_EXCEPTION_CALLBACK ExceptionCallback);
 extern void AsmSendInt2();        // setup NMI
-//extern INT32 PeEptInit (EPT_POINTER *EptPointer);
 extern void PeEptFree(IN UINT64 EptPointer);
-
 extern UINT32 GetVmcsOffset( UINT32 field_encoding);
 extern UINT32 GetMPState;
 
@@ -127,9 +136,6 @@ void LaunchPeVm(UINT32 PeType, UINT32 CpuIndex)
 			ZeroMem ((VOID *)(UINTN)StartEndBlock, EndSize);
 		}
 	}
-
-	//StmVmm->MleStack->RegStack.Rbx = PeVmData[PeType].UserModule.SharedPage;   
-	//StmVmm->MleStack->RegStack.Rcx = (UINT64)PeVmData[PeType].UserModule.segment;
 
 	// setup the variables that are used in case an SMI is taken while the PE VM is running
 
@@ -544,16 +550,9 @@ UINT32  PostPeVmProc(UINT32 rc, UINT32 CpuIndex, UINT32 mode)
 			DEBUG((EFI_D_ERROR, "%ld PostPeVmProc - Unsucessful return noted in RFLAGS_CF\n", CpuIndex));
 			VmWriteN (VMCS_N_GUEST_RFLAGS_INDEX, VmReadN(VMCS_N_GUEST_RFLAGS_INDEX) | RFLAGS_CF);
 		}
-
-		// pStmVmm->NonSmiHandler = 0;   // we are no longer a PE VM
-		// pStmVmm->ExceptionCount = 0; // reset the exception counter
-		// pStmVmm->VmexitStatus = VMEXIT_VMCALL_MLE;        // make sure we take the correct path
-		// pStmVmm->Page_table_number = SMM_PT;              // reset this
 	}
 
 	mHostContextCommon.HostContextPerCpu[CpuIndex].GuestVmType = SMI_HANDLER;
-	//PeSmiControl.PeCpuIndex = -1;                               // indicate none functioning at this momemnet 
-	// note: need to mod to handle if/when there is a temp PE/VM
 	DEBUG((EFI_D_ERROR, "%ld PostPeVmProc - sucessfully completed - RC: 0x%x\n", CpuIndex, rc));
 	//StopSwTimer();
 	CheckPendingMtf (CpuIndex);
@@ -589,8 +588,6 @@ UINT32 FreePE_DataStructures(UINT32 PeType)
 {
 	// first clear out the pages
 
-	// needs to be redone in this context
-	//#ifdef CHANGEME
 	if(PeVmData[PeType].SmmBuffer != NULL)
 	{
 		FreePages(PeVmData[PeType].SmmBuffer, PeVmData[PeType].SmmBufferSize);
@@ -609,9 +606,6 @@ UINT32 FreePE_DataStructures(UINT32 PeType)
 		PeVmData[PeType].SharedPageStm = 0;
 	}
 
-	// set everything to NULL or zero
-
-	//#endif
 	return STM_SUCCESS;
 }
 

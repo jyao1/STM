@@ -1,3 +1,17 @@
+/** @file
+
+APIC Handler
+
+This program and the accompanying materials
+are licensed and made available under the terms and conditions of the BSD License
+which accompanies this distribution.  The full text of the license may be found at
+http://opensource.org/licenses/bsd-license.php.
+
+THE PROGRAM IS DISTRIBUTED UNDER THE BSD LICENSE ON AN "AS IS" BASIS,
+WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
+
+**/
+
 #include "StmRuntime.h"
 #include "PeStm.h"
 
@@ -60,22 +74,9 @@ void SignalPeVm(UINT32 CpuIndex)
 		DEBUG((EFI_D_ERROR, " %ld SignalPeVm ****SMI*** smi_en: %x smi_sts: %x\n", CpuIndex, IoRead32(pmbase + SMI_EN), IoRead32(pmbase + SMI_STS)));
 	}
 #endif
-	//AcquireSpinLock(&PeSmiControl.PeSmiControlLock);
 
 	if((PeSmiControl.PeExec == 1) && (InterlockedCompareExchange32(&PeSmiControl.PeNmiBreak, 0, 1) == 0))
 	{
-
-		//PeSmiControl.PeNmiBreak = 1;      // make sure only one NMI is sent
-		//InterlockedCompareExchange32(&PeSmiControl.PeNmiBreak, 0, 1);  // set to one if it is zero
-		//mine = 1;   // this one is mine
-		//}
-
-		//ReleaseSpinLock(&PeSmiControl.PeSmiControlLock);
-
-		//if(mine == 1)
-		//{
-		// send a NMI to the PE VM
-		//DEBUG((EFI_D_ERROR, "%ld NMI send prep\n", CpuIndex));
 		ApicMsr = AsmReadMsr64 (IA32_APIC_BASE_MSR_INDEX);
 
 		apicAddress = (UINTN)(ApicMsr & 0xffffff000);   // assume the default for now
@@ -134,14 +135,7 @@ void SendSmiToOtherProcessors(UINT32 CpuIndex)
 
 	apicAddress = (UINTN)(ApicMsr & 0xffffff000);   // assume the default for now
 
-	//low. = (UINT32) APIC_REG(ICR_LOW) & 0xFFF32000;
-	//high = APIC_REG(ICR_HIGH) & 0x00FFFFFF;
-
 	highSave = APIC_REG(ICR_HIGH);
-
-	//high |= (PE_APIC_ID << 24); // put the destination apic ID into the upper eight bits
-	//high = PeSmiControl.PeApicId << 24;
-	//low  |= 0x4400;             // bits: (8-10) NMI, (14) asset trigger mode
 	low.Uint32 =  0;
 	low.Bits.DeliveryMode = LOCAL_APIC_DELIVERY_MODE_SMI;
 	low.Bits.Level = 1;

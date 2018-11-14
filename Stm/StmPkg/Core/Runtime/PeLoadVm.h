@@ -1,11 +1,21 @@
+/** @file
 
-// structure for MLE to pass information about the protected execution module
+Structures to pass information about the protected execution module
+
+This program and the accompanying materials
+are licensed and made available under the terms and conditions of the BSD License
+which accompanies this distribution.  The full text of the license may be found at
+http://opensource.org/licenses/bsd-license.php.
+
+THE PROGRAM IS DISTRIBUTED UNDER THE BSD LICENSE ON AN "AS IS" BASIS,
+WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
+
+**/
 
 #ifndef STMLOADVM_H
 #define STMLOADVM_H
 
 // Bit settings for VM_Configuration
-
 
 // Bit settings for PE Vm setup
 

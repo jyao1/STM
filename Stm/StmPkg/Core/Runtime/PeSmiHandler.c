@@ -1,5 +1,17 @@
-// used for getting the other processor state
-// during SMI
+/** @file
+
+PE SMI handler - Used used for getting the other processor state and handling
+SMI's during VM/PE build and execution
+
+This program and the accompanying materials
+are licensed and made available under the terms and conditions of the BSD License
+which accompanies this distribution.  The full text of the license may be found at
+http://opensource.org/licenses/bsd-license.php.
+
+THE PROGRAM IS DISTRIBUTED UNDER THE BSD LICENSE ON AN "AS IS" BASIS,
+WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
+
+**/
 
 #include "StmRuntime.h"
 #include "PeStm.h"
@@ -176,7 +188,7 @@ UINT32 PeSmiHandler(UINT32 CpuIndex)
 
 	default:
 
-		DEBUG((EFI_D_ERROR, "%ld CheckAndGetState (default) ERROR incorrect PeSmiState: %ld, setting to 0\n",
+		DEBUG((EFI_D_ERROR, "%ld CheckAndGetState (default) ERROR incorrect PeSmiState: %ld, setting to PESMINULL (0)\n",
 			CpuIndex, PeSmiControl.PeSmiState));
 		PeSmiControl.PeSmiState = PESMINULL;
 		return 0;

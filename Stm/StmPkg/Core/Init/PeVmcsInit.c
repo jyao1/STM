@@ -1,5 +1,5 @@
 /** @file
-  VMCS initialization
+  VM/PE VMCS initialization
 
   Copyright (c) 2010, Intel Corporation. All rights reserved.<BR>
   This program and the accompanying materials
@@ -11,6 +11,8 @@
   WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 
 **/
+
+/// Intel Copyright left in as this is a modification of their code
 
 #include "StmInit.h"
 #include "PeStm.h"
@@ -105,6 +107,9 @@ InitPeGuestVmcs (
   VmWrite32 (VMCS_32_CONTROL_VMEXIT_CONTROLS_INDEX,                  Vmcs->VmExitCtrls.Uint32);
 
   VmWrite64 (VMCS_64_CONTROL_EPT_PTR_INDEX,                          mGuestContextCommonSmm[VmType].EptPointer.Uint64);
+
+  // turn the below on and the VM/PE CR handling code will be invoked
+  // can enter 64-bit w/o these setting turned on with Sandybridge
 
   VmWriteN (VMCS_N_CONTROL_CR0_GUEST_HOST_MASK_INDEX,                0);//((UINTN)AsmReadMsr64 (IA32_VMX_CR0_FIXED0_MSR_INDEX) & (UINTN)AsmReadMsr64 (IA32_VMX_CR0_FIXED1_MSR_INDEX)) | CR0_CD);
   VmWriteN (VMCS_N_CONTROL_CR4_GUEST_HOST_MASK_INDEX,                0);//((UINTN)AsmReadMsr64 (IA32_VMX_CR4_FIXED0_MSR_INDEX) & (UINTN)AsmReadMsr64 (IA32_VMX_CR4_FIXED1_MSR_INDEX)) );

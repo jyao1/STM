@@ -14,7 +14,9 @@
 
 // most of this code was borrowed from the Intel driver
 // howver, the only MSR of interest is the EFER MSR since that is needed to configure
-// the guest VM
+// the guest VM for 64 bit
+
+// may merge this code back into to Intel reference with VM/PE mods
 
 #include "StmRuntime.h"
 #include "PeStm.h"

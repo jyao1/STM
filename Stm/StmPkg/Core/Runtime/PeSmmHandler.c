@@ -1,3 +1,16 @@
+/** @file
+
+PE SMM handler - Handle VMEXITs from the running VM/PE
+
+This program and the accompanying materials
+are licensed and made available under the terms and conditions of the BSD License
+which accompanies this distribution.  The full text of the license may be found at
+http://opensource.org/licenses/bsd-license.php.
+
+THE PROGRAM IS DISTRIBUTED UNDER THE BSD LICENSE ON AN "AS IS" BASIS,
+WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
+
+**/
 
 #include "StmRuntime.h"
 #include "PeStm.h"
@@ -22,8 +35,6 @@ void InitCpuReadySync();
 STM_HANDLER  mStmHandlerPeVm[VmExitReasonMax];
 
 extern PE_SMI_CONTROL PeSmiControl;
-
-
 
 /**
 
@@ -69,10 +80,9 @@ VOID
 	DEBUG((EFI_D_INFO, "PeInitStmHandlerSmm - CpuReadySync Initialized\n"));
 }
 
-
 /**
 
-This function is STM/PE handler for SMM.
+This function is STM/PE handler for SMM VMEXITS
 
 @param Register X86 register context
 
@@ -101,7 +111,6 @@ VOID
 		pIndex = Index;
 	}
 	// make sure no one fires an SMI our way
-	// BUG - this may not be 100% there seems to still be a small window of oppertunity for something bad to happen here
 
 	PeSmiControl.PeExec = 0;
 	PeSmiControl.PeNmiBreak = 1;
