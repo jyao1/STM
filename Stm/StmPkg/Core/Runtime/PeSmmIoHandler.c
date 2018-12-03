@@ -41,7 +41,7 @@ void PeIoHandler( IN UINT32 CpuIndex)
 	//UINTN PhysAddressParameterEnd;
 
 	// for debugging a VM/PE debugging output can be sent through:
-	//      RDX:    port -   0x3F8     (com1)
+	//      RDX:    port -   0x3F8 or 0x3D8
 	//      RCX:    number of bytes (size over NUMVMDEBUGLEN is truncated)
 	//      DS:ESI  location in PE/VM where output is located
 	//      use instruction OUTSB/OUTSW/OUTSD  0x6E or Ox6F

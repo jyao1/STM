@@ -51,7 +51,7 @@ PeReadMsrHandler (
   case IA32_EFER_MSR_INDEX:
     Data64 = mGuestContextCommonSmm[VmType].GuestContextPerCpu[Index].Efer;
     break;
-
+#if 0
   case IA32_SYSENTER_CS_MSR_INDEX:
     Data64 = (UINT64)VmRead32 (VMCS_32_GUEST_IA32_SYSENTER_CS_INDEX);
     break;
@@ -68,7 +68,7 @@ PeReadMsrHandler (
   case IA32_GS_BASE_MSR_INDEX:
     Data64 = (UINT64)VmReadN (VMCS_N_GUEST_GS_BASE_INDEX);
     break;
-
+#endif
   default:
     // since we do not allow the VM/PE to generally read MSRs
 	// we return 0 for a read.
@@ -147,7 +147,7 @@ PeWriteMsrHandler (
     VmWrite64 (VMCS_64_GUEST_IA32_EFER_INDEX,          mGuestContextCommonSmm[VmType].GuestContextPerCpu[Index].Efer);
 
     break;
-
+#if 0
   case IA32_SYSENTER_CS_MSR_INDEX:
     VmWrite32 (VMCS_32_GUEST_IA32_SYSENTER_CS_INDEX, (UINT32)Data64);
     break;
@@ -166,7 +166,6 @@ PeWriteMsrHandler (
     VmWriteN (VMCS_N_GUEST_GS_BASE_INDEX, (UINTN)Data64);
    // AsmWriteMsr64 (MsrIndex, Data64); // VMM does not use GS
     break;
-#if 0
   case IA32_KERNAL_GS_BASE_MSR_INDEX:
     AsmWriteMsr64 (MsrIndex, Data64); // VMM does not use this
     break;
