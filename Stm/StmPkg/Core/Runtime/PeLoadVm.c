@@ -254,7 +254,7 @@ void LaunchPeVm(UINT32 PeType, UINT32 CpuIndex)
 	DEBUG ((EFI_D_ERROR, "%ld LaunchPeVm - VMCS_32_RO_VM_INSTRUCTION_ERROR: %08x\n", (UINTN)VmRead32 (VMCS_32_RO_VM_INSTRUCTION_ERROR_INDEX)));
 	DumpVmcsAllField ();
 	DumpRegContext (&mGuestContextCommonSmm[PeType].GuestContextPerCpu[0].Register);
-
+	DumpGuestStack(CpuIndex);
 	ReleaseSpinLock (&mHostContextCommon.DebugLock);
 }
 
@@ -365,6 +365,7 @@ UINT32  PostPeVmProc(UINT32 rc, UINT32 CpuIndex, UINT32 mode)
 		DumpVmcsAllField();   //  temp debug
 		DumpVmxCapabillityMsr();
 		DumpRegContext(&mGuestContextCommonSmm[PeType].GuestContextPerCpu[0].Register);
+		DumpGuestStack(CpuIndex);
 		print_region_list(PeType, CpuIndex);
 
 		if((PERM_VM_CRASH_BREAKDOWN & PeVmData[PeType].UserModule.VmConfig) == PERM_VM_CRASH_BREAKDOWN)
@@ -462,7 +463,6 @@ UINT32  PostPeVmProc(UINT32 rc, UINT32 CpuIndex, UINT32 mode)
 		VmWriteN (VMCS_N_GUEST_RIP_INDEX, (UINTN)mHostContextCommon.HostContextPerCpu[CpuIndex].TxtProcessorSmmDescriptor->SmmSmiHandlerRip);
 		VmWriteN (VMCS_N_GUEST_RSP_INDEX, (UINTN)mHostContextCommon.HostContextPerCpu[CpuIndex].TxtProcessorSmmDescriptor->SmmSmiHandlerRsp);
 		VmWriteN (VMCS_N_GUEST_CR3_INDEX, mGuestContextCommonSmm[PeType].GuestContextPerCpu[0].Cr3);
-
 
 		STM_PERF_START (CpuIndex, 0, "BiosSmmHandler", "SmiEventHandler");
 

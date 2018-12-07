@@ -151,6 +151,7 @@ ResumeToBiosExceptionHandler (
   DEBUG ((EFI_D_ERROR, "VMCS_32_RO_VM_INSTRUCTION_ERROR: %08x\n", (UINTN)VmRead32 (VMCS_32_RO_VM_INSTRUCTION_ERROR_INDEX)));
   DumpVmcsAllField ();
   DumpRegContext (Reg);
+  DumpGuestStack(Index);
   ReleaseSpinLock (&mHostContextCommon.DebugLock);
   CpuDeadLoop ();
   return ;
@@ -227,6 +228,7 @@ ReturnFromBiosExceptionHandler (
   DEBUG ((EFI_D_ERROR, "VMCS_32_RO_VM_INSTRUCTION_ERROR: %08x\n", (UINTN)VmRead32 (VMCS_32_RO_VM_INSTRUCTION_ERROR_INDEX)));
   DumpVmcsAllField ();
   DumpRegContext (Reg);
+  DumpGuestStack(Index);
   ReleaseSpinLock (&mHostContextCommon.DebugLock);
   CpuDeadLoop ();
   return ;

@@ -67,6 +67,7 @@ UnknownHandlerSmm (
   DEBUG ((EFI_D_ERROR, "!!!UnknownHandlerSmm - %d\n", (UINTN)Index));
   DumpVmcsAllField ();
   DumpRegContext(&mGuestContextCommonSmm[SMI_HANDLER].GuestContextPerCpu[Index].Register);
+  DumpGuestStack(Index);
 
   {
     UINT8  *Buffer;
@@ -158,7 +159,7 @@ StmHandlerSmm (
   DEBUG ((EFI_D_ERROR, "VMCS_32_RO_VM_INSTRUCTION_ERROR: %08x\n", (UINTN)VmRead32 (VMCS_32_RO_VM_INSTRUCTION_ERROR_INDEX)));
   DumpVmcsAllField ();
   DumpRegContext (&mGuestContextCommonSmm[VmType].GuestContextPerCpu[pIndex].Register);
-
+  DumpGuestStack(Index);
   ReleaseSpinLock (&mHostContextCommon.DebugLock);
 
   CpuDeadLoop ();

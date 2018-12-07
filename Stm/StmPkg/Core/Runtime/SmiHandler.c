@@ -164,7 +164,7 @@ VOID
 	DEBUG ((EFI_D_ERROR, "%ld StmHandlerSmi - VMCS_32_RO_VM_INSTRUCTION_ERROR: %08x\n", Index, (UINTN)VmRead32 (VMCS_32_RO_VM_INSTRUCTION_ERROR_INDEX)));
 	DumpVmcsAllField ();
 	DumpRegContext (&mGuestContextCommonSmi.GuestContextPerCpu[Index].Register);
-
+	DumpGuestStack(Index);
 	ReleaseSpinLock (&mHostContextCommon.DebugLock);
 
 	CpuDeadLoop ();

@@ -41,18 +41,17 @@ InitPeGuestVmcs (
   VM_EXEC_2ND_PROCESSOR_BASES_VMEXIT_CONTROLS  ProcessorBasedCtrls2nd;
   GUEST_INTERRUPTIBILITY_STATE                 GuestInterruptibilityState;
   VM_EXIT_MSR_ENTRY                            *VmExitMsrEntry;
-  //UINT32 VmType;
 
-  //VmType = mHostContextCommon.HostContextPerCpu[CpuIndex].GuestVmType;
-
-  DEBUG((EFI_D_ERROR, "%ld InitPeGuestVmcs Starting - VmType: %d\n", CpuIndex, VmType));
-
-  // setup pin based controls
+  UINT32 ExceptionBitmap;
+  UINT32 PageFaultErrorCodeMask;
+  UINT32 PageFaultErrorCodeMatch;
 
   Data64 = AsmReadMsr64 (IA32_VMX_PINBASED_CTLS_MSR_INDEX);
   PinBasedCtls.Uint32 = (UINT32)(Data64 & 0xFFFFFFFF);
   PinBasedCtls.Bits.ExternalInterrupt = 0; // external interrupt
-  PinBasedCtls.Bits.Nmi = 1;                // NMI is used for the SMI case
+  PinBasedCtls.Bits.Nmi = 1;                // NMI is used to allow for when an SMI occurs when one of the processors
+                                            // is running a VM/PE to allow the other processors to interrupt the VM/PE
+                                            // so that he SMI handler can process the SMI
   PinBasedCtls.Bits.VmxPreemptionTimer = 1; // Timer  (was zero)
 
   //  Processor based controls
@@ -92,6 +91,10 @@ InitPeGuestVmcs (
 
   GuestInterruptibilityState.Uint32 = 0;
   GuestInterruptibilityState.Bits.BlockingBySmi = 1;
+
+  #define VMCS_32_CONTROL_EXCEPTION_BITMAP_INDEX                 0x4004
+#define VMCS_32_CONTROL_PAGE_FAULT_ERROR_CODE_MASK_INDEX       0x4006
+#define VMCS_32_CONTROL_PAGE_FAULT_ERROR_CODE_MATCH_INDEX      0x4008
 
   //
   // Control field

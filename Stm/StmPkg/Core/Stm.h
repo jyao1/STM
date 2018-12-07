@@ -653,6 +653,18 @@ DumpRegContext (
 
 /**
 
+  This function dumps the guest stack.
+
+  @param Index - CPU Index
+
+**/
+VOID
+DumpGuestStack(
+	IN UINT32 Index
+	);
+
+/**
+
   Initialize external vector table pointer.
 
   @param IdtGate  IDT gate descriptor

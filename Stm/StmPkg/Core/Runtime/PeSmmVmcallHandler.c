@@ -39,6 +39,8 @@ UINTN
 
 extern VMCSFIELDOFFSET VmcsFieldOffsetTable[];
 extern void MapVmcs ();
+extern PE_VM_DATA PeVmData[4];
+
 /**
 
 This function is the STM_API_MAP_ADDRESS_RANGEVMCALL handler for SMM VM/PE.
@@ -60,6 +62,20 @@ STM_STATUS
 	UINT32 VmType = mHostContextCommon.HostContextPerCpu[Index].GuestVmType;
 	UINTN PhysAddressParameter;
 	UINTN PhysAddressParameterEnd;
+	UINT64 GuestSmmEnd = PeVmData[VmType].UserModule.AddressSpaceStart + PeVmData[VmType].UserModule.AddressSpaceSize - 1;
+
+	// Make sure the parameter address is with the part of the guest that is within SMRAM
+
+	if((AddressParameter < PeVmData[VmType].UserModule.AddressSpaceStart)||
+	    (AddressParameter > GuestSmmEnd) ||
+		((AddressParameter + sizeof(STM_MAP_ADDRESS_RANGE_DESCRIPTOR)) > GuestSmmEnd))
+	{
+		DEBUG ((EFI_D_ERROR, "%ld PeSmmVmcallMapAddressRangeHandler - Security Violation! - parameter block not in guest physical within SMRAM\n", Index));
+		DEBUG ((EFI_D_ERROR, "%ld PeSmmVmcallMapAddressRangeHandler - AddressParameter = 0x%016llx",
+			Index,
+			AddressParameter));
+		return ERROR_STM_SECURITY_VIOLATION;
+	}
 
 	PhysAddressParameter = TranslateEPTGuestToHost(mGuestContextCommonSmm[VmType].EptPointer.Uint64, (UINTN)AddressParameter, 0L);
 	PhysAddressParameterEnd = TranslateEPTGuestToHost(mGuestContextCommonSmm[VmType].EptPointer.Uint64, (UINTN)AddressParameter + sizeof(STM_MAP_ADDRESS_RANGE_DESCRIPTOR), 0L);
@@ -69,7 +85,9 @@ STM_STATUS
 	if(((PhysAddressParameter == 0)||(PhysAddressParameterEnd == 0))||
 		((PhysAddressParameter & ~0xFFF) != (PhysAddressParameterEnd & ~0XFFF))) 
 	{
-		// TODO - need to address the potential of having a parameter block split across tow oages
+		// TODO - need to address the potential of having a parameter block split across two pages
+		// currently the VM/PE is created as a single block...
+
 		DEBUG ((EFI_D_ERROR, "%ld PeSmmVmcallMapAddressRangeHandler - Security Violation! - parameter block not in guest physical address space or split across two pages\n", Index));
 		DEBUG ((EFI_D_ERROR, "%ld PeSmmVmcallMapAddressRangeHandler - PhysAddressParameter = 0x%016llx, PhysAddressParameterEnd = 0x%016llx\n",
 			Index,

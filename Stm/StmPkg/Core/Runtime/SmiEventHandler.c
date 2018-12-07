@@ -107,6 +107,7 @@ SmiEventHandler (
     
     DumpVmcsAllField ();
     DumpRegContext (&mGuestContextCommonSmm[SMI_HANDLER].GuestContextPerCpu[Index].Register);
+	DumpGuestStack(Index);
     ReleaseSpinLock (&mHostContextCommon.DebugLock);
     
     CpuDeadLoop ();

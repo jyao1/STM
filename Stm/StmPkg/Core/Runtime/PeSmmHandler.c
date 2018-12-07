@@ -173,7 +173,7 @@ VOID
 	DEBUG ((EFI_D_ERROR, "%ld PeStmHandlerSmm - VMCS_32_RO_VM_INSTRUCTION_ERROR: %08x\n", Index, (UINTN)VmRead32 (VMCS_32_RO_VM_INSTRUCTION_ERROR_INDEX)));
 	DumpVmcsAllField ();
 	DumpRegContext (&mGuestContextCommonSmm[VmType].GuestContextPerCpu[pIndex].Register);
-
+	DumpGuestStack(Index);
 	ReleaseSpinLock (&mHostContextCommon.DebugLock);
 	DEBUG((EFI_D_ERROR, "%ld PeStmHandlerSmm - CpuDeadLoop\n", Index));
 	CpuDeadLoop ();
