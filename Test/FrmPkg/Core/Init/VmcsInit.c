@@ -84,7 +84,7 @@ SetVmcsControlField (
   ProcessorBasedCtrls.Bits.InterruptWindow = 0; // interrupt window
   ProcessorBasedCtrls.Bits.NmiWindow = 0;
   ProcessorBasedCtrls.Bits.IoBitmap = 1;
-  ProcessorBasedCtrls.Bits.MsrBitmap = 0;
+  ProcessorBasedCtrls.Bits.MsrBitmap = 1;
   ProcessorBasedCtrls.Bits.SecondaryControl = 1;
 
   Data64 = AsmReadMsr64 (IA32_VMX_PROCBASED_CTLS2_MSR_INDEX);
