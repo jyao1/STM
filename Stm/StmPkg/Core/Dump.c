@@ -555,7 +555,7 @@ VOID DumpGuestStack(IN UINT32 Index)
 	DEBUG((EFI_D_ERROR, "%ld Stacktrace\n", Index));
 
 
-	Location = (UINT64)StackTop;
+	Location = (UINT64)mGuestContextCommonSmm[VmType].EptPointer.Uint64;
 	RelLoc = 0;
 
 	for(i = 0; RelLoc < StackLen; i++)

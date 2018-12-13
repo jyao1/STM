@@ -2,6 +2,6 @@
 EptInit_base*
 Stm/Build/*
 *.suo
-
-
+*.sdn
+*.sln
 
