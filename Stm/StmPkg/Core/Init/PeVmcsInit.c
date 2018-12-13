@@ -42,9 +42,9 @@ InitPeGuestVmcs (
   GUEST_INTERRUPTIBILITY_STATE                 GuestInterruptibilityState;
   VM_EXIT_MSR_ENTRY                            *VmExitMsrEntry;
 
-  UINT32 ExceptionBitmap;
-  UINT32 PageFaultErrorCodeMask;
-  UINT32 PageFaultErrorCodeMatch;
+ // UINT32 ExceptionBitmap;
+ // UINT32 PageFaultErrorCodeMask;
+ // UINT32 PageFaultErrorCodeMatch;
 
   Data64 = AsmReadMsr64 (IA32_VMX_PINBASED_CTLS_MSR_INDEX);
   PinBasedCtls.Uint32 = (UINT32)(Data64 & 0xFFFFFFFF);
@@ -92,9 +92,9 @@ InitPeGuestVmcs (
   GuestInterruptibilityState.Uint32 = 0;
   GuestInterruptibilityState.Bits.BlockingBySmi = 1;
 
-  #define VMCS_32_CONTROL_EXCEPTION_BITMAP_INDEX                 0x4004
-#define VMCS_32_CONTROL_PAGE_FAULT_ERROR_CODE_MASK_INDEX       0x4006
-#define VMCS_32_CONTROL_PAGE_FAULT_ERROR_CODE_MATCH_INDEX      0x4008
+  //#define VMCS_32_CONTROL_EXCEPTION_BITMAP_INDEX                 0x4004
+//#define VMCS_32_CONTROL_PAGE_FAULT_ERROR_CODE_MASK_INDEX       0x4006
+//#define VMCS_32_CONTROL_PAGE_FAULT_ERROR_CODE_MATCH_INDEX      0x4008
 
   //
   // Control field
@@ -106,6 +106,8 @@ InitPeGuestVmcs (
   VmWrite32 (VMCS_32_CONTROL_PROCESSOR_BASED_VM_EXECUTION_INDEX,     ProcessorBasedCtrls.Uint32);
   VmWrite32 (VMCS_32_CONTROL_2ND_PROCESSOR_BASED_VM_EXECUTION_INDEX, ProcessorBasedCtrls2nd.Uint32);
   VmWrite32 (VMCS_32_CONTROL_EXCEPTION_BITMAP_INDEX,                 0);
+
+  DEBUG((EFI_D_ERROR, "%ld InitPeGuestVmcs - Exception Bitmap set to: 0x%08lx\n", CpuIndex, VmRead32(VMCS_32_CONTROL_EXCEPTION_BITMAP_INDEX)));
   VmWrite32 (VMCS_32_CONTROL_VMENTRY_CONTROLS_INDEX,                 Vmcs->VmEntryCtrls.Uint32);
   VmWrite32 (VMCS_32_CONTROL_VMEXIT_CONTROLS_INDEX,                  Vmcs->VmExitCtrls.Uint32);
 

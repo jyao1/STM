@@ -70,6 +70,8 @@ typedef struct
 #define PERM_VM_CLEAR_MEMORY    (1<<23)  // clear HEAP before run
 #define PERM_VM_SET_TEXT_RW     (1<<24)  // set the text area as RW ow W
 #define PERM_VM_EXEC_HEAP       (1<<25)  // Allow Heap Execution
+#define PERM_VM_INJECT_INT      (1<<26)  // VM/PE will handle Internal Interrupts
+
 typedef  struct __PE_SMI_CONTROL
 {
 	SPIN_LOCK PeSmiControlLock;
