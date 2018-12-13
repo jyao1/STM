@@ -29,6 +29,7 @@ extern void PeCrHandler( IN UINT32 CpuIndex);
 extern void PeExceptionHandler( IN UINT32 CpuIndex);
 extern void PeCpuidHandler( IN UINT32 CpuIndex);
 extern void PePreEmptionTimerHandler(IN UINT32 CpuIndex);
+extern void PeTripleFaultHandler(IN UINT32 CpuIndex);
 
 void InitCpuReadySync();
 
@@ -73,6 +74,7 @@ VOID
 	mStmHandlerPeVm[VmExitReasonWrmsr] = PeWriteMsrHandler;
 	mStmHandlerPeVm[VmExitReasonVmEntryFailureDueToInvalidGuestState] = PeBadGuestStateHandler;
 	mStmHandlerPeVm[VmExitReasonVmxPreEmptionTimerExpired] = PePreEmptionTimerHandler;
+	mStmHandlerPeVm[VmExitReasonTripleFault] = PeTripleFaultHandler;
 
 	DEBUG ((EFI_D_INFO, "PeInitStmHandlerSmm - PeSmmHandler Tables initialized\n"));
 

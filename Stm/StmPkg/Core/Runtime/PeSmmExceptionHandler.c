@@ -26,11 +26,9 @@ extern PE_VM_DATA PeVmData[];
 #define INTERRUPT_VECTOR_GPF 13
 
 unsigned int StmVmPeNmiExCount = 0;
-unsigned int PFCount = 0; /*debug - stop run away page faults */
+
 void PeExceptionHandler( IN UINT32 CpuIndex)
 {
-
-	//CpuDeadLoop();
 	VM_EXIT_INFO_INTERRUPTION IntInfo;
 	UINT32 IntErr;
 	UINTN address;
@@ -56,7 +54,7 @@ void PeExceptionHandler( IN UINT32 CpuIndex)
 				// NMI means that (in this case) an external processor has received an SMI..
 
 				DEBUG((EFI_D_ERROR, "%ld PeExceptionHandler - received NMI because SMI detected\n", CpuIndex));
-				save_Inter_PeVm(CpuIndex);
+				save_Inter_PeVm(CpuIndex);  // put the VM to sleep so that the SMI can be handled
 				break;
 			}
 		case INTERRUPT_VECTOR_GPF:
@@ -80,9 +78,6 @@ void PeExceptionHandler( IN UINT32 CpuIndex)
 		case INTERRUPT_VECTOR_PF:
 			{
 				
-				// Page Fault- kill the PE/VM
-				//DEBUG((EFI_D_ERROR, "%ld - PE/VM terminated because of an page fault %x\n", CpuIndex, IntInfo.Uint32));
-
 				UINTN IDTLocation = VmReadN(VMCS_N_GUEST_IDTR_BASE_INDEX);  // find the IDT
 
 				address = VmReadN(VMCS_N_RO_EXIT_QUALIFICATION_INDEX);
@@ -100,10 +95,8 @@ void PeExceptionHandler( IN UINT32 CpuIndex)
 				}
 				else
 				{
-					if(((PERM_VM_INJECT_INT & PeVmData[VmType].UserModule.VmConfig) == PERM_VM_INJECT_INT) &&
-						(PFCount < 5))// does the VM/PE want to handle its own page fault
+					if(((PERM_VM_INJECT_INT & PeVmData[VmType].UserModule.VmConfig) == PERM_VM_INJECT_INT))// does the VM/PE want to handle its own page fault
 					{
-						/*DEBUG*/PFCount++;  // prevent loops
 						AsmWriteCr2(address);   //CR2 holds the Page Fault address
 
 						VmWrite32(VMCS_32_CONTROL_VMENTRY_INTERRUPTION_INFO_INDEX, IntInfo.Uint32);

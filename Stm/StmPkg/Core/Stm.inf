@@ -68,6 +68,7 @@
   Runtime/PeSmmExceptionHandler.c
   Runtime/PeSmmCpuidHandler.c
   Runtime/PeSmmPreemptionTimerHandler.c
+  Runtime/PeSmmTripleFaultHandler.c
   Runtime/PeSmiVmcallHandler.c
   Runtime/PeSmiHandler.c
   Runtime/PeVmxState.c
