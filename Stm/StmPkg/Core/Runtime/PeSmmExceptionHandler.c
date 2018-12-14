@@ -20,8 +20,16 @@ extern UINT32 save_Inter_PeVm(UINT32 CpuIndex);
 extern UINT32 PostPeVmProc(UINT32 rc, UINT32 CpuIndex, UINT32 mode);
 extern PE_VM_DATA PeVmData[];
 
+UINT32 EventInjection (UINT32 Index, VM_EXIT_INFO_INTERRUPTION IntInfo, UINT32 IntErr);
+
 // define this here for now
 #define INTERRUPT_VECTOR_NMI 2
+#define INTERRUPT_VECTOR_OF  4
+#define INTERRUPT_VECTOR_BR  5
+#define INTERRUPT_VECTOR_UD  6
+#define INTERRUPT_VECTOR_DF  8
+#define INTERRUPT_VECTOR_NP  11
+#define INTERRUPT_VECTOR_SS  12
 #define INTERRUPT_VECTOR_PF  14
 #define INTERRUPT_VECTOR_GPF 13
 
@@ -57,7 +65,13 @@ void PeExceptionHandler( IN UINT32 CpuIndex)
 				save_Inter_PeVm(CpuIndex);  // put the VM to sleep so that the SMI can be handled
 				break;
 			}
-		case INTERRUPT_VECTOR_GPF:
+		case INTERRUPT_VECTOR_GPF:		
+		case INTERRUPT_VECTOR_OF:
+		case INTERRUPT_VECTOR_BR:
+		case INTERRUPT_VECTOR_UD:
+		case INTERRUPT_VECTOR_DF:
+		case INTERRUPT_VECTOR_NP:
+		case INTERRUPT_VECTOR_SS:
 			{
 				// General Protection Fault- kill the PE/VM
 				//DEBUG((EFI_D_ERROR, "%ld - PE/VM terminated because of an exception %x\n", CpuIndex, IntInfo.Uint32));
@@ -67,10 +81,14 @@ void PeExceptionHandler( IN UINT32 CpuIndex)
 					VmRead16 (VMCS_16_GUEST_CS_INDEX),               
 					VmReadN(VMCS_N_GUEST_RIP_INDEX),
 					VmReadN(VMCS_N_RO_EXIT_QUALIFICATION_INDEX),
-					IntInfo.Uint32));
-
-				//DumpVmcsAllField();
-
+					IntInfo.Uint32)); 
+					if(((PERM_VM_INJECT_INT & PeVmData[VmType].UserModule.VmConfig) == PERM_VM_INJECT_INT))// does the VM/PE want to handle its own interrupts
+					{
+						EventInjection(CpuIndex, IntInfo, IntErr);
+						return;
+					}
+				
+					// otherwise abort
 				PostPeVmProc(PE_VM_GP_FAULT, CpuIndex, PRESERVE_VM);
 				break;
 			}
@@ -268,239 +286,26 @@ endpf:
 		IntInfo.Uint32));
 	return;
 }
-#ifdef dummy
-VOID
-EventInjection (
-  UINT32 Index
-  )
-{
-  STM_PROTECTION_EXCEPTION_HANDLER          *StmProtectionExceptionHandler;
-  STM_PROTECTION_EXCEPTION_STACK_FRAME_X64  *StackFrame;
-  UINTN                                     Rflags;
-  X86_REGISTER                              *Reg;
-  UINT32									VmType = SMI_HANDLER;
 
-  Reg = &mGuestContextCommonSmm[VmType].GuestContextPerCpu[Index].Register;
+// very simple interrupt/event injection
+// just routing what happened during the vmexit 
+// back to the virtual maching
+//
+// bug - still need to check for stuff such as can the VM be interrupted,
+//
 
-  StmProtectionExceptionHandler = &mHostContextCommon.HostContextPerCpu[Index].TxtProcessorSmmDescriptor->StmProtectionExceptionHandler;
+UINT32 EventInjection (UINT32 Index, VM_EXIT_INFO_INTERRUPTION IntInfo, UINT32 IntErr)
+{ 
+	UINT32 InstructionLength;
 
-  //
-  // Check valid
-  //
-  if (StmProtectionExceptionHandler->SpeRip == 0) {
-    DEBUG ((EFI_D_INFO, "SpeRip unsupported!\n"));
-    // Unsupported;
-    return ;
-  }
+    InstructionLength = VmRead32(VMCS_32_RO_VMEXIT_INSTRUCTION_LENGTH_INDEX);
+ 
+	VmWrite32(VMCS_32_CONTROL_VMENTRY_INTERRUPTION_INFO_INDEX, IntInfo.Uint32);    // send the vector
+	VmWrite32(VMCS_32_CONTROL_VMENTRY_INSTRUCTION_LENGTH_INDEX, InstructionLength);
 
-  //
-  // Fill exception stack
-  //
-  StackFrame = (STM_PROTECTION_EXCEPTION_STACK_FRAME_X64 *)(UINTN)StmProtectionExceptionHandler->SpeRsp;
-  StackFrame -= 1;
-
-  //
-  // make it 16bytes align
-  //
-  StackFrame = (STM_PROTECTION_EXCEPTION_STACK_FRAME_X64 *)(((UINTN)StackFrame - 0x10) & ~0xF);
-  StackFrame = (STM_PROTECTION_EXCEPTION_STACK_FRAME_X64 *)((UINTN)StackFrame - 0x8);
-
-  mGuestContextCommonSmm[VmType].GuestContextPerCpu[Index].InfoBasic.Uint32 = VmRead32 (VMCS_32_RO_EXIT_REASON_INDEX);
-
-  mGuestContextCommonSmm[VmType].GuestContextPerCpu[Index].VmExitInstructionLength = VmRead32 (VMCS_32_RO_VMEXIT_INSTRUCTION_LENGTH_INDEX);
-
-  VmReadN (VMCS_N_RO_EXIT_QUALIFICATION_INDEX);
-  VmRead32 (VMCS_32_RO_VMEXIT_INSTRUCTION_LENGTH_INDEX);
-  VmRead32 (VMCS_32_RO_VMEXIT_INSTRUCTION_INFO_INDEX);
-  switch (mGuestContextCommonSmm[VmType].GuestContextPerCpu[Index].InfoBasic.Bits.Reason) {
-  
-  }
-
-  
-  if (mGuestContextCommonSmm[VmType].GuestContextPerCpu[Index].InfoBasic.Bits.Reason == VmExitReasonEptViolation) {
-    // For SMM handle, linear addr == physical addr
-    StackFrame->Cr2 = (UINTN)VmRead64(VMCS_64_RO_GUEST_PHYSICAL_ADDR_INDEX);
-  } else {
-    StackFrame->Cr2 = AsmReadCr2();
-  }
-
-
- // inject page fault: (from vtlb.c)
-
-  pf_error_code, PF_address
-
-  vector = vmread32(VM_EXIT_INFO_IDT_VECTORING);
-  interrrupt_info = vmread(VM_EXIT_INFO_EXCEPTION_INFO);
-
-  stack->cr2 = PF_ADDRESS;   //???
-
-  vmwrite(VM_ENTER_INTERRUPT_INFO, interrupt_info);
-  vmwrite(VM_ENTER_EXCEPTION_ERROR_CODE, PF_ERROR_CODE);
-
-
-  // inject interrupt
-
-  ivector = vnread*(VM_EXIT_INFO_IDT_VECTORING);
-
-  switch(ivector.bits.type)
-  {
-	case INT_TYPE_NMI:
-		//handleed elsewhare...
-		break;
-	case INT_TYPE_EXCEPT:
-		if(ivector.as_uint32 ==0x80000b0c)
-		{
-			// deal with non-PF exception
-
-		}
-
-		// we got here because we injected a PF that hit an IDT that was
-		// we now reinject the PF so that we won't have to do this again
-		// note: this is a shadow table issue...
-
-		if(ivector.as_uint32 == 0x80000b0e)
-		{
-			idt_vectoring_code = Last_injected_PF_Code
-				if(Last_injected_Ps_add != vstate->non_vmx_gs.cr2;)
-				{
-					// someting is wrong
-				}
-		}
-		cr2 = exit_qualification
-		vmwrite(VM_ENTER_INTERRUPT_INFO, ivector)
-	    vmwrite(VM_ENTER_EXCEPTION_ERROR_CODE, idt_vectoring_code)
-		break;
-		// something was wrong with this...
-	case INT_TYPE_SW:
-
-		vmwrite(VM_ENTER_INTERRUPT_INFO, ivector);
-		vmwrite(VM_ENTER_EXCEPTION_ERROR_CODE, idt_vectoring_code);
-		vmread(VM_EXIT_INFO_INSTRUCTION_LENGTH, instruction_length);
-		vmwrite(VM_ENTER_INSTRUCTION_LENGTH, instuction_length);
-		break;
-	case INT_TYPE_EXT:
-		vmwrite(VM_ENTER_INTERRUPT_INFO, ivector);
-		vmwrite(VM_ENTER_EXCEPTON_ERROR_CODE, idt_vectoring_code);
-  }
-
-  need to check guest interruptability -- VMCS_GUEST_INTERRUPTIBILITY
-	  rflags=vmread(VMCS_GUEST_RFLAGS);
-
-
-
-
-
-
-
-
-
-  Rflags = AsmVmResume (Reg);
-  // BUGBUG: - AsmVmLaunch if AsmVmResume fail
-  if (VmRead32 (VMCS_32_RO_VM_INSTRUCTION_ERROR_INDEX) == VmxFailErrorVmResumeWithNonLaunchedVmcs) {
-//    DEBUG ((EFI_D_ERROR, "(STM):-(\n", (UINTN)Index));
-    Rflags = AsmVmLaunch (Reg);
-  }
-  AcquireSpinLock (&mHostContextCommon.DebugLock);
-  DEBUG ((EFI_D_ERROR, "!!!ResumeToBiosExceptionHandler FAIL!!!\n"));
-  DEBUG ((EFI_D_ERROR, "Rflags: %08x\n", Rflags));
-  DEBUG ((EFI_D_ERROR, "VMCS_32_RO_VM_INSTRUCTION_ERROR: %08x\n", (UINTN)VmRead32 (VMCS_32_RO_VM_INSTRUCTION_ERROR_INDEX)));
-  DumpVmcsAllField ();
-  DumpRegContext (Reg);
-  DumpGuestStack(Index);
-  ReleaseSpinLock (&mHostContextCommon.DebugLock);
-  CpuDeadLoop ();
-  return ;
+	if(IntInfo.Bits.ErrorCodeValid == 1)
+	{
+		VmWrite32(VMCS_32_CONTROL_VMENTRY_EXCEPTION_ERROR_CODE_INDEX, IntErr);
+	}
+	return 0; // for now, always good return
 }
-
-/**
-
-  This function return from BIOS exception handler.
-
-  @param Index CPU index
-
-**/
-VOID
-ReturnFromBiosExceptionHandler (
-  UINT32 Index
-  )
-{
-  STM_PROTECTION_EXCEPTION_HANDLER          *StmProtectionExceptionHandler;
-  STM_PROTECTION_EXCEPTION_STACK_FRAME_X64  *StackFrame;
-  UINTN                                     Rflags;
-  X86_REGISTER                              *Reg;
-  UINT32                                    VmType = SMI_HANDLER;
-
-  Reg = &mGuestContextCommonSmm[VmType].GuestContextPerCpu[Index].Register;
-
-  StmProtectionExceptionHandler = &mHostContextCommon.HostContextPerCpu[Index].TxtProcessorSmmDescriptor->StmProtectionExceptionHandler;
-
-  //
-  // Check valid
-  //
-  if (StmProtectionExceptionHandler->SpeRip == 0) {
-    // Unsupported;
-    return ;
-  }
-
-  //
-  // Get exception stack
-  //
-  StackFrame = (STM_PROTECTION_EXCEPTION_STACK_FRAME_X64 *)(UINTN)StmProtectionExceptionHandler->SpeRsp;
-  StackFrame -= 1;
-
-  //
-  // make it 16bytes align
-  //
-  StackFrame = (STM_PROTECTION_EXCEPTION_STACK_FRAME_X64 *)(((UINTN)StackFrame - 0x10) & ~0xF);
-  StackFrame = (STM_PROTECTION_EXCEPTION_STACK_FRAME_X64 *)((UINTN)StackFrame - 0x8);
-
-  Reg->R15 = StackFrame->R15;
-  Reg->R14 = StackFrame->R14;
-  Reg->R13 = StackFrame->R13;
-  Reg->R12 = StackFrame->R12;
-  Reg->R11 = StackFrame->R11;
-  Reg->R10 = StackFrame->R10;
-  Reg->R9  = StackFrame->R9;
-  Reg->R8  = StackFrame->R8;
-  Reg->Rdi = StackFrame->Rdi;
-  Reg->Rsi = StackFrame->Rsi;
-  Reg->Rbp = StackFrame->Rbp;
-  Reg->Rdx = StackFrame->Rdx;
-  Reg->Rcx = StackFrame->Rcx;
-  Reg->Rbx = StackFrame->Rbx;
-  Reg->Rax = StackFrame->Rax;
-//  AsmWriteCr8 (StackFrame->Cr8);
-  VmWriteN (VMCS_N_GUEST_CR3_INDEX, StackFrame->Cr3);
-  AsmWriteCr2 (StackFrame->Cr2);
-  VmWriteN (VMCS_N_GUEST_CR0_INDEX, StackFrame->Cr0);
-  VmWriteN (VMCS_N_GUEST_RIP_INDEX, StackFrame->Rip);
-  VmWrite16 (VMCS_16_GUEST_CS_INDEX, (UINT16)StackFrame->Cs);
-  VmWriteN (VMCS_N_GUEST_RFLAGS_INDEX, StackFrame->Rflags);
-  VmWriteN (VMCS_N_GUEST_RSP_INDEX, StackFrame->Rsp);
-  VmWrite16 (VMCS_16_GUEST_SS_INDEX, (UINT16)StackFrame->Ss);
-
-  DEBUG ((EFI_D_INFO, "ReturnFromBiosExceptionHandler - %d\n", (UINTN)Index));
-
-  STM_PERF_START (Index, 0, "BiosSmmHandler", "ReturnFromBiosExceptionHandler");
-
-  //
-  // Start resume back to BiosExceptionHandler
-  //
-  Rflags = AsmVmResume (Reg);
-  // BUGBUG: - AsmVmLaunch if AsmVmResume fail
-  if (VmRead32 (VMCS_32_RO_VM_INSTRUCTION_ERROR_INDEX) == VmxFailErrorVmResumeWithNonLaunchedVmcs) {
-//    DEBUG ((EFI_D_ERROR, "(STM):-(\n", (UINTN)Index));
-    Rflags = AsmVmLaunch (Reg);
-  }
-  AcquireSpinLock (&mHostContextCommon.DebugLock);
-  DEBUG ((EFI_D_ERROR, "!!!ReturnFromBiosExceptionHandler FAIL!!!\n"));
-  DEBUG ((EFI_D_ERROR, "Rflags: %08x\n", Rflags));
-  DEBUG ((EFI_D_ERROR, "VMCS_32_RO_VM_INSTRUCTION_ERROR: %08x\n", (UINTN)VmRead32 (VMCS_32_RO_VM_INSTRUCTION_ERROR_INDEX)));
-  DumpVmcsAllField ();
-  DumpRegContext (Reg);
-  DumpGuestStack(Index);
-  ReleaseSpinLock (&mHostContextCommon.DebugLock);
-  CpuDeadLoop ();
-  return ;
-}
-#endif

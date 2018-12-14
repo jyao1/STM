@@ -113,6 +113,7 @@ vmconfig settings:
 	SET_VM_CLEAR_MEMORY            (1<<23)   - Clear heap before each run
 	SET_VM_TEXT_RW                 (1<<24)   - set VM/PE text space as RW
 	SET_VM_EXEC_HEAP               (1<<25)   - allow execution in Heap Space
+        SET_PERM_VM_HANDLE_INT         (1<<26)   - allow perm VM/PE to handle internal interrupts
 
 error returns - placed in eax upon return to caller:
 

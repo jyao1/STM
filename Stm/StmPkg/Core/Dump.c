@@ -530,11 +530,12 @@ VOID DumpGuestStack(IN UINT32 Index)
 	UINT32 i;
 	UINT64 Location;
 	UINT64 RelLoc;
-	UINTN  StackTop = (UINTN)VmReadN (VMCS_N_GUEST_RSP_INDEX);
-	UINTN StackLen;
+	UINTN  StackTopBase = (UINTN)VmReadN (VMCS_N_GUEST_RSP_INDEX);
+	UINTN  StackTop;
+	UINTN  StackLen;
 	UINT64 Stack[20];   // will limit output to at most the first 20 stack elements (64bit)
 
-	StackTop = TranslateEPTGuestToHost(mGuestContextCommonSmm[VmType].EptPointer.Uint64, StackTop, 0L);
+	StackTop = TranslateEPTGuestToHost(mGuestContextCommonSmm[VmType].EptPointer.Uint64, StackTopBase, 0L);
 
 	// make sure that stack exists within the EPT tables
 	// otherwise print an error message
@@ -554,8 +555,7 @@ VOID DumpGuestStack(IN UINT32 Index)
 
 	DEBUG((EFI_D_ERROR, "%ld Stacktrace\n", Index));
 
-
-	Location = (UINT64)mGuestContextCommonSmm[VmType].EptPointer.Uint64;
+	Location = StackTopBase;
 	RelLoc = 0;
 
 	for(i = 0; RelLoc < StackLen; i++)
