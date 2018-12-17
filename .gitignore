@@ -1,9 +1,0 @@
-.DS_Store
-EptInit_base*
-Stm/Build/*
-*.suo
-*.sdn
-*.sln
-.cache/*
-Conf/
-
