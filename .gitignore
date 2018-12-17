@@ -5,4 +5,5 @@ Stm/Build/*
 *.sdn
 *.sln
 .cache/*
+Conf/
 
