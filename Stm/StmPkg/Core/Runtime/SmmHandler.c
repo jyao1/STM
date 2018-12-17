@@ -13,6 +13,7 @@
 **/
 
 #include "StmRuntime.h"
+#include "PeStm.h"
 
 STM_HANDLER  mStmHandlerSmm[VmExitReasonMax];
 
@@ -32,18 +33,18 @@ InitStmHandlerSmm (
     mStmHandlerSmm[Index] = UnknownHandlerSmm;
   }
 
-  mStmHandlerSmm[VmExitReasonRsm] = RsmHandler;
-  mStmHandlerSmm[VmExitReasonVmCall] = SmmVmcallHandler;
-  mStmHandlerSmm[VmExitReasonExceptionNmi] = SmmExceptionHandler;
+  mStmHandlerSmm[VmExitReasonRsm]  = RsmHandler;
+  mStmHandlerSmm[VmExitReasonVmCall]  = SmmVmcallHandler;
+  mStmHandlerSmm[VmExitReasonExceptionNmi]  = SmmExceptionHandler;
 
-  mStmHandlerSmm[VmExitReasonCrAccess] = SmmCrHandler;
-  mStmHandlerSmm[VmExitReasonEptViolation] = SmmEPTViolationHandler;
-  mStmHandlerSmm[VmExitReasonEptMisConfiguration] = SmmEPTMisconfigurationHandler;
-  mStmHandlerSmm[VmExitReasonInvEpt] = SmmInvEPTHandler;
-  mStmHandlerSmm[VmExitReasonIoInstruction] = SmmIoHandler;
-  mStmHandlerSmm[VmExitReasonCpuid] = SmmCpuidHandler;
-  mStmHandlerSmm[VmExitReasonRdmsr] = SmmReadMsrHandler;
-  mStmHandlerSmm[VmExitReasonWrmsr] = SmmWriteMsrHandler;
+  mStmHandlerSmm[VmExitReasonCrAccess]  = SmmCrHandler;
+  mStmHandlerSmm[VmExitReasonEptViolation]  = SmmEPTViolationHandler;
+  mStmHandlerSmm[VmExitReasonEptMisConfiguration]  = SmmEPTMisconfigurationHandler;
+  mStmHandlerSmm[VmExitReasonInvEpt]  = SmmInvEPTHandler;
+  mStmHandlerSmm[VmExitReasonIoInstruction]  = SmmIoHandler; 
+  mStmHandlerSmm[VmExitReasonCpuid]  = SmmCpuidHandler;
+  mStmHandlerSmm[VmExitReasonRdmsr]  = SmmReadMsrHandler;
+  mStmHandlerSmm[VmExitReasonWrmsr]  = SmmWriteMsrHandler;
   mStmHandlerSmm[VmExitReasonInvd] = SmmInvdHandler;
   mStmHandlerSmm[VmExitReasonWbinvd] = SmmWbinvdHandler;
   mStmHandlerSmm[VmExitReasonTaskSwitch] = SmmTaskSwitchHandler;
@@ -65,7 +66,8 @@ UnknownHandlerSmm (
 
   DEBUG ((EFI_D_ERROR, "!!!UnknownHandlerSmm - %d\n", (UINTN)Index));
   DumpVmcsAllField ();
-  DumpRegContext(&mGuestContextCommonSmm.GuestContextPerCpu[Index].Register);
+  DumpRegContext(&mGuestContextCommonSmm[SMI_HANDLER].GuestContextPerCpu[Index].Register);
+  DumpGuestStack(Index);
 
   {
     UINT8  *Buffer;
@@ -103,14 +105,21 @@ StmHandlerSmm (
   UINTN               Rflags;
   VM_EXIT_INFO_BASIC  InfoBasic;
   X86_REGISTER        *Reg;
+  UINT32			  VmType;
+  UINT32              pIndex;
 
   Index = ApicToIndex (ReadLocalApicId ());
-  
+  VmType = mHostContextCommon.HostContextPerCpu[Index].GuestVmType;  // any VmType other than SMI_HANDLER is a PeVm
+  if(VmType != SMI_HANDLER)
+	  pIndex = 0;        // PeVm always have index 0
+  else
+	  pIndex = Index;
+
   STM_PERF_END (Index, "BiosSmmHandler", "StmHandlerSmm");
 
-  Reg = &mGuestContextCommonSmm.GuestContextPerCpu[Index].Register;
+  Reg = &mGuestContextCommonSmm[VmType].GuestContextPerCpu[pIndex].Register;
   Register->Rsp = VmReadN (VMCS_N_GUEST_RSP_INDEX);
-  CopyMem (Reg, Register, sizeof(X86_REGISTER));
+  CopyMem (Reg, Register, sizeof(X86_REGISTER));//
 #if 0
   DEBUG ((EFI_D_INFO, "!!!StmHandlerSmm - %d\n", (UINTN)Index));
 #endif
@@ -136,11 +145,11 @@ StmHandlerSmm (
   //
   // Resume
   //
-  Rflags = AsmVmResume (&mGuestContextCommonSmm.GuestContextPerCpu[Index].Register);
+  Rflags = AsmVmResume (&mGuestContextCommonSmm[VmType].GuestContextPerCpu[pIndex].Register);
   // BUGBUG: - AsmVmLaunch if AsmVmResume fail
   if (VmRead32 (VMCS_32_RO_VM_INSTRUCTION_ERROR_INDEX) == VmxFailErrorVmResumeWithNonLaunchedVmcs) {
 //    DEBUG ((EFI_D_ERROR, "(STM):-(\n", (UINTN)Index));
-    Rflags = AsmVmLaunch (&mGuestContextCommonSmm.GuestContextPerCpu[Index].Register);
+    Rflags = AsmVmLaunch (&mGuestContextCommonSmm[VmType].GuestContextPerCpu[pIndex].Register);
   }
 
   AcquireSpinLock (&mHostContextCommon.DebugLock);
@@ -149,8 +158,8 @@ StmHandlerSmm (
   DEBUG ((EFI_D_ERROR, "Rflags: %08x\n", Rflags));
   DEBUG ((EFI_D_ERROR, "VMCS_32_RO_VM_INSTRUCTION_ERROR: %08x\n", (UINTN)VmRead32 (VMCS_32_RO_VM_INSTRUCTION_ERROR_INDEX)));
   DumpVmcsAllField ();
-  DumpRegContext (&mGuestContextCommonSmm.GuestContextPerCpu[Index].Register);
-
+  DumpRegContext (&mGuestContextCommonSmm[VmType].GuestContextPerCpu[pIndex].Register);
+  DumpGuestStack(Index);
   ReleaseSpinLock (&mHostContextCommon.DebugLock);
 
   CpuDeadLoop ();

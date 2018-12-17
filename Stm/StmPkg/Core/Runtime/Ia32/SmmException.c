@@ -13,6 +13,7 @@
 **/
 
 #include "StmRuntime.h"
+#include "PeStm.h"
 
 /**
 
@@ -30,8 +31,9 @@ ResumeToBiosExceptionHandler (
   STM_PROTECTION_EXCEPTION_STACK_FRAME_IA32 *StackFrame;
   UINTN                                     Rflags;
   X86_REGISTER                              *Reg;
+  UINT32									VmType = SMI_HANDLER;
 
-  Reg = &mGuestContextCommonSmm.GuestContextPerCpu[Index].Register;
+  Reg = &mGuestContextCommonSmm[VmType].GuestContextPerCpu[Index].Register;
 
   StmProtectionExceptionHandler = &mHostContextCommon.HostContextPerCpu[Index].TxtProcessorSmmDescriptor->StmProtectionExceptionHandler;
 
@@ -50,14 +52,14 @@ ResumeToBiosExceptionHandler (
   StackFrame = (STM_PROTECTION_EXCEPTION_STACK_FRAME_IA32 *)(UINTN)StmProtectionExceptionHandler->SpeRsp;
   StackFrame -= 1;
 
-  mGuestContextCommonSmm.GuestContextPerCpu[Index].InfoBasic.Uint32 = VmRead32 (VMCS_32_RO_EXIT_REASON_INDEX);
+  mGuestContextCommonSmm[VmType].GuestContextPerCpu[Index].InfoBasic.Uint32 = VmRead32 (VMCS_32_RO_EXIT_REASON_INDEX);
 
-  mGuestContextCommonSmm.GuestContextPerCpu[Index].VmExitInstructionLength = VmRead32 (VMCS_32_RO_VMEXIT_INSTRUCTION_LENGTH_INDEX);
+  mGuestContextCommonSmm[VmType].GuestContextPerCpu[Index].VmExitInstructionLength = VmRead32 (VMCS_32_RO_VMEXIT_INSTRUCTION_LENGTH_INDEX);
 
   StackFrame->VmcsExitQualification = VmReadN (VMCS_N_RO_EXIT_QUALIFICATION_INDEX);
   StackFrame->VmcsExitInstructionLength = VmRead32 (VMCS_32_RO_VMEXIT_INSTRUCTION_LENGTH_INDEX);
   StackFrame->VmcsExitInstructionInfo = VmRead32 (VMCS_32_RO_VMEXIT_INSTRUCTION_INFO_INDEX);
-  switch (mGuestContextCommonSmm.GuestContextPerCpu[Index].InfoBasic.Bits.Reason) {
+  switch (mGuestContextCommonSmm[VmType].GuestContextPerCpu[Index].InfoBasic.Bits.Reason) {
   case VmExitReasonExceptionNmi:
   case VmExitReasonEptViolation:
     if (StmProtectionExceptionHandler->PageViolationException) {
@@ -113,7 +115,7 @@ ResumeToBiosExceptionHandler (
   StackFrame->Rbx = Reg->Rbx;
   StackFrame->Rax = Reg->Rax;
   StackFrame->Cr3 = VmReadN (VMCS_N_GUEST_CR3_INDEX);
-  if (mGuestContextCommonSmm.GuestContextPerCpu[Index].InfoBasic.Bits.Reason == VmExitReasonEptViolation) {
+  if (mGuestContextCommonSmm[VmType].GuestContextPerCpu[Index].InfoBasic.Bits.Reason == VmExitReasonEptViolation) {
     // For SMM handle, linear addr == physical addr
     StackFrame->Cr2 = (UINTN)VmRead64(VMCS_64_RO_GUEST_PHYSICAL_ADDR_INDEX);
   } else {
@@ -149,6 +151,7 @@ ResumeToBiosExceptionHandler (
   DEBUG ((EFI_D_ERROR, "VMCS_32_RO_VM_INSTRUCTION_ERROR: %08x\n", (UINTN)VmRead32 (VMCS_32_RO_VM_INSTRUCTION_ERROR_INDEX)));
   DumpVmcsAllField ();
   DumpRegContext (Reg);
+  DumpGuestStack(Index);
   ReleaseSpinLock (&mHostContextCommon.DebugLock);
   CpuDeadLoop ();
   return ;
@@ -170,8 +173,9 @@ ReturnFromBiosExceptionHandler (
   STM_PROTECTION_EXCEPTION_STACK_FRAME_IA32 *StackFrame;
   UINTN                                     Rflags;
   X86_REGISTER                              *Reg;
+  UINT32									VmType = SMI_HANDLER;
 
-  Reg = &mGuestContextCommonSmm.GuestContextPerCpu[Index].Register;
+  Reg = &mGuestContextCommonSmm[VmType].GuestContextPerCpu[Index].Register;
 
   StmProtectionExceptionHandler = &mHostContextCommon.HostContextPerCpu[Index].TxtProcessorSmmDescriptor->StmProtectionExceptionHandler;
 
@@ -224,6 +228,7 @@ ReturnFromBiosExceptionHandler (
   DEBUG ((EFI_D_ERROR, "VMCS_32_RO_VM_INSTRUCTION_ERROR: %08x\n", (UINTN)VmRead32 (VMCS_32_RO_VM_INSTRUCTION_ERROR_INDEX)));
   DumpVmcsAllField ();
   DumpRegContext (Reg);
+  DumpGuestStack(Index);
   ReleaseSpinLock (&mHostContextCommon.DebugLock);
   CpuDeadLoop ();
   return ;

@@ -1,0 +1,199 @@
+
+
+STMPE Addtions to the STM API
+
+ AddPEVMtempVMCALL:
+ AddPEVMpermVMCALL:
+ 
+	Create a protected execution (PE) virtual machine (VM) and load a
+	module to be executed in that VM.
+ 
+ AddPEVMtempVMCALL: 
+ 
+	The module is temporarily loaded in a VM,
+	executed, and the VM torn down afterwards. i.e. protected execution.
+
+	Input and Return register values: same as AddPEVMpermVMCALL.
+ 
+ AddPEVMpermVMCALL: 
+ 
+	The module is permanently loaded in a VM and
+	persists.  It is expected that this will be allowed only when the MLE
+	is initially brought up to allow for a measurement engine to be
+	loaded. This module is executed by the RunPeVmVMCALL.
+
+	Input registers:
+ 
+	EAX = STM_API_ADD_TEMP_PE or STM_API_ADD_PERM_PE_VM
+	EBX = low 32 bits of physical address of a caller created structure
+		  containing module load information (struct module_info)
+	ECX = high 32 bits of physical address of a caller created structure
+          containing module load information (struct module_info)
+ 
+	Return register values:
+ 
+	CF = 0: No error, EAX set to STM_SUCCESS (0)
+	CF = 1: An error occurred, EAX holds relevant error value
+	EAX:  Error/success return
+
+ RunPeVmVMCALL
+
+	This call runs the VM that was created via the AddSTMVmVMCALL vmcall.
+	Entrypoint into the module will be that defined during the
+	AddSTMVmVMCALL.
+
+	Input registers:
+
+	EAX = RunPeVmVMCALL
+ 
+	Output registers:
+	
+	CF = 0: No error, EAX set to STM_SUCCESS (0)
+	CF = 1: An error occurred, EAX holds relevant error value EAX = -1 (actual
+            error values TBD)
+
+ EndAddPeVmVMCALL
+
+	Turns off the ability to add a permanent PE VM.  This function is normally
+	ran at the end of the MLE's processing to ensure that no permanent
+	untrusted entity resides in the STM.
+
+Bit definitions for the additions to the STM API
+
+STM_API_ADD_TEMP_PE_VM       0x00010009
+STM_API_ADD_PERM_PE_VM       0x0001000a
+STM_API_END_PERM_PE_VM       0x0001000c
+STM_API_RUN_PERM_PE_VM       0x0001000b
+STM_API_ADD_PERM_PE_VM_NORUN 0x0001000d
+
+
+ Information block used to pass information about the PE module to the STM:
+
+	 struct module_info {
+	  u64 module_address;        - physical address of VM/PE (SMM) module to load
+	  u64 module_load_address;   - guest-physical load address of module (must be
+		                         - within the range of address_space_start and
+			                     - address_space_start+addresss_space_size)
+	  u32 module_size;           - size of module in bytes
+	  u32 module_entry_point;    - relative offset from start of module
+      u64 address_space_start;   - guest-physical address space start of module
+      u32 address_space_size;    - module size in bytes
+      u32 vmconfig;              - flags specifying how VM supporting module should
+                                 - be configured (see below for definitions)
+      u64 cr3_load;              - guest-physical address to initialize cr3 to if
+		                         - paging enabled
+      u64 shared_page;           - guest-physical address of a shared page (must not
+                                 - be in SMRAM space).  segment will have R/W
+                                 - permission. value placed in RBX register of STM
+                                 - module.
+	  struct region *segment;    - guest-physical address of an array of R/O
+                                 - segments terminated with a null element.
+                                 - value placed in RCX register of STM module.
+      u32 shared_page_size;      - size of shared page
+      u32 DoNotClearSize;        - block at beginning of data not to be cleared
+      u64 ModuleDataSection;     - start address of the module data section
+	} __attribute__((__packed__));
+
+vmconfig settings:
+
+	SET_CS_L    (1<<13)      - cs.l set 64bit mode for cs (req. SET_IA32E is set)
+	SET_CS_D    (1<<14)      - cs.d default mode (0: 16bit seg, 1: 32-bit)
+                           must be set if SET_CS_L is set
+	SET_IA32E   (1<<15)      - sets IA32e mode; when set, cr0.pg, cr0.pe, and
+                           cr0.pae will be set as well
+	SET_CR0_PG  (1<<31)      - set cr0.pg
+	SET_CR0_PE  (1<<0)       - set cr0.pe
+	SET_CR4_PAE (1<<3)       - set cr4.pae
+	SET_PERM_VM (1<<2)       - VM can be re-executed using
+	                           STM_API_RUN_VM(RunPeVmVMCALL)
+
+	SET_PERM_VM_RUN_ONCE           (1<<20)   - run perm VM only once, then breakdown
+	SET_PERM_VM_CRASH_BREAKDOWN    (1<<21)   - if Perm VM crashes, then breakdown
+	SET_PERM_VM_RUN_SMI            (1<<22)   - Run VM/PE via SMI timer
+	SET_VM_CLEAR_MEMORY            (1<<23)   - Clear heap before each run
+	SET_VM_TEXT_RW                 (1<<24)   - set VM/PE text space as RW
+	SET_VM_EXEC_HEAP               (1<<25)   - allow execution in Heap Space
+	SET_PERM_VM_HANDLE_INT         (1<<26)   - allow perm VM/PE to handle internal interrupts
+
+error returns - placed in eax upon return to caller:
+
+	PE_SUCCESS                   0           - PE setup/ran sucessfully
+	PE_FAIL                     -1           - catchall PE ERROR
+	PE_SPACE_TOO_LARGE           0x80040001  - requested memory space too large
+	PE_MODULE_ADDRESS_TOO_LOW    0x80040002  - PE module start below address space start
+	PE_MODULE_TOO_LARGE          0x80040003  - PE module too large for address space
+	                                           (or located such that it overflows
+		                                       the end of the address space
+	PE_NO_PT_SPACE               0x80040004  - not enough space left for PE VM
+                                               page tables
+	PE_NO_RL_SPACE               0x80040005  - not enough space left for resource
+                                               list
+	PE_MEMORY_AC_SETUP_FAILURE   0x80040006  - could not setup accesses to PE space
+		                                       (internal error)
+	PE_SHARED_MEMORY_SETUP_ERROR 0x80040007  - could not setup shared memory
+	PE_MODULE_MAP_FAILURE        0x80040008  - could not map in the address space
+	PE_SHARED_MAP_FAILURE        0x80040009  - could not map in the shared page
+	PE_VMCS_ALLOC_FAIL           0x8004000A  - could not allocate VMCS memory
+	PE_VMLAUNCH_ERROR            0x8004000B  - attempted to launch PE VM with bad
+                                             - guest VM state
+	PE_VM_BAD_ACCESS             0x8004000C  - PE VM attempted to access protected
+                                               memory out of bounds)
+    PE_VM_SETUP_ERROR_D_L        0x8004000D  - CS_D and CS_L cannot be set to one at
+                                               the same time
+	PE_VM_SETUP_ERROR_IA32E_D    0x8004000E  - SET_IA32E must be set when CS_L is
+                                               set
+    PE_VM_TRIPLE_FAULT           0x8004000F  - PE VM crashed with a triple fault
+    PE_VM_PAGE_FAULT             0x80040010  - PE VM crashed with a page fault
+
+Region list structure
+
+	struct region {
+	u64 address;                           - page aligned physical address
+	u32 size;                              - size of segment
+	u32 padding;                           - align structure to 64-bits
+	} __attribute__((__packed__));
+
+
+Notes:
+
+  Interrupts and faults: 
+  
+  If the PE module encounters a fault, the VM/PE will be terminated.  A future
+  STM/PE version will allow for faults to be handled by the PE module.  In this
+  instance, the PE module will need to properly setup an IDT along with the
+  necessary handlers.
+ 
+  The VM/PE will not receive external interrupts.
+ 
+  Memory allocation errors: 
+  
+  Allocation errors for the PE module most likely mean that there is not enough 
+  contiguous memory to fit the PE module in.  The memory allocation could be 
+  modified to allocate memory in smaller blocks from the STM heap, but as more 
+  pages are allocated, the higher the overhead necessary for page tables.  
+  Memory allocation errors for the overhead really mean that you should consider
+  reducing the size of the PE module.  As at this point heap memory may
+  be getting so limited as the affect the operation of the STM itself.
+  To prevent this, the size of the PE module should be limited to
+  ensure that there is enough heap space for the STM to function.
+ 
+  MSR and I/O access: 
+  
+  Read and write access to the IA32_EFER_MSR is allowed, write access 
+  to other MSRs are ignored and read attempts to other MSRs will return 0.
+
+  IO ports: 
+  
+  Access attempts to I/O ports are generally ignored except for 0x3D8 and 0x3F8.
+
+  0x3D8 and 0x3F8 (aka COM2 and COM1 respectively) can be used to send character strings through the STM console port.  
+  No formatting, etc is done (any byte combinations that can pose a security issue will be delt with a necessary).
+
+  for debugging a VM/PE debugging output can be sent through:
+
+        RDX:    port -   0x3F8 or 0x3D8
+        RCX:    number of bytes (maximun length is 200.  Stings longer than that will be truncated)
+        DS:ESI  location in PE/VM where output is located
+	            Use either instruction OUTSB/OUTSW/OUTSD  (0x6E or Ox6F)
+	            Note: do not use a loop with a rep statement (which is what is normally done)
+

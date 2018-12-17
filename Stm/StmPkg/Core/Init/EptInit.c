@@ -13,6 +13,17 @@
 **/
 
 #include "StmInit.h"
+#include "PeStm.h"
+
+#define PAGING_PAE_INDEX_MASK  0x1FF
+
+#define PAGING_4K_ADDRESS_MASK_64 0x000FFFFFFFFFF000ull
+#define PAGING_2M_ADDRESS_MASK_64 0x000FFFFFFFE00000ull
+#define PAGING_1G_ADDRESS_MASK_64 0x000FFFFFC0000000ull
+
+#define PAGING_4K_MASK  0xFFF
+#define PAGING_2M_MASK  0x1FFFFF
+#define PAGING_1G_MASK  0x3FFFFFFF
 
 MRTT_INFO  mMtrrInfo;
 
@@ -47,6 +58,22 @@ EptDumpPageTable (
   IN EPT_POINTER              *EptPointer
   );
 
+/**
+ 
+ This function creates and individual EPT page table entry.
+ Accounts for 1GB and 2MB pages
+ 
+ @param EptPointer EPT pointer
+ @param BaseAddress address within the PTE to be created
+ 
+ **/
+
+UINT64
+EptAllocatePte(
+  IN UINT64 EptPointer,
+  IN UINT64 BaseAddress,
+  IN UINT64 PhysAddress,
+  IN UINT64 PhysSize);
 /**
 
   This function return TSEG information in TXT heap region.
@@ -288,170 +315,169 @@ GetMemoryType (
   @param Xa         Execute access
 
 **/
+
+static UINT32                   SmrrBase;
+static UINT32                   SmrrLength;
+
 VOID
 EptCreatePageTable (
   OUT EPT_POINTER              *EptPointer,
   IN UINT32                    Xa
   )
 {
-  EPT_ENTRY                *L1PageTable;
-  EPT_ENTRY                *L2PageTable;
-  EPT_ENTRY                *L3PageTable;
   EPT_ENTRY                *L4PageTable;
-  UINTN                    Index1;
-  UINTN                    Index2;
-  UINTN                    Index3;
-  UINTN                    Index4;
-  UINT64                   BaseAddress;
-  UINT8                    MemoryType;
-  UINT32                   SmrrBase;
-  UINT32                   SmrrLength;
-  UINTN                    NumberOfPml4EntriesNeeded;
-  UINTN                    NumberOfPdpEntriesNeeded;
-
-  if (mHostContextCommon.PhysicalAddressBits <= 39) {
-    NumberOfPml4EntriesNeeded = 1;
-    NumberOfPdpEntriesNeeded = (UINTN)LShiftU64 (1, mHostContextCommon.PhysicalAddressBits - 30);
-  } else {
-    NumberOfPml4EntriesNeeded = (UINTN)LShiftU64 (1, mHostContextCommon.PhysicalAddressBits - 39);
-    NumberOfPdpEntriesNeeded = 512;
-  }
-
+ 
   SmrrBase = (UINT32)mMtrrInfo.SmrrBase & (UINT32)mMtrrInfo.SmrrMask & 0xFFFFF000;
   SmrrLength = (UINT32)mMtrrInfo.SmrrMask & 0xFFFFF000;
   SmrrLength = ~SmrrLength + 1;
 
-  //
-  // Setup below 4G
-  //
-  L4PageTable = (EPT_ENTRY *)AllocatePages (6);
-  ZeroMem (L4PageTable, STM_PAGES_TO_SIZE(6));
+  L4PageTable = (EPT_ENTRY *)AllocatePages (1);
+  ZeroMem (L4PageTable, STM_PAGES_TO_SIZE(1));
 
   EptPointer->Uint64 = (UINT64)(UINTN)L4PageTable;
   EptPointer->Bits32.Gaw = EPT_GAW_48BIT;
   EptPointer->Bits32.Etmt = MEMORY_TYPE_WB;
+}
 
-  L3PageTable = (EPT_ENTRY *)((UINTN)L4PageTable + SIZE_4KB);
-  L2PageTable = (EPT_ENTRY *)((UINTN)L3PageTable + SIZE_4KB);
+/**
+ 
+ This function creates and individual EPT page table entry for BaseAddess.
+ Accounts for 1GB and 2MB pages.
+ 
+ @param EptPointer EPT pointer
+ @param BaseAddress address within the PTE to be created
+ @param PhysAddress physical address to be mapped to
+ 
+ @return pte, 0 if Fail
+ 
+ **/
 
-  BaseAddress = 0;
-  for (Index4 = 0; Index4 < 1; Index4 ++) {
-    L4PageTable->Uint64 = (UINT64)(UINTN)L3PageTable;
-    L4PageTable->Bits32.Ra    = 1;
-    L4PageTable->Bits32.Wa    = 1;
-    L4PageTable->Bits32.Xa    = 1;
-    L4PageTable ++;
-    for (Index3 = 0; Index3 < 4; Index3 ++) {
-      L3PageTable->Uint64 = (UINT64)(UINTN)L2PageTable;
-      L3PageTable->Bits32.Ra    = 1;
-      L3PageTable->Bits32.Wa    = 1;
-      L3PageTable->Bits32.Xa    = 1;
-      L3PageTable ++;
-      for (Index2 = 0; Index2 < 512; Index2 ++) {
+UINT64
+EptAllocatePte(
+  IN UINT64 EptPointer,
+  IN UINT64 BaseAddress,
+  IN UINT64 PhysAddress,
+  IN UINT64 PhysSize
+  )
+{
+    EPT_ENTRY                *L1PageTable;
+    EPT_ENTRY                *L2PageTable;
+    EPT_ENTRY                *L3PageTable;
+    EPT_ENTRY                *L4PageTable;
+    
+    UINTN                    Index1;
+    UINTN                    Index2;
+    UINTN                    Index3;
+    UINTN                    Index4;
 
-        if (BaseAddress >= BASE_2MB) {
-          if (TRUE) {
-            // Use super page
-            L2PageTable->Uint64 = BaseAddress;
-            L2PageTable->Bits32.Ra    = 1;
-            L2PageTable->Bits32.Wa    = 1;
-            L2PageTable->Bits32.Xa    = Xa;
-            L2PageTable->Bits32.Sp    = 1;
+	UINT8 MemoryType;
+    
+    Index4 = ((UINTN)RShiftU64 (BaseAddress, 39)) & PAGING_PAE_INDEX_MASK;
+    Index3 = ((UINTN)BaseAddress >> 30) & PAGING_PAE_INDEX_MASK;
+    Index2 = ((UINTN)BaseAddress >> 21) & PAGING_PAE_INDEX_MASK;
+    Index1 = ((UINTN)BaseAddress >> 12) & PAGING_PAE_INDEX_MASK;
 
-            // BUGBUG: Do we need set UC for STM region???
-            MemoryType = GetMemoryType (BaseAddress);
-            L2PageTable->Bits32.Emt = MemoryType;
-            if ((BaseAddress >= SmrrBase) && (BaseAddress < SmrrBase + SmrrLength)) {
-              DEBUG ((EFI_D_INFO, "EPT init: %x - %x\n", (UINTN)BaseAddress, (UINTN)L2PageTable->Bits32.Emt));
-              L2PageTable->Bits32.Xa    = 1;
-            }
-
-            L2PageTable ++;
-
-            BaseAddress += SIZE_2MB;
-            continue;
-          }
-        }
-
-        //
-        // [0, 2MB)
-        //
-        L1PageTable = (EPT_ENTRY *)AllocatePages (1);
-
-        L2PageTable->Uint64 = (UINT64)(UINTN)L1PageTable;
-        L2PageTable->Bits32.Ra    = 1;
-        L2PageTable->Bits32.Wa    = 1;
-        L2PageTable->Bits32.Xa    = 1;
-        L2PageTable ++;
-        for (Index1 = 0; Index1 < 512; Index1 ++) {
-          L1PageTable->Uint64 = BaseAddress;
-          L1PageTable->Bits32.Ra    = 1;
-          L1PageTable->Bits32.Wa    = 1;
-          L1PageTable->Bits32.Xa    = Xa;
-
-          MemoryType = GetMemoryType (BaseAddress);
-          L1PageTable->Bits32.Emt = MemoryType;
-          L1PageTable ++;
-          BaseAddress += SIZE_4KB;
-        }
-      }
-    }
-  }
-
-  //
-  // Setup above 4G
-  //
-  if (sizeof(UINTN) == sizeof(UINT64)) {
-    ASSERT(BaseAddress == BASE_4GB);
-    L4PageTable = (EPT_ENTRY *)(UINTN)(EptPointer->Uint64 & ~(SIZE_4KB - 1));
-    for (Index4 = 0; Index4 < NumberOfPml4EntriesNeeded; Index4 ++) {
-      if (Index4 > 0) {
+	//DEBUG((EFI_D_INFO, "EptAllocatePte - BaseAddress 0x%llx PhysAddress 0x%llx Physize 0x%x\n", BaseAddress, PhysAddress, PhysSize));
+    
+    L4PageTable = (EPT_ENTRY *) (UINTN)EptPointer;
+    
+    if (L4PageTable[Index4].Uint64 == 0)
+    {
         L3PageTable = (EPT_ENTRY *)(UINTN)AllocatePages (1);
+        if(L3PageTable == NULL)
+		{
+            return 0;
+		}
+        ZeroMem (L3PageTable, STM_PAGES_TO_SIZE(1));
         L4PageTable[Index4].Uint64 = (UINT64)(UINTN)L3PageTable;
-        L4PageTable[Index4].Bits32.Ra = 1;
-        L4PageTable[Index4].Bits32.Wa = 1;
-        L4PageTable[Index4].Bits32.Xa = 1;
-        Index3 = 0;
-      } else {
-        // Start from 4G - L4PageTable[0] already allocated.
-        L3PageTable = (EPT_ENTRY *)(UINTN)(L4PageTable[0].Uint64 & ~(SIZE_4KB - 1));
-        Index3 = 4;
-      }
-      
-      if (Is1GPageSupport()) {
-        for (; Index3 < NumberOfPdpEntriesNeeded; Index3 ++) {
-          L3PageTable[Index3].Uint64 = BaseAddress;
-          L3PageTable[Index3].Bits32.Ra = 1;
-          L3PageTable[Index3].Bits32.Wa = 1;
-          L3PageTable[Index3].Bits32.Xa = Xa;
-          L3PageTable[Index3].Bits32.Sp = 1;
-          MemoryType = GetMemoryType (BaseAddress);
-          L3PageTable[Index3].Bits32.Emt = MemoryType;
-          BaseAddress += SIZE_1GB;
-        }
-      } else {
-        for (; Index3 < NumberOfPdpEntriesNeeded; Index3 ++) {
-          L2PageTable = (EPT_ENTRY *)(UINTN)AllocatePages (1);
-          L3PageTable[Index3].Uint64 = (UINT64)(UINTN)L2PageTable;
-          L3PageTable[Index3].Bits32.Ra = 1;
-          L3PageTable[Index3].Bits32.Wa = 1;
-          L3PageTable[Index3].Bits32.Xa = 1;
-          for (Index2 = 0; Index2 < 512; Index2 ++) {
-            L2PageTable[Index2].Uint64 = BaseAddress;
-            L2PageTable[Index2].Bits32.Ra = 1;
-            L2PageTable[Index2].Bits32.Wa = 1;
-            L2PageTable[Index2].Bits32.Xa = Xa;
-            L2PageTable[Index2].Bits32.Sp = 1;
-            MemoryType = GetMemoryType (BaseAddress);
-            L2PageTable[Index2].Bits32.Emt = MemoryType;
-            BaseAddress += SIZE_2MB;
-          }
-        }
-      }
+        L4PageTable[Index4].Bits32.Ra    = 1;
+        L4PageTable[Index4].Bits32.Wa    = 1;
+        L4PageTable[Index4].Bits32.Xa    = 1;
     }
-  }
-
-  return ;
+    
+    L3PageTable = (EPT_ENTRY *)(UINTN)(L4PageTable[Index4].Uint64 & PAGING_4K_ADDRESS_MASK_64);
+    
+    if(L3PageTable[Index3].Uint64 == 0)
+    {
+        if((PhysAddress >= BASE_4GB) &&
+           Is1GPageSupport() &&
+           ((PhysAddress & PAGING_1G_MASK) == 0) &&
+		   (PhysSize > PAGING_1G_MASK ))   // mask happens to be the size
+        {
+            L3PageTable[Index3].Uint64 = PhysAddress & PAGING_1G_ADDRESS_MASK_64;
+            L3PageTable[Index3].Bits32.Sp = 1;
+            MemoryType = GetMemoryType (PhysAddress);
+            L3PageTable[Index3].Bits32.Emt = MemoryType;
+            return L3PageTable[Index3].Uint64;
+        }
+        else
+        {
+            L2PageTable = (EPT_ENTRY *)(UINTN)AllocatePages (1);
+            if(L2PageTable == NULL)
+			{
+                return 0;
+			}
+            ZeroMem (L2PageTable, STM_PAGES_TO_SIZE(1));
+            L3PageTable[Index3].Uint64 = (UINT64)(UINTN)L2PageTable;
+            L3PageTable[Index3].Bits32.Ra = 1;
+            L3PageTable[Index3].Bits32.Wa = 1;
+            L3PageTable[Index3].Bits32.Xa = 1;  // was Xa
+        }
+    }
+	else
+	{
+		L2PageTable = (EPT_ENTRY *)(UINTN)(L3PageTable[Index3].Uint64 & PAGING_4K_ADDRESS_MASK_64);
+	}
+    
+    if(L2PageTable[Index2].Uint64 == 0)
+    {
+            if ((BaseAddress >= BASE_2MB) &&
+                ((BaseAddress & PAGING_2M_MASK) == 0) &&
+				((PhysAddress & PAGING_2M_MASK) == 0) &&
+				(PhysSize > PAGING_2M_MASK))
+			    {
+                if (TRUE) {
+                    // Use super page
+                    L2PageTable[Index2].Uint64 = PhysAddress & PAGING_2M_ADDRESS_MASK_64;
+                    L2PageTable[Index2].Bits32.Sp    = 1;
+                    
+                    // BUGBUG: Do we need set UC for STM region???
+                    MemoryType = GetMemoryType (PhysAddress);
+                    L2PageTable[Index2].Bits32.Emt = MemoryType;
+                    
+                    return L2PageTable[Index2].Uint64;
+                }
+            }
+            else
+            {
+                //
+                // [0, 2MB)
+                //
+                L1PageTable = (EPT_ENTRY *)AllocatePages (1);
+                if(L1PageTable == NULL)
+				{
+                    return 0;
+				}
+                ZeroMem (L1PageTable, STM_PAGES_TO_SIZE(1));
+                L2PageTable[Index2].Uint64 = (UINT64)(UINTN)L1PageTable;
+                L2PageTable[Index2].Bits32.Ra    = 1;
+                L2PageTable[Index2].Bits32.Wa    = 1;
+                L2PageTable[Index2].Bits32.Xa    = 1;
+            }
+    }
+	else
+	{
+		L1PageTable = (EPT_ENTRY *)(UINTN)(L2PageTable[Index2].Uint64 & PAGING_4K_ADDRESS_MASK_64);
+	}
+    
+    if(L1PageTable[Index1].Uint64 == 0)
+    {
+        L1PageTable[Index1].Uint64 = PhysAddress & PAGING_4K_ADDRESS_MASK_64;
+                
+        MemoryType = GetMemoryType (PhysAddress);
+        L1PageTable[Index1].Bits32.Emt = MemoryType;
+    }
+    return L1PageTable[Index1].Uint64;
 }
 
 /**
@@ -561,7 +587,7 @@ EptInit (
     Xa = 1;
   }
 
-  EptCreatePageTable (&mGuestContextCommonSmm.EptPointer, Xa);
+  EptCreatePageTable (&mGuestContextCommonSmm[SMI_HANDLER].EptPointer, Xa);
 
   SmrrBase = (UINT32)mMtrrInfo.SmrrBase & (UINT32)mMtrrInfo.SmrrMask & 0xFFFFF000;
   SmrrLength = (UINT32)mMtrrInfo.SmrrMask & 0xFFFFF000;
@@ -572,7 +598,7 @@ EptInit (
   DEBUG ((EFI_D_INFO, "SmrrLength - %08x\n", (UINTN)SmrrLength));
   DEBUG ((EFI_D_INFO, "StmHeader - %08x\n", (UINTN)mHostContextCommon.StmHeader));
   DEBUG ((EFI_D_INFO, "StmSize - %08x\n", (UINTN)mHostContextCommon.StmSize));
-  DEBUG ((EFI_D_INFO, "GuestCr3(0) - %08x\n", (UINTN)mGuestContextCommonSmm.GuestContextPerCpu[0].Cr3));
+  DEBUG ((EFI_D_INFO, "GuestCr3(0) - %08x\n", (UINTN)mGuestContextCommonSmm[SMI_HANDLER].GuestContextPerCpu[0].Cr3));
 
   if (IsSentryEnabled()) {
     GetTsegInfoFromTxt (&TsegBase, &TsegLength);
@@ -601,29 +627,33 @@ EptInit (
   //
   // Need mark SMRAM executable again
   //
-  if (ExecutionDisableOutsideSmrr)  {
+  //if (ExecutionDisableOutsideSmrr)  {
     EPTSetPageAttributeRange (
+	  mGuestContextCommonSmm[SMI_HANDLER].EptPointer.Uint64,
       TsegBase,
       TsegLength,
+	  TsegBase,
       1,
       1,
       1,
       EptPageAttributeSet
       );
-  }
+  //}
 
   //
   // Protect MSEG
   //
   DEBUG ((EFI_D_INFO, "Protect MSEG\n"));
   EPTSetPageAttributeRange (
+	mGuestContextCommonSmm[SMI_HANDLER].EptPointer.Uint64,
     (UINT64)(UINTN)mHostContextCommon.StmHeader,
     (UINT64)(UINTN)mHostContextCommon.StmSize,
+	(UINT64)(UINTN)mHostContextCommon.StmHeader,
     0,
     0,
     0,
     EptPageAttributeSet
     );
-  //EptDumpPageTable (&mGuestContextCommonSmm.EptPointer);
+ // EptDumpPageTable (&mGuestContextCommonSmm[SMI_HANDLER].EptPointer);
   return ;
 }

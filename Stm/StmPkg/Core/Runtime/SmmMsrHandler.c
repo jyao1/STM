@@ -13,6 +13,7 @@
 **/
 
 #include "StmRuntime.h"
+#include "PeStm.h"
 
 /**
 
@@ -31,9 +32,12 @@ SmmReadMsrHandler (
   X86_REGISTER      *Reg;
   STM_RSC_MSR_DESC  *MsrDesc;
   STM_RSC_MSR_DESC  LocalMsrDesc;
+  STM_SMM_CPU_STATE *SmmCpuState;
+  UINT32			VmType = SMI_HANDLER;
   BOOLEAN           Result;
 
-  Reg = &mGuestContextCommonSmm.GuestContextPerCpu[Index].Register;
+  SmmCpuState = mGuestContextCommonSmi.GuestContextPerCpu[Index].SmmCpuState;
+  Reg = &mGuestContextCommonSmm[VmType].GuestContextPerCpu[Index].Register;
   MsrIndex = ReadUnaligned32 ((UINT32 *)&Reg->Rcx);
 
   MsrDesc = GetStmResourceMsr (mHostContextCommon.MleProtectedResource.Base, MsrIndex);
@@ -44,7 +48,7 @@ SmmReadMsrHandler (
     CpuDeadLoop ();
   }
 
-  MsrDesc = GetStmResourceMsr ((STM_RSC *)(UINTN)mGuestContextCommonSmm.BiosHwResourceRequirementsPtr, MsrIndex);
+  MsrDesc = GetStmResourceMsr ((STM_RSC *)(UINTN)mGuestContextCommonSmm[VmType].BiosHwResourceRequirementsPtr, MsrIndex);
   if ((MsrDesc == NULL) || (MsrDesc->ReadMask == 0) || (MsrDesc->KernelModeProcessing == 0)) {
     ZeroMem (&LocalMsrDesc, sizeof(LocalMsrDesc));
     LocalMsrDesc.Hdr.RscType = MACHINE_SPECIFIC_REG;
@@ -59,7 +63,7 @@ SmmReadMsrHandler (
 
   switch (MsrIndex) {
   case IA32_EFER_MSR_INDEX:
-    Data64 = VmRead64 (VMCS_64_GUEST_IA32_EFER_INDEX);
+    Data64 = mGuestContextCommonSmm[VmType].GuestContextPerCpu[Index].Efer;
     break;
 
   case IA32_SYSENTER_CS_MSR_INDEX:
@@ -125,9 +129,13 @@ SmmWriteMsrHandler (
   X86_REGISTER      *Reg;
   STM_RSC_MSR_DESC  *MsrDesc;
   STM_RSC_MSR_DESC  LocalMsrDesc;
-  BOOLEAN           Result;
+  BOOLEAN Result;
+  STM_SMM_CPU_STATE *SmmCpuState;
+  UINT32			VmType = SMI_HANDLER;
 
-  Reg = &mGuestContextCommonSmm.GuestContextPerCpu[Index].Register;
+  SmmCpuState = mGuestContextCommonSmi.GuestContextPerCpu[Index].SmmCpuState;
+
+  Reg = &mGuestContextCommonSmm[VmType].GuestContextPerCpu[Index].Register;
   MsrIndex = ReadUnaligned32 ((UINT32 *)&Reg->Rcx);
 
   MsrDesc = GetStmResourceMsr (mHostContextCommon.MleProtectedResource.Base, MsrIndex);
@@ -138,7 +146,7 @@ SmmWriteMsrHandler (
     CpuDeadLoop ();
   }
 
-  MsrDesc = GetStmResourceMsr ((STM_RSC *)(UINTN)mGuestContextCommonSmm.BiosHwResourceRequirementsPtr, MsrIndex);
+  MsrDesc = GetStmResourceMsr ((STM_RSC *)(UINTN)mGuestContextCommonSmm[VmType].BiosHwResourceRequirementsPtr, MsrIndex);
   if ((MsrDesc == NULL) || (MsrDesc->WriteMask == 0) || (MsrDesc->KernelModeProcessing == 0)) {
     ZeroMem (&LocalMsrDesc, sizeof(LocalMsrDesc));
     LocalMsrDesc.Hdr.RscType = MACHINE_SPECIFIC_REG;
@@ -164,26 +172,26 @@ SmmWriteMsrHandler (
     }
   ReleaseSpinLock (&mHostContextCommon.DebugLock);
 #endif
-    mGuestContextCommonSmm.GuestContextPerCpu[Index].Efer = Data64;
+    mGuestContextCommonSmm[VmType].GuestContextPerCpu[Index].Efer = Data64;
     //
     // Check IA32e mode switch
     //
     VmEntryControls.Uint32 = VmRead32 (VMCS_32_CONTROL_VMENTRY_CONTROLS_INDEX);
     if ((Data64 & IA32_EFER_MSR_MLE) != 0) {
-      mGuestContextCommonSmm.GuestContextPerCpu[Index].Efer |= IA32_EFER_MSR_MLE;
+      mGuestContextCommonSmm[VmType].GuestContextPerCpu[Index].Efer |= IA32_EFER_MSR_MLE;
     } else {
-      mGuestContextCommonSmm.GuestContextPerCpu[Index].Efer &= ~IA32_EFER_MSR_MLE;
+      mGuestContextCommonSmm[VmType].GuestContextPerCpu[Index].Efer &= ~IA32_EFER_MSR_MLE;
     }
-    if (((mGuestContextCommonSmm.GuestContextPerCpu[Index].Efer & IA32_EFER_MSR_MLE) != 0) && 
-        ((VmReadN (VMCS_N_GUEST_CR0_INDEX) & CR0_PG) != 0)) {
-      mGuestContextCommonSmm.GuestContextPerCpu[Index].Efer |= IA32_EFER_MSR_MLA;
+    if (((mGuestContextCommonSmm[VmType].GuestContextPerCpu[Index].Efer & IA32_EFER_MSR_MLE) != 0) && 
+        ((mGuestContextCommonSmm[VmType].GuestContextPerCpu[Index].Cr0 & CR0_PG) != 0)) {
+      mGuestContextCommonSmm[VmType].GuestContextPerCpu[Index].Efer |= IA32_EFER_MSR_MLA;
       VmEntryControls.Bits.Ia32eGuest = 1;
     } else {
-      mGuestContextCommonSmm.GuestContextPerCpu[Index].Efer &= ~IA32_EFER_MSR_MLA;
+      mGuestContextCommonSmm[VmType].GuestContextPerCpu[Index].Efer &= ~IA32_EFER_MSR_MLA;
       VmEntryControls.Bits.Ia32eGuest = 0;
     }
     VmWrite32 (VMCS_32_CONTROL_VMENTRY_CONTROLS_INDEX, VmEntryControls.Uint32);
-    VmWrite64 (VMCS_64_GUEST_IA32_EFER_INDEX,          mGuestContextCommonSmm.GuestContextPerCpu[Index].Efer);
+    VmWrite64 (VMCS_64_GUEST_IA32_EFER_INDEX,          mGuestContextCommonSmm[VmType].GuestContextPerCpu[Index].Efer);
 
     break;
 
@@ -230,7 +238,7 @@ SmmWriteMsrHandler (
     
   case IA32_BIOS_UPDT_TRIG_MSR_INDEX:
     // Only write it when BIOS request MicrocodeUpdate
-    MsrDesc = GetStmResourceMsr ((STM_RSC *)(UINTN)mGuestContextCommonSmm.BiosHwResourceRequirementsPtr, IA32_BIOS_UPDT_TRIG_MSR_INDEX);
+    MsrDesc = GetStmResourceMsr ((STM_RSC *)(UINTN)mGuestContextCommonSmm[VmType].BiosHwResourceRequirementsPtr, IA32_BIOS_UPDT_TRIG_MSR_INDEX);
     if (MsrDesc != NULL) {
       AsmWriteMsr64 (MsrIndex, Data64);
     }

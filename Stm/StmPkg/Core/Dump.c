@@ -19,6 +19,13 @@ typedef struct {
   CHAR8   *Str;
 } DATA_STR;
 
+extern UINTN
+	TranslateEPTGuestToHost (
+	IN UINT64      EptPointer,
+	IN UINTN       Addr,
+	OUT EPT_ENTRY  **EntryPtr  OPTIONAL
+	);
+
 GLOBAL_REMOVE_IF_UNREFERENCED
 DATA_STR mVmxCapabilityMsrStr[] = {
   {IA32_VMX_BASIC_MSR_INDEX,           "VMX_BASIC_MSR            "},
@@ -503,4 +510,59 @@ DumpRegContext (
   for (Index = 0; Index < sizeof(mX86RegisterStr)/sizeof(mX86RegisterStr[0]) / (sizeof(UINT64)/sizeof(UINTN)); Index++) {
     DumpRegFiled (Reg, &mX86RegisterStr[Index]);
   }
+}
+
+/**
+
+  This function dumps the guest stack.
+
+  @param Index - CPU Index
+
+  Assumes 1-1 mapping in the guest page tables between the 
+  guest virtual address and the guest physical address
+
+**/
+
+VOID DumpGuestStack(IN UINT32 Index)
+{
+
+	UINT32 VmType = mHostContextCommon.HostContextPerCpu[Index].GuestVmType;
+	UINT32 i;
+	UINT64 Location;
+	UINT64 RelLoc;
+	UINTN  StackTopBase = (UINTN)VmReadN (VMCS_N_GUEST_RSP_INDEX);
+	UINTN  StackTop;
+	UINTN  StackLen;
+	UINT64 Stack[20];   // will limit output to at most the first 20 stack elements (64bit)
+
+	StackTop = TranslateEPTGuestToHost(mGuestContextCommonSmm[VmType].EptPointer.Uint64, StackTopBase, 0L);
+
+	// make sure that stack exists within the EPT tables
+	// otherwise print an error message
+	
+	if(StackTop == 0) 
+	{		
+		DEBUG ((EFI_D_ERROR, "%ld DumpGuestStack - Stack registers have bad addresses\n", Index));
+		return;
+	}
+
+	StackLen = (((UINT64)StackTop + 0x1000) & (~0xFFF)) - (UINT64)StackTop;
+
+	if(StackLen > 160)
+		StackLen = 160;    // max stackdump of 20 64-bit words
+
+	CopyMem (Stack, (VOID *)(UINTN)StackTop, StackLen);
+
+	DEBUG((EFI_D_ERROR, "%ld Stacktrace\n", Index));
+
+	Location = StackTopBase;
+	RelLoc = 0;
+
+	for(i = 0; RelLoc < StackLen; i++)
+	{
+
+		DEBUG ((EFI_D_INFO, "%ld: %016lx %016lx\n", Index, Location, Stack[i] ));
+		RelLoc =+ 8;
+	}
+	DEBUG((EFI_D_ERROR, "%ld End Stacktrace\n", Index));
 }

@@ -13,6 +13,7 @@
 **/
 
 #include "StmInit.h"
+#include "PeStm.h"
 
 /**
 
@@ -31,12 +32,13 @@ SetIoBitmapEx (
   UINT8 *IoBitmap;
   UINTN Index;
   UINTN Offset;
+  UINT32 VmType = SMI_HANDLER;
 
   if (Port >= 0x8000) {
-    IoBitmap = (UINT8 *)(UINTN)mGuestContextCommonSmm.IoBitmapB;
+    IoBitmap = (UINT8 *)(UINTN)mGuestContextCommonSmm[VmType].IoBitmapB;
     Port -= 0x8000;
   } else {
-    IoBitmap = (UINT8 *)(UINTN)mGuestContextCommonSmm.IoBitmapA;
+    IoBitmap = (UINT8 *)(UINTN)mGuestContextCommonSmm[VmType].IoBitmapA;
   }
 
   Index = Port / 8;
@@ -101,6 +103,7 @@ IoInit (
   VOID
   )
 {
-  mGuestContextCommonSmm.IoBitmapA = (UINT64)(UINTN)AllocatePages (1);
-  mGuestContextCommonSmm.IoBitmapB = (UINT64)(UINTN)AllocatePages (1);
+  UINT32 VmType = SMI_HANDLER;
+  mGuestContextCommonSmm[VmType].IoBitmapA = (UINT64)(UINTN)AllocatePages (1);
+  mGuestContextCommonSmm[VmType].IoBitmapB = (UINT64)(UINTN)AllocatePages (1);
 }

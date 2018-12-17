@@ -13,6 +13,12 @@
 **/
 
 #include "StmRuntime.h"
+#include "PeStm.h"
+#include "PeLoadVm.h"
+#include "StmInit.h"
+
+extern PE_VM_DATA PeVmData[4];
+extern VOID EptDumpPageTable (IN EPT_POINTER *EptPointer );
 
 /**
 
@@ -44,6 +50,9 @@ SmiVmcallInitializeProtectionHandler (
   @return VMCALL status
 
 **/
+
+extern VOID CpuReadySync(UINT32 Index);
+
 STM_STATUS
 SmiVmcallStartHandler (
   IN UINT32  Index,
@@ -53,12 +62,31 @@ SmiVmcallStartHandler (
   //
   // Let STM enable SMI for SMM guest
   //
-  DEBUG ((EFI_D_INFO, "STM_API_START:\n"));
-  if (!mGuestContextCommonSmm.GuestContextPerCpu[Index].Actived) {
-    mGuestContextCommonSmm.GuestContextPerCpu[Index].Actived = TRUE;
+
+   GUEST_INTERRUPTIBILITY_STATE                 GuestInterruptibilityState;
+
+  DEBUG ((EFI_D_INFO, "%ld STM_API_START:\n", Index));
+  if (!mGuestContextCommonSmm[SMI_HANDLER].GuestContextPerCpu[Index].Actived) {
+    mGuestContextCommonSmm[SMI_HANDLER].GuestContextPerCpu[Index].Actived = TRUE;
     SmmSetup (Index);
+
+    if(Index == 0)
+    {
+		//EptDumpPageTable (&mGuestContextCommonSmm[0].EptPointer);  // **DEBUG** Dump the SMI Handler EPT tables
+		// sync the BSP CPU once the API is ready
+        CpuReadySync(Index);
+
+		// turn on SMI for the BSP - the base code allows SMIs before this point
+		// this mod prvents SMIs until the STM is ready to process them
+
+		GuestInterruptibilityState.Uint32 = VmRead32 (VMCS_32_GUEST_INTERRUPTIBILITY_STATE_INDEX);
+        GuestInterruptibilityState.Bits.BlockingBySmi = 0;
+		VmWrite32 (VMCS_32_GUEST_INTERRUPTIBILITY_STATE_INDEX, GuestInterruptibilityState.Uint32);
+
+    } 
     return STM_SUCCESS;
   } else {
+	  DEBUG((EFI_D_ERROR, "%d STM_API_START -- Error STM already started\n", (UINTN) Index));
     return ERROR_STM_ALREADY_STARTED;
   }
 }
@@ -83,6 +111,7 @@ SmiVmcallStopHandler (
 
   Reg = &mGuestContextCommonSmi.GuestContextPerCpu[Index].Register;
 
+  mHostContextCommon.StmShutdown = 1; // let the VM/PE know to quit
   //
   // Launch SMM Teardown handler.
   //
@@ -91,6 +120,7 @@ SmiVmcallStopHandler (
   WriteUnaligned32 ((UINT32 *)&Reg->Rax, STM_SUCCESS);
   VmWriteN (VMCS_N_GUEST_RFLAGS_INDEX, VmReadN(VMCS_N_GUEST_RFLAGS_INDEX) & ~RFLAGS_CF);
   StmTeardown (Index);
+  DEBUG((EFI_D_INFO, "CpuDeadLoop\n"));
   CpuDeadLoop ();
 
   return STM_SUCCESS;
@@ -122,14 +152,14 @@ SmiVmcallProtectResourceHandler (
   DEBUG ((EFI_D_INFO, "STM_API_PROTECT_RESOURCE:\n"));
 
   // BiosHwResourceRequirementsPtr to local BiosResource, delay it to first ProtectResource VMCALL, because BIOS may change resource at runtime.
-  if (mGuestContextCommonSmm.BiosHwResourceRequirementsPtr == 0) {
+  if (mGuestContextCommonSmm[SMI_HANDLER].BiosHwResourceRequirementsPtr == 0) {
     if (!IsResourceListValid ((STM_RSC *)(UINTN)mHostContextCommon.HostContextPerCpu[0].TxtProcessorSmmDescriptor->BiosHwResourceRequirementsPtr, FALSE)) {
-      DEBUG ((EFI_D_ERROR, "ValidateBiosResourceList fail!\n"));
       ReleaseSpinLock (&mHostContextCommon.SmiVmcallLock);
+	  DEBUG ((EFI_D_ERROR, "ValidateBiosResourceList fail!\n"));
       return ERROR_STM_MALFORMED_RESOURCE_LIST;
     }
-    mGuestContextCommonSmm.BiosHwResourceRequirementsPtr = (UINT64)(UINTN)DuplicateResource ((STM_RSC *)(UINTN)mHostContextCommon.HostContextPerCpu[0].TxtProcessorSmmDescriptor->BiosHwResourceRequirementsPtr);
-    RegisterBiosResource ((STM_RSC *)(UINTN)mGuestContextCommonSmm.BiosHwResourceRequirementsPtr);
+    mGuestContextCommonSmm[SMI_HANDLER].BiosHwResourceRequirementsPtr = (UINT64)(UINTN)DuplicateResource ((STM_RSC *)(UINTN)mHostContextCommon.HostContextPerCpu[0].TxtProcessorSmmDescriptor->BiosHwResourceRequirementsPtr);
+    RegisterBiosResource ((STM_RSC *)(UINTN)mGuestContextCommonSmm[SMI_HANDLER].BiosHwResourceRequirementsPtr);
   }
 
   //
@@ -153,7 +183,7 @@ SmiVmcallProtectResourceHandler (
   }
   DEBUG ((EFI_D_INFO, "IsResourceListValid pass!\n"));
 
-  BiosResource = (STM_RSC *)(UINTN)mGuestContextCommonSmm.BiosHwResourceRequirementsPtr;
+  BiosResource = (STM_RSC *)(UINTN)mGuestContextCommonSmm[SMI_HANDLER].BiosHwResourceRequirementsPtr;
   if (IsResourceListOverlap (StmResource, BiosResource)) {
     DEBUG ((EFI_D_ERROR, "IsResourceListOverlap fail!\n"));
     RawFreeResource (LocalBuffer);
@@ -253,7 +283,7 @@ SmiVmcallGetBiosResourcesHandler (
   UINTN                              BiosResourceSize;
   UINT32                             PageNum;
   X86_REGISTER                       *Reg;
-
+  
   Reg = &mGuestContextCommonSmi.GuestContextPerCpu[Index].Register;
 
   // ECX:EBX - STM_RESOURCE_LIST
@@ -262,14 +292,14 @@ SmiVmcallGetBiosResourcesHandler (
   DEBUG ((EFI_D_INFO, "STM_API_GET_BIOS_RESOURCES:\n"));
 
   // BiosHwResourceRequirementsPtr to local BiosResource, delay it to first ProtectResource VMCALL, because BIOS may change resource at runtime.
-  if (mGuestContextCommonSmm.BiosHwResourceRequirementsPtr == 0) {
+  if (mGuestContextCommonSmm[SMI_HANDLER].BiosHwResourceRequirementsPtr == 0) {
     if (!IsResourceListValid ((STM_RSC *)(UINTN)mHostContextCommon.HostContextPerCpu[0].TxtProcessorSmmDescriptor->BiosHwResourceRequirementsPtr, FALSE)) {
       DEBUG ((EFI_D_ERROR, "ValidateBiosResourceList fail!\n"));
       ReleaseSpinLock (&mHostContextCommon.SmiVmcallLock);
       return ERROR_STM_MALFORMED_RESOURCE_LIST;
     }
-    mGuestContextCommonSmm.BiosHwResourceRequirementsPtr = (UINT64)(UINTN)DuplicateResource ((STM_RSC *)(UINTN)mHostContextCommon.HostContextPerCpu[0].TxtProcessorSmmDescriptor->BiosHwResourceRequirementsPtr);
-    RegisterBiosResource ((STM_RSC *)(UINTN)mGuestContextCommonSmm.BiosHwResourceRequirementsPtr);
+    mGuestContextCommonSmm[SMI_HANDLER].BiosHwResourceRequirementsPtr = (UINT64)(UINTN)DuplicateResource ((STM_RSC *)(UINTN)mHostContextCommon.HostContextPerCpu[0].TxtProcessorSmmDescriptor->BiosHwResourceRequirementsPtr);
+    RegisterBiosResource ((STM_RSC *)(UINTN)mGuestContextCommonSmm[SMI_HANDLER].BiosHwResourceRequirementsPtr);
   }
 
   PageNum = (UINT32)Reg->Rdx;
@@ -280,7 +310,7 @@ SmiVmcallGetBiosResourcesHandler (
     return ERROR_STM_SECURITY_VIOLATION;
   }
 
-  BiosResource = (STM_RSC *)(UINTN)mGuestContextCommonSmm.BiosHwResourceRequirementsPtr;
+  BiosResource = (STM_RSC *)(UINTN)mGuestContextCommonSmm[SMI_HANDLER].BiosHwResourceRequirementsPtr;
   BiosResourceSize = GetSizeFromResource (BiosResource);
   if (BiosResourceSize == 0) {
     ReleaseSpinLock(&mHostContextCommon.SmiVmcallLock);
@@ -294,6 +324,7 @@ SmiVmcallGetBiosResourcesHandler (
 
   if (PageNum >= STM_SIZE_TO_PAGES (BiosResourceSize)) {
     WriteUnaligned32 ((UINT32 *)&Reg->Rdx, 0);
+	DEBUG((EFI_D_INFO, "SmiVmcallGetBiosResourcesHandler - ERROR_STM_PAGE_NOT_FOUND - writing 0 to 0x%x\n", &Reg->Rdx));
     return ERROR_STM_PAGE_NOT_FOUND;
   }
   // Write data
@@ -415,7 +446,7 @@ SmiVmcallEventNewLogHandler (
   // Check if local copy matches previous PageCount
   //
   if (PageCount != (UINTN)EventLogRequest->Data.LogBuffer.PageCount) {
-    DEBUG((EFI_D_ERROR, "Security Violation!\n"));
+    DEBUG ((EFI_D_ERROR, "Security Violation!\n"));
     return ERROR_STM_SECURITY_VIOLATION;
   }
 
@@ -687,6 +718,216 @@ SmiVmcallManageEventLogHandler (
   return Status;
 }
 
+
+/**
+
+  This function is VMCALL handler for SMI.
+
+  @param Index             CPU index
+  @param AddressParameter  Addresss parameter
+
+  @return VMCALL status
+
+**/
+STM_STATUS
+SmiVmcallAddTempPeVmHandler (
+  IN UINT32  Index,
+  IN UINT64  AddressParameter
+  )
+{
+  STM_STATUS                         Status;
+  PE_MODULE_INFO					 LocalBuffer;
+
+  // STM_ADD_TEMP_PE
+  AcquireSpinLock (&mHostContextCommon.SmiVmcallLock);
+  DEBUG ((EFI_D_ERROR, "STM_API_ADD_TEMP_VM:\n"));
+
+  if (!IsGuestAddressValid ((UINTN)AddressParameter, sizeof(PE_MODULE_INFO), TRUE)) {
+    DEBUG ((EFI_D_ERROR, "Security Violation!\n"));
+    ReleaseSpinLock (&mHostContextCommon.SmiVmcallLock);
+    return ERROR_STM_SECURITY_VIOLATION;
+  }
+
+  //
+  // Copy data to local, to prevent time of check VS time of use attack
+  //
+  CopyMem (&LocalBuffer, (VOID *)(UINTN)AddressParameter, sizeof(LocalBuffer));
+
+  ReleaseSpinLock (&mHostContextCommon.SmiVmcallLock);
+  Status = AddPeVm(Index, &LocalBuffer, PE_TEMP, 1);
+
+  //Status = STM_SUCCESS;
+ 
+
+  return Status;
+}
+
+/**
+
+  This function is VMCALL handler for SMI.
+
+  @param Index             CPU index
+  @param AddressParameter  Addresss parameter
+
+  @return VMCALL status
+
+**/
+STM_STATUS
+SmiVmcallAddPermPeVmHandler (
+  IN UINT32  Index,
+  IN UINT64  AddressParameter
+  )
+{
+  STM_STATUS                         Status;
+  PE_MODULE_INFO					 LocalBuffer;
+
+  // - STM_ADD_PERM_PE_VM
+  AcquireSpinLock (&mHostContextCommon.SmiVmcallLock);
+  DEBUG ((EFI_D_ERROR, "STM_API_ADD_PERM_VM:\n"));
+
+  if (!IsGuestAddressValid ((UINTN)AddressParameter, sizeof(PE_MODULE_INFO), TRUE)) {
+    DEBUG ((EFI_D_ERROR, "Security Violation!\n"));
+    ReleaseSpinLock (&mHostContextCommon.SmiVmcallLock);
+    return ERROR_STM_SECURITY_VIOLATION;
+  }
+
+  //
+  // Copy data to local, to prevent time of check VS time of use attack
+  //
+  CopyMem (&LocalBuffer, (VOID *)(UINTN)AddressParameter, sizeof(LocalBuffer));
+
+  ReleaseSpinLock (&mHostContextCommon.SmiVmcallLock);
+  Status = AddPeVm(Index, &LocalBuffer, PE_PERM, 1);
+ 
+  return Status;
+}
+
+/**
+
+  This function is VMCALL handler for SMI.
+
+  @param Index             CPU index
+  @param AddressParameter  Addresss parameter
+
+  @return VMCALL status
+
+**/
+STM_STATUS
+SmiVmcallAddPermPeVmNoRunHandler (
+  IN UINT32  Index,
+  IN UINT64  AddressParameter
+  )
+{
+  STM_STATUS                         Status;
+  PE_MODULE_INFO					 LocalBuffer;
+
+  // - STM_ADD_PERM_PE_VM
+  AcquireSpinLock (&mHostContextCommon.SmiVmcallLock);
+  DEBUG ((EFI_D_ERROR, "%ld SmiVmcallAddPermPeVmNoRunHandler - STM_API_ADD_PERM_VM_NO_RUN:\n", Index));
+
+  if (!IsGuestAddressValid ((UINTN)AddressParameter, sizeof(PE_MODULE_INFO), TRUE)) {
+    DEBUG ((EFI_D_ERROR, "%ld SmiVmcallAddPermPeVmNoRunHandler - Security Violation!\n", Index));
+    ReleaseSpinLock (&mHostContextCommon.SmiVmcallLock);
+    return ERROR_STM_SECURITY_VIOLATION;
+  }
+
+  //
+  // Copy data to local, to prevent time of check VS time of use attack
+  //
+  CopyMem (&LocalBuffer, (VOID *)(UINTN)AddressParameter, sizeof(LocalBuffer));
+
+  ReleaseSpinLock (&mHostContextCommon.SmiVmcallLock);
+  Status = AddPeVm(Index, &LocalBuffer, PE_PERM, 0);  // do not run PE/VM
+
+  return Status;
+}
+/**
+
+  This function is VMCALL handler for SMI.
+
+  @param Index             CPU index
+  @param AddressParameter  Addresss parameter
+
+  @return VMCALL status
+
+**/
+STM_STATUS
+SmiVmcallRunPeVmHandler (
+  IN UINT32  Index,
+  IN UINT64  AddressParameter
+  )
+{
+  STM_STATUS                         Status;
+  PE_MODULE_INFO					 LocalBuffer;
+
+  UINT32 PeType = PE_PERM;
+  // ECX:EBX - STM_VMCS_DATABASE_REQUEST
+  AcquireSpinLock (&mHostContextCommon.SmiVmcallLock);
+  DEBUG ((EFI_D_ERROR, " %ld STM_API_RUN_PERM_VM:\n", Index));
+
+  if (!IsGuestAddressValid ((UINTN)AddressParameter, sizeof(PE_MODULE_INFO), TRUE)) {
+    DEBUG ((EFI_D_ERROR, " %ld Security Violation!\n", Index));
+    ReleaseSpinLock (&mHostContextCommon.SmiVmcallLock);
+    return ERROR_STM_SECURITY_VIOLATION;
+  }
+
+  //
+  // Copy data to local, to prevent time of check VS time of use attack
+  //
+  CopyMem (&LocalBuffer, (VOID *)(UINTN)AddressParameter, sizeof(LocalBuffer));
+
+  ReleaseSpinLock (&mHostContextCommon.SmiVmcallLock);
+  // provide the root state for the measurement VM
+  //GetRootVmxState(StmVmm, (ROOT_VMX_STATE *) ptData[CR3index].ShareModuleStm);
+  PeVmData[PeType].StartMode = PEVM_START_VMCALL;
+  RunPermVM(Index);
+  
+  Status = STM_SUCCESS;
+  return Status;
+}
+
+/**
+
+  This function is VMCALL handler for SMI.
+
+  @param Index             CPU index
+  @param AddressParameter  Addresss parameter
+
+  @return VMCALL status
+
+**/
+STM_STATUS
+SmiVmcallEndPermVmHandler (
+  IN UINT32  Index,
+  IN UINT64  AddressParameter
+  )
+{
+  STM_STATUS                         Status;
+  PE_MODULE_INFO					 LocalBuffer;
+
+  // ECX:EBX - STM_VMCS_DATABASE_REQUEST
+  AcquireSpinLock (&mHostContextCommon.SmiVmcallLock);
+  DEBUG ((EFI_D_ERROR, "STM_API_END_PERM_VM:\n"));
+
+  if (!IsGuestAddressValid ((UINTN)AddressParameter, sizeof(PE_MODULE_INFO), TRUE)) {
+    DEBUG ((EFI_D_ERROR, "Security Violation!\n"));
+    ReleaseSpinLock (&mHostContextCommon.SmiVmcallLock);
+    return ERROR_STM_SECURITY_VIOLATION;
+  }
+
+  DEBUG ((EFI_D_ERROR, "STM_API_END_PERM_VM - not implemented\n"));
+  //
+  // Copy data to local, to prevent time of check VS time of use attack
+  //
+  CopyMem (&LocalBuffer, (VOID *)(UINTN)AddressParameter, sizeof(LocalBuffer));
+
+  Status = STM_SUCCESS;
+  ReleaseSpinLock (&mHostContextCommon.SmiVmcallLock);
+
+  return Status;
+}
+
+
 STM_VMCALL_HANDLER_STRUCT  mSmiVmcallHandler[] = {
   {STM_API_START,                              SmiVmcallStartHandler},
   {STM_API_STOP,                               SmiVmcallStopHandler},
@@ -696,6 +937,11 @@ STM_VMCALL_HANDLER_STRUCT  mSmiVmcallHandler[] = {
   {STM_API_MANAGE_VMCS_DATABASE,               SmiVmcallManageVmcsDatabaseHandler},
   {STM_API_INITIALIZE_PROTECTION,              SmiVmcallInitializeProtectionHandler},
   {STM_API_MANAGE_EVENT_LOG,                   SmiVmcallManageEventLogHandler},
+  {STM_API_ADD_TEMP_PE_VM,				       SmiVmcallAddTempPeVmHandler},
+  {STM_API_ADD_PERM_PE_VM,					   SmiVmcallAddPermPeVmHandler},
+  {STM_API_ADD_PERM_PE_VM_NORUN,			   SmiVmcallAddPermPeVmNoRunHandler},
+  {STM_API_RUN_PE_VM,						   SmiVmcallRunPeVmHandler},
+  {STM_API_END_ADD_PERM_PE_VM,                 SmiVmcallEndPermVmHandler}
 };
 
 /**
@@ -742,13 +988,17 @@ SmiVmcallHandler (
 
   StmVmcallHandler = GetSmiVmcallHandlerByIndex (ReadUnaligned32 ((UINT32 *)&Reg->Rax));
   if (StmVmcallHandler == NULL) {
-    DEBUG ((EFI_D_INFO, "GetSmiVmcallHandlerByIndex - %x!\n", (UINTN)ReadUnaligned32 ((UINT32 *)&Reg->Rax)));
-    // Should not happen
+    DEBUG ((EFI_D_INFO, "%ld SmiVmcallHandler - GetSmiVmcallHandlerByIndex - %x!\n", Index, (UINTN)ReadUnaligned32 ((UINT32 *)&Reg->Rax)));
+    DumpVmcsAllField ();
+    DEBUG ((EFI_D_ERROR, "%ld SmiVmcallHandler - ***Error*** Halting STM\n", Index));
+   
+	// Should not happen
     CpuDeadLoop ();
     Status = ERROR_INVALID_API;
   } else {
     AddressParameter = ReadUnaligned32 ((UINT32 *)&Reg->Rbx) + LShiftU64 (ReadUnaligned32 ((UINT32 *)&Reg->Rcx), 32);
     Status = StmVmcallHandler (Index, AddressParameter);
+	DEBUG((EFI_D_ERROR, " %ld SmiVmcallHandler done, Status: %x\n", Index, Status));
   }
 
   if (Status == STM_SUCCESS) {

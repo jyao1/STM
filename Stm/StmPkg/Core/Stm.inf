@@ -35,6 +35,7 @@
   Init/IoInit.c
   Init/MsrInit.c
   Init/Relocate.c
+  Init/PeVmcsInit.c
   Runtime/SmmMp.c
   Runtime/SmmHandler.c
   Runtime/SmmStateSync.c
@@ -56,6 +57,29 @@
   Runtime/StmTearDown.c
   Runtime/StmExceptionHandler.c
   Runtime/PageTable.c
+  Runtime/PeEptHandler.c
+  Runtime/PeSmmHandler.c
+  Runtime/PeSmmVmcallHandler.c
+  Runtime/PeSmmRsmHandler.c
+  Runtime/PeSmmIoHandler.c
+  Runtime/PeSmmBadGuestStateHandler.c
+  Runtime/PeSmmMsrHandler.c
+  Runtime/PeSmmCrHandler.c
+  Runtime/PeSmmExceptionHandler.c
+  Runtime/PeSmmCpuidHandler.c
+  Runtime/PeSmmPreemptionTimerHandler.c
+  Runtime/PeSmmTripleFaultHandler.c
+  Runtime/PeSmiVmcallHandler.c
+  Runtime/PeSmiHandler.c
+  Runtime/PeVmxState.c
+  Runtime/PeApicHandler.c
+  Runtime/PePciHandler.c
+  Runtime/PeLoadVm.c
+  Runtime/PeLoadVm.h
+  Runtime/PeStm.h
+  Runtime/PeVmcsInit.c
+  Runtime/VmcsOffsets.h
+  Runtime/VmcsMapper.c
   Stm.h
   CpuDef.h
   Cpu.c
@@ -64,11 +88,13 @@
   StmResource.c
   VmcsRecord.c
   StmPerformance.c
+  PeStmEpt.h
 
 [Sources.Ia32]
   Init/Ia32/AsmStmInit.asm
   Init/Ia32/AsmStmInit.s
   Runtime/Ia32/VmExit.asm
+  Runtime/Ia32/PeVmExit.asm
   Runtime/Ia32/VmExit.s
   Runtime/Ia32/Exception.asm
   Runtime/Ia32/Exception.s
@@ -80,6 +106,7 @@
   Init/x64/AsmStmInit.s
   Runtime/x64/VmExit.asm
   Runtime/x64/VmExit.s
+  Runtime/x64/PeVmExit.asm
   Runtime/x64/Exception.asm
   Runtime/x64/Exception.s
   Runtime/x64/SmmException.c
@@ -100,8 +127,8 @@
   StmPlatformLib
 
 [Pcd]
-  gEfiStmPkgTokenSpaceGuid.PcdPerformanceLibraryPropertyMask  ## CONSUMES
-  gEfiStmPkgTokenSpaceGuid.PcdPciExpressBaseAddress           ## PRODUCES
+  gEfiStmPkgTokenSpaceGuid.PcdPerformanceLibraryPropertyMask
+  gEfiStmPkgTokenSpaceGuid.PcdPciExpressBaseAddress
 
 [BuildOptions]
 #  MSFT:*_*_X64_CC_FLAGS  = /Od  /GL-
@@ -111,11 +138,11 @@
   INTEL:*_*_X64_CC_FLAGS  = /Qopt-jump-tables-
   INTEL:*_*_IA32_CC_FLAGS = /Qopt-jump-tables-
 
-  MSFT:*_*_X64_DLINK_FLAGS  = /BASE:0x0 /ALIGN:32 /FILEALIGN:32 /STACK:0x8000,0x8000 /HEAP:0x140000,0x140000 /OUT:$(DEBUG_DIR)\Stm.dll 
-  MSFT:*_*_IA32_DLINK_FLAGS = /BASE:0x0 /ALIGN:32 /FILEALIGN:32 /STACK:0x8000,0x8000 /HEAP:0x140000,0x140000 /OUT:$(DEBUG_DIR)\Stm.dll
+  MSFT:*_*_X64_DLINK_FLAGS  = /BASE:0x0 /ALIGN:32 /FILEALIGN:32 /STACK:0x8000,0x8000 /HEAP:0x240000,0x240000 /OUT:$(DEBUG_DIR)\Stm.dll 
+  MSFT:*_*_IA32_DLINK_FLAGS = /BASE:0x0 /ALIGN:32 /FILEALIGN:32 /STACK:0x8000,0x8000 /HEAP:0x240000,0x240000 /OUT:$(DEBUG_DIR)\Stm.dll
 
-  INTEL:*_*_X64_DLINK_FLAGS  = /BASE:0x0 /ALIGN:32 /FILEALIGN:32 /STACK:0x8000,0x8000 /HEAP:0x140000,0x140000 /OUT:$(DEBUG_DIR)\Stm.dll 
-  INTEL:*_*_IA32_DLINK_FLAGS = /BASE:0x0 /ALIGN:32 /FILEALIGN:32 /STACK:0x8000,0x8000 /HEAP:0x140000,0x140000 /OUT:$(DEBUG_DIR)\Stm.dll
+  INTEL:*_*_X64_DLINK_FLAGS  = /BASE:0x0 /ALIGN:32 /FILEALIGN:32 /STACK:0x8000,0x8000 /HEAP:0x240000,0x240000 /OUT:$(DEBUG_DIR)\Stm.dll 
+  INTEL:*_*_IA32_DLINK_FLAGS = /BASE:0x0 /ALIGN:32 /FILEALIGN:32 /STACK:0x8000,0x8000 /HEAP:0x240000,0x240000 /OUT:$(DEBUG_DIR)\Stm.dll
 
-  GCC:*_*_X64_DLINK_FLAGS  == -o $(DEBUG_DIR)/Stm.dll -nostdlib -n -q --gc-sections -z common-page-size=0x40 --entry _ModuleEntryPoint -u _ModuleEntryPoint -Map $(DEST_DIR_DEBUG)/$(BASE_NAME).map -m elf_x86_64 --oformat=elf64-x86-64 --defsym=PECOFF_HEADER_SIZE=0x228 #--script=$(MODULE_DIR)/Stm.lds
-  GCC:*_*_IA32_DLINK_FLAGS == -o $(DEBUG_DIR)/Stm.dll -nostdlib -n -q --gc-sections -z common-page-size=0x40 --entry _ModuleEntryPoint -u _ModuleEntryPoint -Map $(DEST_DIR_DEBUG)/$(BASE_NAME).map -m elf_i386   --oformat=elf32-i386   --defsym=PECOFF_HEADER_SIZE=0x220 #--script=$(MODULE_DIR)/Stm.lds
+GCC:*_*_X64_DLINK_FLAGS  == -o $(DEBUG_DIR)/Stm.dll -nostdlib -n -q --gc-sections -z common-page-size=0x40 --entry _ModuleEntryPoint -u _ModuleEntryPoint -Map $(DEST_DIR_DEBUG)/$(BASE_NAME).map -m elf_x86_64 --oformat=elf64-x86-64 --defsym=PECOFF_HEADER_SIZE=0x228 #--script=$(MODULE_DIR)/Stm.lds
+GCC:*_*_IA32_DLINK_FLAGS == -o $(DEBUG_DIR)/Stm.dll -nostdlib -n -q --gc-sections -z common-page-size=0x40 --entry _ModuleEntryPoint -u _ModuleEntryPoint -Map $(DEST_DIR_DEBUG)/$(BASE_NAME).map -m elf_i386   --oformat=elf32-i386   --defsym=PECOFF_HEADER_SIZE=0x220 #--script=$(MODULE_DIR)/Stm.lds

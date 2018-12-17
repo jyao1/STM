@@ -13,6 +13,7 @@
 **/
 
 #include "StmRuntime.h"
+#include "PeStm.h"
 
 #define BUS_FROM_CF8_ADDRESS(PciAddress)       (UINT8)(((UINTN)(PciAddress) & 0x00FF0000) >> 16)
 #define DEVICE_FROM_CF8_ADDRESS(PciAddress)    (UINT8)(((UINTN)(PciAddress) & 0x0000F800) >> 13)
@@ -57,8 +58,9 @@ SmmIoHandler (
   STM_RSC_IO_DESC         LocalIoDesc;
   STM_RSC_PCI_CFG_DESC    *LocalPciCfgDescPtr;
   UINT8                   LocalPciCfgDescBuf[STM_LOG_ENTRY_SIZE];
+  UINT32				  VmType = SMI_HANDLER;
 
-  Reg = &mGuestContextCommonSmm.GuestContextPerCpu[Index].Register;
+  Reg = &mGuestContextCommonSmm[VmType].GuestContextPerCpu[Index].Register;
 
   Qualification.UintN = VmReadN (VMCS_N_RO_EXIT_QUALIFICATION_INDEX);
 
@@ -82,7 +84,7 @@ SmmIoHandler (
     CpuDeadLoop ();
   }
 
-  IoDesc = GetStmResourceIo ((STM_RSC *)(UINTN)mGuestContextCommonSmm.BiosHwResourceRequirementsPtr, Port);
+  IoDesc = GetStmResourceIo ((STM_RSC *)(UINTN)mGuestContextCommonSmm[VmType].BiosHwResourceRequirementsPtr, Port);
   if (IoDesc == NULL) {
     ZeroMem (&LocalIoDesc, sizeof(LocalIoDesc));
     LocalIoDesc.Hdr.RscType = IO_RANGE;
@@ -100,7 +102,7 @@ SmmIoHandler (
 
     //
     // We need make sure PciAddress access and PciData access is atomic.
-    //
+  //
     AcquireSpinLock (&mHostContextCommon.PciLock);
   }
   if ((Port >= 0xCFC) && (Port <= 0xCFF)) {
@@ -128,7 +130,7 @@ SmmIoHandler (
     }
 
     PciCfgDesc = GetStmResourcePci (
-                   (STM_RSC *)(UINTN)mGuestContextCommonSmm.BiosHwResourceRequirementsPtr,
+                   (STM_RSC *)(UINTN)mGuestContextCommonSmm[VmType].BiosHwResourceRequirementsPtr,
                    BUS_FROM_CF8_ADDRESS(PciAddress),
                    DEVICE_FROM_CF8_ADDRESS(PciAddress),
                    FUNCTION_FROM_CF8_ADDRESS(PciAddress),
@@ -136,7 +138,14 @@ SmmIoHandler (
                    (Qualification.IoInstruction.Direction != 0) ? STM_RSC_PCI_CFG_R : STM_RSC_PCI_CFG_W
                    );
     if (PciCfgDesc == NULL) {
-      DEBUG((EFI_D_ERROR, "Add unclaimed PCI_RSC!\n"));
+      DEBUG((EFI_D_ERROR, "Add unclaimed PCI_RSC!: Port: 0x%x PciAddress 0x%x Bus: 0x%x Device: 0x%x Function: 0x%x Register: 0x%x Direction: 0x%x\n",
+		           Port,
+				   PciAddress,
+				   BUS_FROM_CF8_ADDRESS(PciAddress),
+                   DEVICE_FROM_CF8_ADDRESS(PciAddress),
+                   FUNCTION_FROM_CF8_ADDRESS(PciAddress),
+                   REGISTER_FROM_CF8_ADDRESS(PciAddress) + (Port & 0x3),
+                   (Qualification.IoInstruction.Direction != 0) ? STM_RSC_PCI_CFG_R : STM_RSC_PCI_CFG_W));
       LocalPciCfgDescPtr = (STM_RSC_PCI_CFG_DESC *)LocalPciCfgDescBuf;
       ZeroMem (LocalPciCfgDescBuf, sizeof(LocalPciCfgDescBuf));
       LocalPciCfgDescPtr->Hdr.RscType = PCI_CFG_RANGE;
@@ -159,7 +168,7 @@ SmmIoHandler (
     UINT64 RcxMask;
 
     RcxMask = 0xFFFFFFFFFFFFFFFFull;
-    if ((mGuestContextCommonSmm.GuestContextPerCpu[Index].Efer & IA32_EFER_MSR_MLA) == 0) {
+    if ((mGuestContextCommonSmm[VmType].GuestContextPerCpu[Index].Efer & IA32_EFER_MSR_MLA) == 0) {
       RcxMask = 0xFFFFFFFFull;
     }
     if ((Reg->Rcx & RcxMask) == 0) {

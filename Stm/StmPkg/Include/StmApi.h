@@ -560,6 +560,7 @@ typedef struct {
 #define STM_API_UNMAP_ADDRESS_RANGE                0x00000002
 #define STM_API_ADDRESS_LOOKUP                     0x00000003
 #define STM_API_RETURN_FROM_PROTECTION_EXCEPTION   0x00000004
+#define STM_API_GET_VMCS_MAP                       0x00000005
 
 // API number convention: MLE facing VMCALL interfaces have bit 16 set
 //
@@ -579,6 +580,11 @@ typedef struct {
 #define STM_API_MANAGE_VMCS_DATABASE               0x00010006
 #define STM_API_INITIALIZE_PROTECTION              0x00010007
 #define STM_API_MANAGE_EVENT_LOG                   0x00010008
+#define STM_API_ADD_TEMP_PE_VM	                   0x00010009
+#define STM_API_ADD_PERM_PE_VM		               0x0001000a
+#define STM_API_RUN_PE_VM			               0x0001000b
+#define STM_API_END_ADD_PERM_PE_VM                 0x0001000c
+#define STM_API_ADD_PERM_PE_VM_NORUN			   0x0001000d
 
 //
 // Return codes

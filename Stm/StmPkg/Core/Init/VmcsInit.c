@@ -13,6 +13,7 @@
 **/
 
 #include "StmInit.h"
+#include "PeStm.h"
 
 /**
 
@@ -56,7 +57,15 @@ InitializeSmiVmcs (
   VmExitCtrls.Bits.SaveIA32_EFER = 1;
 
   GuestInterruptibilityState.Uint32 = VmRead32 (VMCS_32_GUEST_INTERRUPTIBILITY_STATE_INDEX);
-  GuestInterruptibilityState.Bits.BlockingBySmi = 0;
+
+  if(Index != 0)
+  {
+      GuestInterruptibilityState.Bits.BlockingBySmi = 0;
+  }
+  else
+  {
+      GuestInterruptibilityState.Bits.BlockingBySmi = 1;   // BSP has to do other stuff before interrupts are enabled
+  }
 
   //
   // Control field
@@ -165,14 +174,14 @@ InitializeSmmVmcs (
   Data64 = AsmReadMsr64 (IA32_VMX_PROCBASED_CTLS2_MSR_INDEX);
   ProcessorBasedCtrls2nd.Uint32 = (UINT32)RShiftU64 (Data64, 32);
   if (ProcessorBasedCtrls2nd.Bits.UnrestrictedGuest != 0) {
-    mGuestContextCommonSmm.GuestContextPerCpu[Index].UnrestrictedGuest = TRUE;
+    mGuestContextCommonSmm[SMI_HANDLER].GuestContextPerCpu[Index].UnrestrictedGuest = TRUE;
   } else {
-    mGuestContextCommonSmm.GuestContextPerCpu[Index].UnrestrictedGuest = FALSE;
+    mGuestContextCommonSmm[SMI_HANDLER].GuestContextPerCpu[Index].UnrestrictedGuest = FALSE;
   }
 
   ProcessorBasedCtrls2nd.Uint32 = (UINT32)Data64 & (UINT32)RShiftU64 (Data64, 32);
   ProcessorBasedCtrls2nd.Bits.Ept = 1;
-  if (mGuestContextCommonSmm.GuestContextPerCpu[Index].UnrestrictedGuest) {
+  if (mGuestContextCommonSmm[SMI_HANDLER].GuestContextPerCpu[Index].UnrestrictedGuest) {
     ProcessorBasedCtrls2nd.Bits.UnrestrictedGuest = 1;
   }
 
@@ -208,21 +217,21 @@ InitializeSmmVmcs (
   VmWrite32 (VMCS_32_CONTROL_VMENTRY_CONTROLS_INDEX,                 VmEntryCtrls.Uint32);
   VmWrite32 (VMCS_32_CONTROL_VMEXIT_CONTROLS_INDEX,                  VmExitCtrls.Uint32);
 
-  VmWrite64 (VMCS_64_CONTROL_EPT_PTR_INDEX,                          mGuestContextCommonSmm.EptPointer.Uint64);
+  VmWrite64 (VMCS_64_CONTROL_EPT_PTR_INDEX,                          mGuestContextCommonSmm[SMI_HANDLER].EptPointer.Uint64);
 
   VmWriteN (VMCS_N_CONTROL_CR0_GUEST_HOST_MASK_INDEX,                ((UINTN)AsmReadMsr64 (IA32_VMX_CR0_FIXED0_MSR_INDEX) & (UINTN)AsmReadMsr64 (IA32_VMX_CR0_FIXED1_MSR_INDEX)) | CR0_CD);
   VmWriteN (VMCS_N_CONTROL_CR4_GUEST_HOST_MASK_INDEX,                (UINTN)-1);
 
-  VmWriteN (VMCS_N_CONTROL_CR0_READ_SHADOW_INDEX,                    mGuestContextCommonSmm.GuestContextPerCpu[Index].Cr0 | ((UINTN)AsmReadMsr64 (IA32_VMX_CR0_FIXED0_MSR_INDEX) & (UINTN)AsmReadMsr64 (IA32_VMX_CR0_FIXED1_MSR_INDEX)));
-  VmWriteN (VMCS_N_CONTROL_CR4_READ_SHADOW_INDEX,                    mGuestContextCommonSmm.GuestContextPerCpu[Index].Cr4 | ((UINTN)AsmReadMsr64 (IA32_VMX_CR4_FIXED0_MSR_INDEX) & (UINTN)AsmReadMsr64 (IA32_VMX_CR4_FIXED1_MSR_INDEX)) | CR4_PAE);
+  VmWriteN (VMCS_N_CONTROL_CR0_READ_SHADOW_INDEX,                    mGuestContextCommonSmm[SMI_HANDLER].GuestContextPerCpu[Index].Cr0 | ((UINTN)AsmReadMsr64 (IA32_VMX_CR0_FIXED0_MSR_INDEX) & (UINTN)AsmReadMsr64 (IA32_VMX_CR0_FIXED1_MSR_INDEX)));
+  VmWriteN (VMCS_N_CONTROL_CR4_READ_SHADOW_INDEX,                    mGuestContextCommonSmm[SMI_HANDLER].GuestContextPerCpu[Index].Cr4 | ((UINTN)AsmReadMsr64 (IA32_VMX_CR4_FIXED0_MSR_INDEX) & (UINTN)AsmReadMsr64 (IA32_VMX_CR4_FIXED1_MSR_INDEX)) | CR4_PAE);
 
   if (ProcessorBasedCtrls.Bits.IoBitmap != 0) {
-    VmWrite64 (VMCS_64_CONTROL_IO_BITMAP_A_INDEX,                    mGuestContextCommonSmm.IoBitmapA);
-    VmWrite64 (VMCS_64_CONTROL_IO_BITMAP_B_INDEX,                    mGuestContextCommonSmm.IoBitmapB);
+    VmWrite64 (VMCS_64_CONTROL_IO_BITMAP_A_INDEX,                    mGuestContextCommonSmm[SMI_HANDLER].IoBitmapA);
+    VmWrite64 (VMCS_64_CONTROL_IO_BITMAP_B_INDEX,                    mGuestContextCommonSmm[SMI_HANDLER].IoBitmapB);
   }
 
   if (ProcessorBasedCtrls.Bits.MsrBitmap != 0) {
-    VmWrite64 (VMCS_64_CONTROL_MSR_BITMAP_INDEX,                     mGuestContextCommonSmm.MsrBitmap);
+    VmWrite64 (VMCS_64_CONTROL_MSR_BITMAP_INDEX,                     mGuestContextCommonSmm[SMI_HANDLER].MsrBitmap);
   }
 
   //
@@ -270,9 +279,9 @@ InitializeSmmVmcs (
   //
   // Guest field
   //
-  VmWriteN  (VMCS_N_GUEST_CR0_INDEX,                     mGuestContextCommonSmm.GuestContextPerCpu[Index].Cr0 | ((UINTN)AsmReadMsr64 (IA32_VMX_CR0_FIXED0_MSR_INDEX) & (UINTN)AsmReadMsr64 (IA32_VMX_CR0_FIXED1_MSR_INDEX)));
+  VmWriteN  (VMCS_N_GUEST_CR0_INDEX,                     mGuestContextCommonSmm[SMI_HANDLER].GuestContextPerCpu[Index].Cr0 | ((UINTN)AsmReadMsr64 (IA32_VMX_CR0_FIXED0_MSR_INDEX) & (UINTN)AsmReadMsr64 (IA32_VMX_CR0_FIXED1_MSR_INDEX)));
   VmWriteN  (VMCS_N_GUEST_CR3_INDEX,                     (UINTN)mHostContextCommon.HostContextPerCpu[Index].TxtProcessorSmmDescriptor->SmmCr3);
-  VmWriteN  (VMCS_N_GUEST_CR4_INDEX,                     mGuestContextCommonSmm.GuestContextPerCpu[Index].Cr4 | ((UINTN)AsmReadMsr64 (IA32_VMX_CR4_FIXED0_MSR_INDEX) & (UINTN)AsmReadMsr64 (IA32_VMX_CR4_FIXED1_MSR_INDEX)));
+  VmWriteN  (VMCS_N_GUEST_CR4_INDEX,                     mGuestContextCommonSmm[SMI_HANDLER].GuestContextPerCpu[Index].Cr4 | ((UINTN)AsmReadMsr64 (IA32_VMX_CR4_FIXED0_MSR_INDEX) & (UINTN)AsmReadMsr64 (IA32_VMX_CR4_FIXED1_MSR_INDEX)));
   if (sizeof(UINTN) == sizeof(UINT64)) {
     VmWriteN  (VMCS_N_GUEST_CR4_INDEX,                   VmReadN(VMCS_N_GUEST_CR4_INDEX) | CR4_PAE);
   } else {
@@ -339,6 +348,6 @@ InitializeSmmVmcs (
 
   VmWrite64 (VMCS_64_GUEST_IA32_PERF_GLOBAL_CTRL_INDEX,  AsmReadMsr64(IA32_PERF_GLOBAL_CTRL_MSR_INDEX));
 
-  VmWrite64 (VMCS_64_GUEST_IA32_EFER_INDEX,              mGuestContextCommonSmm.GuestContextPerCpu[Index].Efer);
+  VmWrite64 (VMCS_64_GUEST_IA32_EFER_INDEX,              mGuestContextCommonSmm[SMI_HANDLER].GuestContextPerCpu[Index].Efer);
   return ;
 }

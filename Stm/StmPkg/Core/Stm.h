@@ -400,8 +400,10 @@ FreePages (
 
   This function set EPT page table attribute by range.
 
+  @param EptPointer               EPT table of interest
   @param Base                     Memory base
   @param Length                   Memory length
+  @param Physmem                  Physical Memory base
   @param Ra                       Read access
   @param Wa                       Write access
   @param Xa                       Execute access
@@ -411,8 +413,10 @@ FreePages (
 **/
 RETURN_STATUS
 EPTSetPageAttributeRange (
+  IN UINT64					    EptPointer,
   IN UINT64                     Base,
   IN UINT64                     Length,
+  IN UINT64						Physmem,
   IN UINT32                     Ra,
   IN UINT32                     Wa,
   IN UINT32                     Xa,
@@ -561,7 +565,7 @@ AddEventLog (
 
 /**
 
-  This function add event log for invalid parameter.
+  This function add event log for invalid parameter
 
   @param VmcallApiNumber    VMCALL API number which caused invalid parameter
 
@@ -573,7 +577,7 @@ AddEventLogInvalidParameter (
 
 /**
 
-  This function add event log for resource.
+  This function add event log for resource
 
   @param EventType   EvtHandledProtectionException, EvtBiosAccessToUnclaimedResource,
                      EvtMleResourceProtectionGranted, EvtMleResourceProtectionDenied,
@@ -646,6 +650,18 @@ VOID
 DumpRegContext (
   IN X86_REGISTER *Reg
   );
+
+/**
+
+  This function dumps the guest stack.
+
+  @param Index - CPU Index
+
+**/
+VOID
+DumpGuestStack(
+	IN UINT32 Index
+	);
 
 /**
 
@@ -923,6 +939,8 @@ typedef struct _STM_HOST_CONTEXT_PER_CPU {
   UINT32                              Index;
   UINT32                              ApicId;
   UINTN                               Stack;
+  UINT32							  GuestVmType;
+  UINT32							  NonSmiHandler;
   UINT32                              Smbase;
   TXT_PROCESSOR_SMM_DESCRIPTOR        *TxtProcessorSmmDescriptor;
   UINT32                              HostMsrEntryCount;
@@ -931,6 +949,7 @@ typedef struct _STM_HOST_CONTEXT_PER_CPU {
   // JumpBuffer for Setup/TearDown
   BOOLEAN                             JumpBufferValid;
   BASE_LIBRARY_JUMP_BUFFER            JumpBuffer;
+  UINT64							  Vmxon;
 } STM_HOST_CONTEXT_PER_CPU;
 
 typedef struct _STM_HOST_CONTEXT_COMMON {
@@ -940,11 +959,13 @@ typedef struct _STM_HOST_CONTEXT_COMMON {
   SPIN_LOCK                           PciLock;
   UINT32                              CpuNum;
   UINT32                              JoinedCpuNum;
+  UINT32                             StmShutdown;
   UINTN                               PageTable;
   IA32_DESCRIPTOR                     Gdtr;
   IA32_DESCRIPTOR                     Idtr;
   UINT64                              HeapBottom;
   UINT64                              HeapTop;
+  UINT64							  HeapFree;
   UINT8                               PhysicalAddressBits;
   UINT64                              MaximumSupportAddress;
   //
@@ -993,6 +1014,6 @@ typedef struct _STM_HOST_CONTEXT_COMMON {
 
 extern STM_HOST_CONTEXT_COMMON         mHostContextCommon;
 extern STM_GUEST_CONTEXT_COMMON        mGuestContextCommonSmi;
-extern STM_GUEST_CONTEXT_COMMON        mGuestContextCommonSmm;
+extern STM_GUEST_CONTEXT_COMMON        mGuestContextCommonSmm[];
 
 #endif

@@ -13,6 +13,7 @@
 **/
 
 #include "StmRuntime.h"
+#include "PeStm.h"
 
 extern volatile BOOLEAN         mIsBspInitialized;
 extern volatile BOOLEAN         *mCpuInitStatus;
@@ -35,7 +36,7 @@ RestoreStmData (
   ZeroMem (&mMtrrInfo, sizeof(mMtrrInfo));
   ZeroMem (&mStmHandlerSmm, sizeof(mStmHandlerSmm));
   ZeroMem (&mStmHandlerSmi, sizeof(mStmHandlerSmi));
-  ZeroMem (&mGuestContextCommonSmm, sizeof(mGuestContextCommonSmm));
+  ZeroMem (&mGuestContextCommonSmm, sizeof(mGuestContextCommonSmm[NUM_PE_TYPE]));
   ZeroMem (&mHostContextCommon, sizeof(mHostContextCommon));
   ZeroMem (&mGuestContextCommonSmi, sizeof(mGuestContextCommonSmi));
   mIsBspInitialized = FALSE;
@@ -122,6 +123,7 @@ StmTeardown (
   DEBUG ((EFI_D_ERROR, "VMCS_32_RO_VM_INSTRUCTION_ERROR: %08x\n", (UINTN)VmRead32 (VMCS_32_RO_VM_INSTRUCTION_ERROR_INDEX)));
   DumpVmcsAllField ();
   DumpRegContext (Reg);
+  DumpGuestStack(Index);
   ReleaseSpinLock (&mHostContextCommon.DebugLock);
 #endif
 
