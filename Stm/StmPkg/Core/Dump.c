@@ -523,17 +523,19 @@ DumpRegContext (
 
 **/
 
+#define MAXDUMP 20    // number of 64 bit words to dump
+
 VOID DumpGuestStack(IN UINT32 Index)
 {
 
 	UINT32 VmType = mHostContextCommon.HostContextPerCpu[Index].GuestVmType;
 	UINT32 i;
 	UINT64 Location;
-	UINT64 RelLoc;
 	UINTN  StackTopBase = (UINTN)VmReadN (VMCS_N_GUEST_RSP_INDEX);
 	UINTN  StackTop;
 	UINTN  StackLen;
-	UINT64 Stack[20];   // will limit output to at most the first 20 stack elements (64bit)
+	UINT64 MaxPrint;
+	UINT64 Stack[MAXDUMP];   // will limit output to at most the first 20 stack elements (64bit)
 
 	StackTop = TranslateEPTGuestToHost(mGuestContextCommonSmm[VmType].EptPointer.Uint64, StackTopBase, 0L);
 
@@ -546,23 +548,28 @@ VOID DumpGuestStack(IN UINT32 Index)
 		return;
 	}
 
-	StackLen = (((UINT64)StackTop + 0x1000) & (~0xFFF)) - (UINT64)StackTop;
+	StackLen = (((UINT64)StackTop + 0x1000) & (~0xFFF)) - (UINT64)StackTop;  // only print to a page boundary...
 
-	if(StackLen > 160)
-		StackLen = 160;    // max stackdump of 20 64-bit words
+	if(StackLen > MAXDUMP*8)
+	{
+		StackLen = MAXDUMP*8;    // max stackdump of 20 64-bit words
+		MaxPrint = MAXDUMP;
+	}
+	else
+	{
+		MaxPrint = StackLen/8;   
+	}
 
 	CopyMem (Stack, (VOID *)(UINTN)StackTop, StackLen);
 
 	DEBUG((EFI_D_ERROR, "%ld Stacktrace\n", Index));
 
 	Location = StackTopBase;
-	RelLoc = 0;
 
-	for(i = 0; RelLoc < StackLen; i++)
+	for(i = 0; i < MaxPrint; i++)
 	{
-
-		DEBUG ((EFI_D_INFO, "%ld: %016lx %016lx\n", Index, Location, Stack[i] ));
-		RelLoc =+ 8;
+		DEBUG ((EFI_D_INFO, "%ld: %016llx %016llx\n", Index, Location, Stack[i] ));
+		Location += 8;
 	}
 	DEBUG((EFI_D_ERROR, "%ld End Stacktrace\n", Index));
 }
