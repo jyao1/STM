@@ -62,17 +62,6 @@ MRTT_INFO  mMtrrInfo;
 #define L2_POSITION          21
 #define L1_POSITION          12
 
-#ifdef 0
-UINT8 GetMemoryTypeTest(UINT64 StartAddress)
-{
-	UINT8 Memory_Type = GetMemoryType(StartAddress);
-
-	if((Memory_Type != 0) || (Memory_Type != 6))
-		Memory_Type = 6;
-
-	return Memory_Type;
-}
-#endif
 /**
 
 This function create EPT l4/L3 tables for VM/PE guest.

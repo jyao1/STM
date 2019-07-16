@@ -1444,7 +1444,7 @@ RegisterProtectedResourceNode (
       ((Resource->Mem.RWXAttributes & STM_RSC_MEM_R) != 0) ? 0 : 1,
       ((Resource->Mem.RWXAttributes & STM_RSC_MEM_W) != 0) ? 0 : 1,
       ((Resource->Mem.RWXAttributes & STM_RSC_MEM_X) != 0) ? 0 : 1,
-      EptPageAttributeAnd
+      EptPageAttributeSet
       );
     Resource->Header.ReturnStatus = 1;
     break;
@@ -1476,7 +1476,7 @@ RegisterProtectedResourceNode (
         ((Resource->PciCfg.RWAttributes & STM_RSC_PCI_CFG_R) != 0) ? 0 : 1,
         ((Resource->PciCfg.RWAttributes & STM_RSC_PCI_CFG_W) != 0) ? 0 : 1,
         0,
-        EptPageAttributeAnd
+        EptPageAttributeSet
         );
     }
     Resource->Header.ReturnStatus = 1;
@@ -1864,7 +1864,7 @@ RegisterBiosResourceNode (
         ((Resource->PciCfg.RWAttributes & STM_RSC_PCI_CFG_R) == STM_RSC_PCI_CFG_R) ? 1 : 0,
         ((Resource->PciCfg.RWAttributes & STM_RSC_PCI_CFG_W) == STM_RSC_PCI_CFG_W) ? 1 : 0,
         0,
-        EptPageAttributeAnd
+        EptPageAttributeSet
         );
     }
     Resource->Header.ReturnStatus = 1;

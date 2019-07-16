@@ -59,6 +59,8 @@ EptAllocatePte(
 			   IN UINT64 PhySize
                );
 
+extern UINT8 GetMemoryType (IN UINT64 BaseAddress);
+
 /**
   Return length according to page attributes.
 
@@ -246,8 +248,22 @@ ConvertPageEntryAttribute (
     CpuDeadLoop ();
     break;
   }
+
+  if(PageEntry->Bits32.Wa == 1)
+	  PageEntry->Bits.Ra = 1;    // have to have read with write(vol 3c 28.2.3.1)
+
+  PageEntry->Bits32.Emt = GetMemoryType((PageEntry->Uint64) & PAGING_4K_MASK );
+#ifdef DEBUGPRINT
+  DEBUG((EFI_D_INFO, "ConvertPageEntryAttribute - 0x%llx->0x%llx (%1x%1x%1x) Emt: %3x\n",
+	  (UINT64) CurrentPageEntry, 
+	  PageEntry->Uint64,
+	  PageEntry->Bits32.Ra,
+	  PageEntry->Bits32.Wa,
+	  PageEntry->Bits32.Xa,
+	  PageEntry->Bits32.Emt));
+#endif
   if (CurrentPageEntry != PageEntry->Uint64) {
-    //DEBUG ((EFI_D_INFO, "ConvertPageEntryAttribute 0x%lx->0x%lx\n", CurrentPageEntry, PageEntry->Uint64));
+   //DEBUG ((EFI_D_INFO, "ConvertPageEntryAttribute 0x%lx->0x%lx\n", CurrentPageEntry, PageEntry->Uint64));
   }
 }
 
@@ -701,10 +717,10 @@ SmmEPTViolationHandler (
 					LocalMemDesc.Base,
 					LocalMemDesc.Length,
 					LocalMemDesc.Base,
-					1,//((LocalMemDesc.RWXAttributes & STM_RSC_MEM_R) != 0) ? 0 : 1,
-					1,//((LocalMemDesc.RWXAttributes & STM_RSC_MEM_W) != 0) ? 0 : 1,
-					1,//((LocalMemDesc.RWXAttributes & STM_RSC_MEM_X) != 0) ? 0 : 1,
-					EptPageAttributeAnd
+					((LocalMemDesc.RWXAttributes & STM_RSC_MEM_R) != 0) ? 0 : 1,
+					((LocalMemDesc.RWXAttributes & STM_RSC_MEM_W) != 0) ? 0 : 1,
+					((LocalMemDesc.RWXAttributes & STM_RSC_MEM_X) != 0) ? 0 : 1,
+					EptPageAttributeSet
 					) != 0)
 				{
 					DEBUG((EFI_D_ERROR, "%ld SmmEPTViolationHandler - STM ERROR unable to add resource to EPT map\n", Index));
