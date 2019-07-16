@@ -579,7 +579,7 @@ EPTSetPageAttributeRange (
 
   while (Length != 0) {
     PageEntry = GetPageTableEntry (EptPointer, Base, PhysMem, Length, &PageAttribute);
-	//DEBUG((EFI_D_INFO, "EPTSetPageAttributeRange - received page entry: %llx\n", PageEntry->Uint64));
+//	DEBUG((EFI_D_INFO, "EPTSetPageAttributeRange - received page entry: %llx\n", PageEntry->Uint64));
     if (PageEntry == NULL) {
       DEBUG ((EFI_D_INFO, "EPTSetPageAttributeRange - PageEntry == NULL\n"));
       return RETURN_UNSUPPORTED;
@@ -641,9 +641,9 @@ SmmEPTViolationHandler (
     
     Qualification.UintN = VmReadN (VMCS_N_RO_EXIT_QUALIFICATION_INDEX);
     
-    DEBUG ((EFI_D_ERROR, "!!!EPTViolationHandler (%d)!!!\n", (UINTN)Index));
-    DEBUG ((EFI_D_ERROR, "Qualification - %016lx\n", (UINT64)Qualification.UintN));
-    DEBUG ((EFI_D_ERROR, "GuestPhysicalAddress - %016lx\n", VmRead64 (VMCS_64_RO_GUEST_PHYSICAL_ADDR_INDEX)));
+    DEBUG ((EFI_D_ERROR, "%ld !!!EPTViolationHandler!!!\n", (UINTN)Index));
+    DEBUG ((EFI_D_ERROR, "  Qualification - %016lx\n", (UINT64)Qualification.UintN));
+    DEBUG ((EFI_D_ERROR, "  GuestPhysicalAddress - %016lx\n", VmRead64 (VMCS_64_RO_GUEST_PHYSICAL_ADDR_INDEX)));
     
     StmVmPeNmiExCount++;   // make sure there is no smi processors waiting
     
@@ -651,6 +651,7 @@ SmmEPTViolationHandler (
         //
         // 0=Linear address invalid.
         //
+		DEBUG ((EFI_D_ERROR, "%ld SmmEPTViolationHandler - Linear address invalid\n", Index));
     } else {
         if (Qualification.EptViolation.Gpa == 0) {
             //
@@ -658,6 +659,9 @@ SmmEPTViolationHandler (
             //   1) No-read EPT page encountered when trying to read from the guest IA32 page tables (e.g fetching a PML4, PDE, PTE).
             //   2) No-write EPT page encountered when trying to write an A or D bit.
             //
+
+			DEBUG ((EFI_D_ERROR, "%ld SmmEPTViolationHandler - EPT violation occurred while performing a guest page walk\n", Index));
+
         } else {
             //
             // 3=Linear address valid and match provided physical address. This is the normal case.
@@ -669,7 +673,7 @@ SmmEPTViolationHandler (
                                          (UINT32)(Qualification.UintN & 0x7)
                                          );
             if (MemDesc != NULL) {
-                DEBUG ((EFI_D_ERROR, "EPT violation!\n"));
+                DEBUG ((EFI_D_ERROR, "%ld SmmEPTViolationHandler - SMI Handler attempted to access MLE protected resource\n", Index));
                 AddEventLogForResource (EvtHandledProtectionException, (STM_RSC *)MemDesc);
                 SmmExceptionHandler (Index);
                 CpuDeadLoop ();
@@ -681,7 +685,7 @@ SmmEPTViolationHandler (
                                          (UINT32)(Qualification.UintN & 0x7)
                                          );
             if (MemDesc == NULL) {
-                DEBUG((EFI_D_ERROR, "Add unclaimed MEM_RSC!\n"));
+                DEBUG((EFI_D_ERROR, "%ld SmmEPTViolationHandler - Add unclaimed MEM_RSC!\n", Index));
                 ZeroMem (&LocalMemDesc, sizeof(LocalMemDesc));
                 LocalMemDesc.Hdr.RscType = MEM_RANGE;
                 LocalMemDesc.Hdr.Length = sizeof(LocalMemDesc);
@@ -691,7 +695,21 @@ SmmEPTViolationHandler (
                 AddEventLogForResource (EvtBiosAccessToUnclaimedResource, (STM_RSC *)&LocalMemDesc);
                 // BUGBUG: it should not happen?
                 // TBD: We need create EPT mapping here, if so?
-                CpuDeadLoop ();
+
+				if(EPTSetPageAttributeRange (
+					mGuestContextCommonSmm[SMI_HANDLER].EptPointer.Uint64,
+					LocalMemDesc.Base,
+					LocalMemDesc.Length,
+					LocalMemDesc.Base,
+					1,//((LocalMemDesc.RWXAttributes & STM_RSC_MEM_R) != 0) ? 0 : 1,
+					1,//((LocalMemDesc.RWXAttributes & STM_RSC_MEM_W) != 0) ? 0 : 1,
+					1,//((LocalMemDesc.RWXAttributes & STM_RSC_MEM_X) != 0) ? 0 : 1,
+					EptPageAttributeAnd
+					) != 0)
+				{
+					DEBUG((EFI_D_ERROR, "%ld SmmEPTViolationHandler - STM ERROR unable to add resource to EPT map\n", Index));
+					CpuDeadLoop ();
+				}
             }
             
             // Check PCIE MMIO.
@@ -708,7 +726,7 @@ SmmEPTViolationHandler (
                                                 (UINT8)(Qualification.UintN & 0x3)
                                                 );
                 if (PciCfgDesc != NULL) {
-                    DEBUG ((EFI_D_ERROR, "EPT (PCIE) violation!\n"));
+                    DEBUG ((EFI_D_ERROR, "%ld EPT (PCIE) violation!\n", Index));
                     AddEventLogForResource (EvtHandledProtectionException, (STM_RSC *)PciCfgDesc);
                     SmmExceptionHandler (Index);
                     CpuDeadLoop ();

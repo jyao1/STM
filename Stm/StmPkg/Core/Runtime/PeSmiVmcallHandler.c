@@ -525,13 +525,13 @@ STM_STATUS setupModulepages(UINT32 PeType, UINT32 CpuIndex)
 		if((PeVmData[PeType].UserModule.VmConfig & PERM_VM_EXEC_HEAP) == PERM_VM_EXEC_HEAP)
 		{
 			ExecuteHeap = TRUE;
-			DEBUG((EFI_D_ERROR, "%d setModulepages - Execute Heap set to TRUE\n"));
+			DEBUG((EFI_D_ERROR, "%d setModulepages - Execute Heap set to TRUE\n", CpuIndex));
 		}
 		else
 			ExecuteHeap = FALSE;
 
-		/*DEBUG*/ DEBUG((EFI_D_ERROR, "%d setModulepages - Execute Heap set to TRUE for debug purposes\n"));
-		ExecuteHeap = TRUE;
+		/*DEBUG DEBUG((EFI_D_ERROR, "%d setModulepages - Execute Heap set to TRUE for debug purposes\n", CpuIndex));
+		ExecuteHeap = TRUE;*/
 
 		rc1 = EPTSetPageAttributeRange(
 			mGuestContextCommonSmm[PeType].EptPointer.Uint64, 

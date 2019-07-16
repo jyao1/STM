@@ -41,6 +41,7 @@ RestoreStmData (
   ZeroMem (&mGuestContextCommonSmi, sizeof(mGuestContextCommonSmi));
   mIsBspInitialized = FALSE;
   mCpuInitStatus = NULL;
+  AsmWbinvd ();   // let all see it
 }
 
 /**

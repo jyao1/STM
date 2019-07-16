@@ -138,6 +138,12 @@ void SetEndOfSmi(void)
 
 }
 
+void PrintSmiEnRegister(UINT32 Index)
+{
+	UINT16 pmbase = get_pmbase();
+	DEBUG((EFI_D_ERROR, "%ld PrintSmiEnRegister smi_en: 0x%08x smi_sts: 0x%08x\n", Index, IoRead32(pmbase + SMI_EN), IoRead32(pmbase + SMI_STS)));
+}
+
 void AckTimer(void)
 {
 	UINT16 pmbase = get_pmbase();

@@ -91,7 +91,6 @@ InitPeGuestVmcs (
 
   GuestInterruptibilityState.Uint32 = 0;
   GuestInterruptibilityState.Bits.BlockingBySmi = 1;
-
   //#define VMCS_32_CONTROL_EXCEPTION_BITMAP_INDEX                 0x4004
 //#define VMCS_32_CONTROL_PAGE_FAULT_ERROR_CODE_MASK_INDEX       0x4006
 //#define VMCS_32_CONTROL_PAGE_FAULT_ERROR_CODE_MATCH_INDEX      0x4008

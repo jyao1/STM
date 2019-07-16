@@ -15,6 +15,7 @@
 #include "StmInit.h"
 #include "PeStm.h"
 #include <Library/PcdLib.h>
+#include <string.h>
 
 extern PE_SMI_CONTROL PeSmiControl;
 
@@ -213,16 +214,20 @@ FindAcpiRsdPtr (
   )
 {
   if (mHostContextCommon.AcpiRsdp != 0) {
+	  DEBUG((EFI_D_INFO, "RSDP found in mHostContextCommon.AcpiRsdp 0x%016llx\n", mHostContextCommon.AcpiRsdp));
     return (VOID *)(UINTN)mHostContextCommon.AcpiRsdp;
   } else {
     UINTN                           Address;
-
+	DEBUG((EFI_D_INFO, "Searching for RSDP\n"));
     //
     // Search EBDA
     //
     Address = (*(UINT16 *)(UINTN)(EBDA_BASE_ADDRESS)) << 4;
     for (; Address < 0xA0000 ; Address += 0x10) {
-      if (*(UINT64 *)(Address) == EFI_ACPI_2_0_ROOT_SYSTEM_DESCRIPTION_POINTER_SIGNATURE) {
+         if (*(UINT64 *)(Address) == EFI_ACPI_2_0_ROOT_SYSTEM_DESCRIPTION_POINTER_SIGNATURE) {
+		DEBUG((EFI_D_INFO, "RSDP found\n"));
+		mHostContextCommon.AcpiRsdp = Address;     // save having to keep looking for it
+		AsmWbinvd ();                              // let everone see it
         return (VOID *)(Address);
       }
     }
@@ -231,7 +236,11 @@ FindAcpiRsdPtr (
     // First Seach 0x0e0000 - 0x0fffff for RSD Ptr
     //
     for (Address = 0xe0000; Address < 0xfffff; Address += 0x10) {
-      if (*(UINT64 *)(Address) == EFI_ACPI_2_0_ROOT_SYSTEM_DESCRIPTION_POINTER_SIGNATURE) {
+		//DEBUG((EFI_D_INFO, "0x%08lx  0x%016llx 0x%016llx - ", Address, *(UINT64 *)(Address), EFI_ACPI_2_0_ROOT_SYSTEM_DESCRIPTION_POINTER_SIGNATURE));
+        if (*(UINT64 *)(Address) == EFI_ACPI_2_0_ROOT_SYSTEM_DESCRIPTION_POINTER_SIGNATURE) {
+		DEBUG((EFI_D_INFO, "RSDP found\n"));
+		mHostContextCommon.AcpiRsdp = Address;     // save having to keep looking for it
+		AsmWbinvd ();
         return (VOID *)Address;
       }
     }
@@ -525,7 +534,8 @@ GetMsegInfoFromTxt (
  This function return MSEG information from MSR.
  
  @param  MsegBase    MSEG base address
- @param  MsegLength  MSEG length
+ @param  
+ MSEG length
  
  @return MsegBase
  
@@ -549,7 +559,7 @@ GetMsegInfoFromMsr (
     *MsegBase = (UINT64)((UINT32)AsmReadMsr64(IA32_SMM_MONITOR_CTL_MSR_INDEX) & 0xFFFFF000);
     
     *MsegLength = SmrrLength - (*MsegBase - SmrrBase);
-    
+
     return *MsegLength;
 }
 
@@ -583,6 +593,9 @@ InitHeap (
     DEBUG ((EFI_D_ERROR, "MsegBase == 0\n"));
     CpuDeadLoop ();
   }
+
+  // make sure that the tseg size was set correctly
+  // right now we will assume a max size of 3mb for mseg, bug, bug
 
   mHostContextCommon.HeapBottom = (UINT64)((UINTN)StmHeader + 
                                             StmHeader->HwStmHdr.Cr3Offset +
@@ -643,13 +656,13 @@ BspInit (
   UINT32						 BiosStmVer = 100;   // initially assume that the BIOS supports v1.0 of the Intel ref
   IA32_DESCRIPTOR IdtrLoad;
  
-  
-  
   StmHeader = (STM_HEADER *)(UINTN)((UINT32)AsmReadMsr64(IA32_SMM_MONITOR_CTL_MSR_INDEX) & 0xFFFFF000);
 
+    // on a platform that does not start with TXT, cannot assume the data space has been set to zero
+  ZeroMem(&mHostContextCommon, sizeof(STM_HOST_CONTEXT_COMMON));
   InitHeap (StmHeader);
   // after that we can use mHostContextCommon
-
+ 
   InitializeSpinLock (&mHostContextCommon.DebugLock);
  // after that we can use DEBUG
 
@@ -665,56 +678,10 @@ BspInit (
   } else {
     TxtProcessorSmmDescriptor = (TXT_PROCESSOR_SMM_DESCRIPTOR *)(UINTN)(VmRead32 (VMCS_32_GUEST_SMBASE_INDEX) + SMM_TXTPSD_OFFSET);
   }
+  
+  DEBUG((EFI_D_INFO, "TxtProcessorSmmDescriptor: 0x%016llx\n", TxtProcessorSmmDescriptor));
 
-  // We have to know CpuNum, or we do not know where VMCS will be.
-  if (IsSentryEnabled ()) {
-    mHostContextCommon.CpuNum = GetCpuNumFromTxt ();
-    DEBUG ((EFI_D_INFO, "CpuNumber from TXT Region - %d\n", (UINTN)mHostContextCommon.CpuNum));
-  } else {
-    {
-      EFI_ACPI_2_0_ROOT_SYSTEM_DESCRIPTION_POINTER  *Rsdp;
-      EFI_ACPI_DESCRIPTION_HEADER                   *Rsdt;
-      EFI_ACPI_DESCRIPTION_HEADER                   *Xsdt;
-
-	  mHostContextCommon.AcpiRsdp = TxtProcessorSmmDescriptor->AcpiRsdp;
-      Rsdp = FindAcpiRsdPtr ();
-      DEBUG ((EFI_D_INFO, "Rsdp - %08x\n", Rsdp));
-	  if (Rsdp == NULL) {
-        CpuDeadLoop ();
-      }
-      Rsdt = (EFI_ACPI_DESCRIPTION_HEADER *)(UINTN)Rsdp->RsdtAddress;
-      DEBUG ((EFI_D_INFO, "Rsdt - %08x\n", Rsdt));
-      DEBUG ((EFI_D_INFO, "RsdtLen - %08x\n", Rsdt->Length));
-      if ((Rsdp->Revision >= 2) && (Rsdp->XsdtAddress < (UINT64)(UINTN)-1)) {
-        Xsdt = (EFI_ACPI_DESCRIPTION_HEADER *)(UINTN)Rsdp->XsdtAddress;
-        DEBUG ((EFI_D_INFO, "Xsdt - %016lx\n", Xsdt));
-        DEBUG ((EFI_D_INFO, "XsdtLen - %08x\n", Xsdt->Length));
-      }
-    }
-
-    mHostContextCommon.CpuNum = GetCpuNumFromAcpi ();
-    DEBUG ((EFI_D_INFO, "CpuNumber from ACPI MADT - %d\n", (UINTN)mHostContextCommon.CpuNum));
-  }
-
-  InterlockedIncrement (&mHostContextCommon.JoinedCpuNum);
-  mHostContextCommon.StmShutdown = 0;     // used by Stm/Pe to know when to stop the timer
-  InitializeSpinLock (&mHostContextCommon.MemoryLock);
-  InitializeSpinLock (&mHostContextCommon.SmiVmcallLock);
-  InitializeSpinLock (&mHostContextCommon.PciLock);
-
-  DEBUG ((EFI_D_INFO, "HeapBottom - %08x\n", mHostContextCommon.HeapBottom));
-  DEBUG ((EFI_D_INFO, "HeapTop    - %08x\n", mHostContextCommon.HeapTop));
-
-    // initialize PE state
-
-  PeSmiControl.PeExec     = 0;
-  PeSmiControl.PeNmiBreak = 0;
-  PeSmiControl.PeCpuIndex = -1;
-
-  // Initialize CpuSync
-
-  CpuReadyCount = 0;
-  InitializeSpinLock(&CpuReadyCountLock);
+  /*debug - used to make sure that the bios properly sets up the Smm Descriptors*********************debug*/
 
   DEBUG ((EFI_D_INFO, "TxtProcessorSmmDescriptor     - %08x\n",   (UINTN)TxtProcessorSmmDescriptor));
   DEBUG ((EFI_D_INFO, "  Signature                   - %016lx\n", TxtProcessorSmmDescriptor->Signature));
@@ -756,6 +723,61 @@ BspInit (
   DEBUG ((EFI_D_INFO, "  BiosHwResourceRequirements  - %016lx\n", TxtProcessorSmmDescriptor->BiosHwResourceRequirementsPtr));
   DEBUG ((EFI_D_INFO, "  AcpiRsdp                    - %016lx\n", TxtProcessorSmmDescriptor->AcpiRsdp));
   DEBUG ((EFI_D_INFO, "  PhysicalAddressBits         - %02x\n",   (UINTN)TxtProcessorSmmDescriptor->PhysicalAddressBits));
+
+  /************************************debug**********************************************************************/
+
+  // We have to know CpuNum, or we do not know where VMCS will be.
+  if (IsSentryEnabled ()) {
+    mHostContextCommon.CpuNum = GetCpuNumFromTxt ();
+    DEBUG ((EFI_D_INFO, "CpuNumber from TXT Region - %d\n", (UINTN)mHostContextCommon.CpuNum));
+  } else {
+    {
+      EFI_ACPI_2_0_ROOT_SYSTEM_DESCRIPTION_POINTER  *Rsdp;
+      EFI_ACPI_DESCRIPTION_HEADER                   *Rsdt;
+      EFI_ACPI_DESCRIPTION_HEADER                   *Xsdt;
+
+	  mHostContextCommon.AcpiRsdp = TxtProcessorSmmDescriptor->AcpiRsdp;
+	  /***DEBUG***/ DEBUG((EFI_D_INFO, "TxtProcessorSmmDescriptor->AcpiRsdp : 0x%016llx (0x%016llx)\n", 
+		  &TxtProcessorSmmDescriptor->AcpiRsdp,  TxtProcessorSmmDescriptor->AcpiRsdp));
+      Rsdp = FindAcpiRsdPtr ();
+      DEBUG ((EFI_D_INFO, "Rsdp - %08x\n", Rsdp));
+	  if (Rsdp == NULL) {
+		DEBUG ((EFI_D_INFO, "Null Rsdp - Can not continue\n", Rsdp));
+        CpuDeadLoop ();
+      }
+      Rsdt = (EFI_ACPI_DESCRIPTION_HEADER *)(UINTN)Rsdp->RsdtAddress;
+      DEBUG ((EFI_D_INFO, "Rsdt - %08x\n", Rsdt));
+      DEBUG ((EFI_D_INFO, "RsdtLen - %08x\n", Rsdt->Length));
+      if ((Rsdp->Revision >= 2) && (Rsdp->XsdtAddress < (UINT64)(UINTN)-1)) {
+        Xsdt = (EFI_ACPI_DESCRIPTION_HEADER *)(UINTN)Rsdp->XsdtAddress;
+        DEBUG ((EFI_D_INFO, "Xsdt - %016lx\n", Xsdt));
+        DEBUG ((EFI_D_INFO, "XsdtLen - %08x\n", Xsdt->Length));
+      }
+    }
+
+    mHostContextCommon.CpuNum = GetCpuNumFromAcpi ();
+    DEBUG ((EFI_D_INFO, "CpuNumber from ACPI MADT - %d\n", (UINTN)mHostContextCommon.CpuNum));
+  }
+
+  InterlockedIncrement (&mHostContextCommon.JoinedCpuNum);
+  mHostContextCommon.StmShutdown = 0;     // used by Stm/Pe to know when to stop the timer
+  InitializeSpinLock (&mHostContextCommon.MemoryLock);
+  InitializeSpinLock (&mHostContextCommon.SmiVmcallLock);
+  InitializeSpinLock (&mHostContextCommon.PciLock);
+
+  DEBUG ((EFI_D_INFO, "HeapBottom - %08x\n", mHostContextCommon.HeapBottom));
+  DEBUG ((EFI_D_INFO, "HeapTop    - %08x\n", mHostContextCommon.HeapTop));
+
+    // initialize PE state
+
+  PeSmiControl.PeExec     = 0;
+  PeSmiControl.PeNmiBreak = 0;
+  PeSmiControl.PeCpuIndex = -1;
+
+  // Initialize CpuSync
+
+  CpuReadyCount = 0;
+  InitializeSpinLock(&CpuReadyCountLock);
 
   if (TxtProcessorSmmDescriptor->Signature != TXT_PROCESSOR_SMM_DESCRIPTOR_SIGNATURE) {
     DEBUG ((EFI_D_INFO, "TXT Descriptor Signature ERROR - %016lx!\n", TxtProcessorSmmDescriptor->Signature));
@@ -955,7 +977,7 @@ BspInit (
   // Initialization done
   //
   mIsBspInitialized = TRUE;
-
+   AsmWbinvd ();  // let everyone else know 
   return ;
 }
 
@@ -981,10 +1003,10 @@ ApInit (
     //
   }
 
-  DEBUG ((EFI_D_INFO, "!!!Enter StmInit (AP done)!!! - %d (%x)\n", (UINTN)Index, (UINTN)ReadUnaligned32 ((UINT32 *)&Register->Rax)));
+  DEBUG ((EFI_D_INFO, "%ld !!!Enter StmInit (AP done)!!! (%x)\n", (UINTN)Index, (UINTN)ReadUnaligned32 ((UINT32 *)&Register->Rax)));
 
   if (Index >= mHostContextCommon.CpuNum) {
-    DEBUG ((EFI_D_INFO, "!!!Index(0x%x) >= mHostContextCommon.CpuNum(0x%x)\n", (UINTN)Index, (UINTN)mHostContextCommon.CpuNum));
+    DEBUG ((EFI_D_INFO, "%ld !!!Index(0x%x) >= mHostContextCommon.CpuNum(0x%x)\n", Index, (UINTN)Index, (UINTN)mHostContextCommon.CpuNum));
     CpuDeadLoop ();
     Index = GetIndexFromStack (Register);
   }
@@ -995,13 +1017,13 @@ ApInit (
   
   InterlockedIncrement (&mHostContextCommon.JoinedCpuNum);
 
-  DEBUG ((EFI_D_INFO, "Register(%d) - %08x\n", (UINTN)Index, Register));
+  DEBUG ((EFI_D_INFO, "%ld Register - %08x\n", (UINTN)Index, Register));
   Reg = &mGuestContextCommonSmi.GuestContextPerCpu[Index].Register;
   Register->Rsp = VmReadN (VMCS_N_GUEST_RSP_INDEX);
   CopyMem (Reg, Register, sizeof(X86_REGISTER));
 
   if (mHostContextCommon.JoinedCpuNum > mHostContextCommon.CpuNum) {
-    DEBUG ((EFI_D_ERROR, "JoinedCpuNum(%d) > CpuNum(%d)\n", (UINTN)mHostContextCommon.JoinedCpuNum, (UINTN)mHostContextCommon.CpuNum));
+    DEBUG ((EFI_D_ERROR, "%ld JoinedCpuNum(%d) > CpuNum(%d)\n", Index, (UINTN)mHostContextCommon.JoinedCpuNum, (UINTN)mHostContextCommon.CpuNum));
     // Reset system
     CpuDeadLoop ();
   }
@@ -1057,11 +1079,6 @@ CommonInit (
     mHostContextCommon.HostContextPerCpu[Index].Smbase = VmRead32 (VMCS_32_GUEST_SMBASE_INDEX);
   }
   mHostContextCommon.HostContextPerCpu[Index].TxtProcessorSmmDescriptor = (TXT_PROCESSOR_SMM_DESCRIPTOR *)(UINTN)(mHostContextCommon.HostContextPerCpu[Index].Smbase + SMM_TXTPSD_OFFSET);
-
-  DEBUG ((EFI_D_INFO, "SMBASE(%d) - %08x\n", (UINTN)Index, (UINTN)mHostContextCommon.HostContextPerCpu[Index].Smbase));
-  DEBUG ((EFI_D_INFO, "TxtProcessorSmmDescriptor(%d) - %08x\n", (UINTN)Index, mHostContextCommon.HostContextPerCpu[Index].TxtProcessorSmmDescriptor));
-  DEBUG ((EFI_D_INFO, "Stack(%d) - %08x\n", (UINTN)Index, (UINTN)mHostContextCommon.HostContextPerCpu[Index].Stack));
-
   mGuestContextCommonSmm[SMI_HANDLER].GuestContextPerCpu[Index].Cr3 = (UINTN)mHostContextCommon.HostContextPerCpu[Index].TxtProcessorSmmDescriptor->SmmCr3;
   mGuestContextCommonSmm[SMI_HANDLER].GuestContextPerCpu[Index].Efer = AsmReadMsr64 (IA32_EFER_MSR_INDEX);
   
@@ -1096,19 +1113,19 @@ VmcsInit (
   mGuestContextCommonSmi.GuestContextPerCpu[Index].Vmcs = (UINT64)(VmcsBase + VmcsSize * (Index * 2));
   mGuestContextCommonSmm[SMI_HANDLER].GuestContextPerCpu[Index].Vmcs = (UINT64)(VmcsBase + VmcsSize * (Index * 2 + 1));
 
-  DEBUG ((EFI_D_INFO, "SmiVmcsPtr(%d) - %016lx\n", (UINTN)Index, mGuestContextCommonSmi.GuestContextPerCpu[Index].Vmcs));
-  DEBUG ((EFI_D_INFO, "SmmVmcsPtr(%d) - %016lx\n", (UINTN)Index, mGuestContextCommonSmm[SMI_HANDLER].GuestContextPerCpu[Index].Vmcs));
+  DEBUG ((EFI_D_INFO, "%d SmiVmcsPtr - %016lx\n", (UINTN)Index, mGuestContextCommonSmi.GuestContextPerCpu[Index].Vmcs));
+  DEBUG ((EFI_D_INFO, "%d SmmVmcsPtr - %016lx\n", (UINTN)Index, mGuestContextCommonSmm[SMI_HANDLER].GuestContextPerCpu[Index].Vmcs));
 
   AsmVmPtrStore (&CurrentVmcs);
-  DEBUG ((EFI_D_INFO, "CurrentVmcs(%d) - %016lx\n", (UINTN)Index, CurrentVmcs));
+  DEBUG ((EFI_D_INFO, "%d CurrentVmcs - %016lx\n", (UINTN)Index, CurrentVmcs));
   if (IsOverlap (CurrentVmcs, VmcsSize, mHostContextCommon.TsegBase, mHostContextCommon.TsegLength)) {
     // Overlap TSEG
-    DEBUG ((EFI_D_ERROR, "CurrentVmcs violation - %016lx\n", CurrentVmcs));
+    DEBUG ((EFI_D_ERROR, "%d CurrentVmcs violation - %016lx\n", (UINTN)Index, CurrentVmcs));
     CpuDeadLoop() ;
   }
   Rflags = AsmVmClear (&CurrentVmcs);
   if ((Rflags & (RFLAGS_CF | RFLAGS_ZF)) != 0) {
-    DEBUG ((EFI_D_ERROR, "ERROR: AsmVmClear(%d) - %016lx : %08x\n", (UINTN)Index, CurrentVmcs, Rflags));
+    DEBUG ((EFI_D_ERROR, "%d ERROR: AsmVmClear - %016lx : %08x\n", (UINTN)Index, CurrentVmcs, Rflags));
     CpuDeadLoop ();
   }
 
@@ -1129,13 +1146,13 @@ VmcsInit (
 
   Rflags = AsmVmPtrLoad (&mGuestContextCommonSmm[SMI_HANDLER].GuestContextPerCpu[Index].Vmcs);
   if ((Rflags & (RFLAGS_CF | RFLAGS_ZF)) != 0) {
-    DEBUG ((EFI_D_ERROR, "ERROR: AsmVmPtrLoad(%d) - %016lx : %08x\n", (UINTN)Index, mGuestContextCommonSmm[SMI_HANDLER].GuestContextPerCpu[Index].Vmcs, Rflags));
+    DEBUG ((EFI_D_ERROR, "%d ERROR: AsmVmPtrLoad - %016lx : %08x\n", (UINTN)Index, mGuestContextCommonSmm[SMI_HANDLER].GuestContextPerCpu[Index].Vmcs, Rflags));
     CpuDeadLoop ();
   }
   InitializeSmmVmcs (Index, &mGuestContextCommonSmm[SMI_HANDLER].GuestContextPerCpu[Index].Vmcs);
   Rflags = AsmVmClear (&mGuestContextCommonSmm[SMI_HANDLER].GuestContextPerCpu[Index].Vmcs);
   if ((Rflags & (RFLAGS_CF | RFLAGS_ZF)) != 0) {
-    DEBUG ((EFI_D_ERROR, "ERROR: AsmVmClear(%d) - %016lx : %08x\n", (UINTN)Index, mGuestContextCommonSmm[SMI_HANDLER].GuestContextPerCpu[Index].Vmcs, Rflags));
+    DEBUG ((EFI_D_ERROR, "%d ERROR: AsmVmClear - %016lx : %08x\n", (UINTN)Index, mGuestContextCommonSmm[SMI_HANDLER].GuestContextPerCpu[Index].Vmcs, Rflags));
     CpuDeadLoop ();
   }
 
@@ -1143,7 +1160,7 @@ VmcsInit (
 
   Rflags = AsmVmPtrLoad (&mGuestContextCommonSmi.GuestContextPerCpu[Index].Vmcs);
   if ((Rflags & (RFLAGS_CF | RFLAGS_ZF)) != 0) {
-    DEBUG ((EFI_D_ERROR, "ERROR: AsmVmPtrLoad(%d) - %016lx : %08x\n", (UINTN)Index, mGuestContextCommonSmi.GuestContextPerCpu[Index].Vmcs, Rflags));
+    DEBUG ((EFI_D_ERROR, "%d ERROR: AsmVmPtrLoad - %016lx : %08x\n", (UINTN)Index, mGuestContextCommonSmi.GuestContextPerCpu[Index].Vmcs, Rflags));
     CpuDeadLoop ();
   }
   InitializeSmiVmcs (Index, &mGuestContextCommonSmi.GuestContextPerCpu[Index].Vmcs);
@@ -1179,12 +1196,9 @@ LaunchBack (
     mGuestContextCommonSmm[SMI_HANDLER].GuestContextPerCpu[Index].Actived = TRUE;
     SmmSetup (Index);
   }
-
-  //
-  // Indicate success, if BIOS resource is good.
-  //
-  if (!IsResourceListValid ((STM_RSC *)(UINTN)mHostContextCommon.HostContextPerCpu[Index].TxtProcessorSmmDescriptor->BiosHwResourceRequirementsPtr, FALSE)) {
-    DEBUG ((EFI_D_INFO, "ValidateBiosResourceList fail!\n"));
+  
+  if(!IsResourceListValid ((STM_RSC *)(UINTN)mHostContextCommon.HostContextPerCpu[Index].TxtProcessorSmmDescriptor->BiosHwResourceRequirementsPtr, FALSE)) {
+    DEBUG ((EFI_D_INFO, "%ld LaunchBack - ValidateBiosResourceList fail!\n", Index));
     WriteUnaligned32 ((UINT32 *)&Reg->Rax, ERROR_STM_MALFORMED_RESOURCE_LIST);
     VmWriteN (VMCS_N_GUEST_RFLAGS_INDEX, VmReadN(VMCS_N_GUEST_RFLAGS_INDEX) | RFLAGS_CF);
   } else {
@@ -1204,7 +1218,7 @@ LaunchBack (
   {
      // DumpVmcsAllField();
   }
-
+  AsmWbinvd();  // flush caches
   Rflags = AsmVmLaunch (Reg);
 
   AcquireSpinLock (&mHostContextCommon.DebugLock);
@@ -1223,12 +1237,18 @@ LaunchBack (
   @param Register X86 register context
 
 **/
+
+extern void GetMtrr();  // found in eptinit.c...
+extern void PrintSmiEnRegister(UINT32 Index); // found in PcPciHandler.c
 VOID
 InitializeSmmMonitor (
   IN X86_REGISTER *Register
   )
 {
   UINT32  Index;
+
+  GetMtrr();  //Needed in various inits
+  AsmWbinvd();  // make sure it gets out
 
   Index = GetIndexFromStack (Register);
   if (Index == 0) {
@@ -1242,11 +1262,12 @@ InitializeSmmMonitor (
     Index = GetIndexFromStack (Register);
     ApInit (Index, Register);
   }
-
+  PrintSmiEnRegister(Index);    /* debug*/
   CommonInit (Index);
 
   VmcsInit (Index);
-
+   PrintSmiEnRegister(Index);   /* DEBUG*/
+    AsmWbinvd();  // flush caches
   LaunchBack (Index);
   return ;
 }
@@ -1258,6 +1279,7 @@ VOID InitCpuReadySync()
 	CpuReadyCount = 0;   // count of CPUs waiting in the loop
 	CpuSynched = 0;       // when 0 - not synched yet; when 1 CPUs are synched, but all have not exited the loop
 					     // need to prevent CPUs from entering the loop until all CPUs have exited
+	AsmWbinvd ();        // force it out
 }
 
 VOID CpuReadySync(UINT32 Index)
@@ -1266,7 +1288,7 @@ VOID CpuReadySync(UINT32 Index)
 
     InterlockedIncrement(&CpuReadyCount);
 
-    // DEBUG ((EFI_D_ERROR, "%ld CpuReadySync - CpuReadyCount: %d CpuNum %d\n", Index, CpuReadyCount, mHostContextCommon.CpuNum));
+    //DEBUG ((EFI_D_ERROR, "%ld CpuReadySync - CpuReadyCount: %d CpuNum %d\n", Index, CpuReadyCount, mHostContextCommon.CpuNum));
     while(InterlockedCompareExchange32(&CpuSynched, 0, 0) == 0)//( CpuReadyCount < mHostContextCommon.CpuNum)
     {
         // spin until all CPUs are synced
@@ -1285,6 +1307,6 @@ VOID CpuReadySync(UINT32 Index)
 	//	DEBUG((EFI_D_ERROR, "%ld CpuReadySync - CpuSynched set to 0\n", Index));
 	}
 	
-    //DEBUG((EFI_D_ERROR, "%ld CpuReadySync - Cpu Released - CpuReadyCount: %d, \n", Index, CpuReadyCount));//could cause problems
+   // DEBUG((EFI_D_ERROR, "%ld CpuReadySync - Cpu Released - CpuReadyCount: %d, \n", Index, CpuReadyCount));//could cause problems
 }
 

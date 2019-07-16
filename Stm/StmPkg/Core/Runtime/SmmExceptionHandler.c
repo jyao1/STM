@@ -33,5 +33,8 @@ SmmExceptionHandler (
   //
   // Should not return, issue TXT.RESET or system reset.
   //
+  DEBUG((EFI_D_ERROR, "%ld SmmExceptionHandler - no recovery for exception - dropping into CouDeadLoop\n", Index));
+  DumpVmcsAllField();
+  CpuDeadLoop ();
   StmTxtReset (STM_CRASH_PROTECTION_EXCEPTION);
 }

@@ -219,6 +219,8 @@ WriteSyncSmmStateSaveArea (
   // Basic info
   //
   if (CpuState->Smbase != mHostContextCommon.HostContextPerCpu[Index].Smbase) {
+	  DEBUG ((EFI_D_INFO, "%ld WriteSyncSmmStateSaveArea - Error - Smbase inconsistency CpuState: %08x HostContextPerCpu: %08x\n", 
+		  Index, CpuState->Smbase, mHostContextCommon.HostContextPerCpu[Index].Smbase));
     CpuDeadLoop ();
   }
   CpuState->SMMRevId = STM_SMM_REV_ID;

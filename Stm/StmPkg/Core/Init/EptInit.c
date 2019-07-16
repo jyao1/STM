@@ -571,7 +571,7 @@ EptInit (
   IA32_VMX_MISC_MSR             VmxMisc;
 
   AsmWbinvd ();
-  GetMtrr ();
+  //GetMtrr ();   // moved to InitializeSmmMonitor
   
   VmxMisc.Uint64 = AsmReadMsr64 (IA32_VMX_MISC_MSR_INDEX);
   if ((VmxMisc.Uint64 & BIT15) != 0) {
@@ -655,5 +655,6 @@ EptInit (
     EptPageAttributeSet
     );
  // EptDumpPageTable (&mGuestContextCommonSmm[SMI_HANDLER].EptPointer);
+  AsmWbinvd ();  // make sure all the table info gets flushed
   return ;
 }

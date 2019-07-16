@@ -138,6 +138,8 @@ DumpStmResource (
   IN STM_RSC   *Resource
   )
 {
+	if(Resource == 0)
+		return;
   while (Resource->Header.RscType != END_OF_RESOURCES) {
     DumpStmResourceNode (Resource);
     Resource = (STM_RSC *)((UINTN)Resource + Resource->Header.Length);
@@ -1899,6 +1901,10 @@ RegisterBiosResource (
   //
   // TBD: Need adjust resource protection according to BiosHwResourceRequirementsPtr (for EvtBiosAccessToUnclaimedResource).
   //
+
+  if(Resource == 0)
+	  return;
+
   while (Resource->Header.RscType != END_OF_RESOURCES) {
     RegisterBiosResourceNode (Resource);
     Resource = (STM_RSC *)((UINTN)Resource + Resource->Header.Length);

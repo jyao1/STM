@@ -121,14 +121,14 @@ StmHandlerSmm (
   Register->Rsp = VmReadN (VMCS_N_GUEST_RSP_INDEX);
   CopyMem (Reg, Register, sizeof(X86_REGISTER));//
 #if 0
-  DEBUG ((EFI_D_INFO, "!!!StmHandlerSmm - %d\n", (UINTN)Index));
+  DEBUG ((EFI_D_INFO, "%ld - !!!StmHandlerSmm\n", (UINTN)Index));
 #endif
   //
   // Dispatch
   //
   InfoBasic.Uint32 = VmRead32 (VMCS_32_RO_EXIT_REASON_INDEX);
   if (InfoBasic.Bits.Reason >= VmExitReasonMax) {
-    DEBUG ((EFI_D_ERROR, "!!!UnknownReason!!!\n"));
+    DEBUG ((EFI_D_ERROR, "%ld - StmHandlerSmm !!!UnknownReason!!!: %d\n", (UINTN)Index, InfoBasic.Bits.Reason));
     DumpVmcsAllField ();
 
     CpuDeadLoop ();
@@ -136,6 +136,9 @@ StmHandlerSmm (
   //
   // Call dispatch handler
   //
+
+   DEBUG ((EFI_D_ERROR, "%ld - StmHandlerSmm - calling handler reason: %d\n", (UINTN)Index, InfoBasic.Bits.Reason));
+
   mStmHandlerSmm[InfoBasic.Bits.Reason] (Index);
 
   VmWriteN (VMCS_N_GUEST_RSP_INDEX, Reg->Rsp); // sync RSP

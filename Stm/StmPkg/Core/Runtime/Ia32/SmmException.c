@@ -41,7 +41,9 @@ ResumeToBiosExceptionHandler (
   // Check valid
   //
   if (StmProtectionExceptionHandler->SpeRip == 0) {
-    DEBUG ((EFI_D_INFO, "SpeRip unsupported!\n"));
+    DEBUG ((EFI_D_INFO, "%ld ResumeToBiosExceptionHandler - exeception handling not supported by SMI Handler!\n", Index));
+	DumpVmcsAllField();
+	CpuDeadLoop();
     // Unsupported;
     return ;
   }

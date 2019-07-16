@@ -63,7 +63,7 @@ SmmIoHandler (
   Reg = &mGuestContextCommonSmm[VmType].GuestContextPerCpu[Index].Register;
 
   Qualification.UintN = VmReadN (VMCS_N_RO_EXIT_QUALIFICATION_INDEX);
-
+  //DEBUG((EFI_D_ERROR, "%ld SmmIoHandler entered\n", Index));
   if (Qualification.IoInstruction.Operand != 0) {
     Port = (UINT16)Qualification.IoInstruction.PortNum;
   } else {

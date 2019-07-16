@@ -38,7 +38,7 @@ SmmTeardown (
   AsmVmPtrStore (&mGuestContextCommonSmi.GuestContextPerCpu[Index].Vmcs);
   Rflags = AsmVmPtrLoad (&mGuestContextCommonSmm[VmType].GuestContextPerCpu[Index].Vmcs);
   if ((Rflags & (RFLAGS_CF | RFLAGS_ZF)) != 0) {
-    DEBUG ((EFI_D_ERROR, "ERROR: AsmVmPtrLoad(%d) - %016lx : %08x\n", (UINTN)Index, mGuestContextCommonSmm[VmType].GuestContextPerCpu[Index].Vmcs, Rflags));
+    DEBUG ((EFI_D_ERROR, "%ld ERROR: AsmVmPtrLoad - %016lx : %08x\n", (UINTN)Index, mGuestContextCommonSmm[VmType].GuestContextPerCpu[Index].Vmcs, Rflags));
     CpuDeadLoop ();
   }
 

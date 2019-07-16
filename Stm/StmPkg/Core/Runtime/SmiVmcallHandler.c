@@ -65,7 +65,7 @@ SmiVmcallStartHandler (
 
    GUEST_INTERRUPTIBILITY_STATE                 GuestInterruptibilityState;
 
-  DEBUG ((EFI_D_INFO, "%ld STM_API_START:\n", Index));
+  DEBUG ((EFI_D_INFO, "%ld SmiVmcallStartHandler - STM_API_START:\n", Index));
   if (!mGuestContextCommonSmm[SMI_HANDLER].GuestContextPerCpu[Index].Actived) {
     mGuestContextCommonSmm[SMI_HANDLER].GuestContextPerCpu[Index].Actived = TRUE;
     SmmSetup (Index);
@@ -82,8 +82,10 @@ SmiVmcallStartHandler (
 		GuestInterruptibilityState.Uint32 = VmRead32 (VMCS_32_GUEST_INTERRUPTIBILITY_STATE_INDEX);
         GuestInterruptibilityState.Bits.BlockingBySmi = 0;
 		VmWrite32 (VMCS_32_GUEST_INTERRUPTIBILITY_STATE_INDEX, GuestInterruptibilityState.Uint32);
-
-    } 
+    }
+#if 0
+	DumpVmcsAllField();
+#endif
     return STM_SUCCESS;
   } else {
 	  DEBUG((EFI_D_ERROR, "%d STM_API_START -- Error STM already started\n", (UINTN) Index));
@@ -149,17 +151,17 @@ SmiVmcallProtectResourceHandler (
 
   // ECX:EBX - STM_RESOURCE_LIST
   AcquireSpinLock (&mHostContextCommon.SmiVmcallLock);
-  DEBUG ((EFI_D_INFO, "STM_API_PROTECT_RESOURCE:\n"));
+  DEBUG ((EFI_D_INFO, "%ld STM_API_PROTECT_RESOURCE:\n", Index));
 
   // BiosHwResourceRequirementsPtr to local BiosResource, delay it to first ProtectResource VMCALL, because BIOS may change resource at runtime.
   if (mGuestContextCommonSmm[SMI_HANDLER].BiosHwResourceRequirementsPtr == 0) {
-    if (!IsResourceListValid ((STM_RSC *)(UINTN)mHostContextCommon.HostContextPerCpu[0].TxtProcessorSmmDescriptor->BiosHwResourceRequirementsPtr, FALSE)) {
-      ReleaseSpinLock (&mHostContextCommon.SmiVmcallLock);
-	  DEBUG ((EFI_D_ERROR, "ValidateBiosResourceList fail!\n"));
-      return ERROR_STM_MALFORMED_RESOURCE_LIST;
-    }
-    mGuestContextCommonSmm[SMI_HANDLER].BiosHwResourceRequirementsPtr = (UINT64)(UINTN)DuplicateResource ((STM_RSC *)(UINTN)mHostContextCommon.HostContextPerCpu[0].TxtProcessorSmmDescriptor->BiosHwResourceRequirementsPtr);
-    RegisterBiosResource ((STM_RSC *)(UINTN)mGuestContextCommonSmm[SMI_HANDLER].BiosHwResourceRequirementsPtr);
+		if (!IsResourceListValid ((STM_RSC *)(UINTN)mHostContextCommon.HostContextPerCpu[0].TxtProcessorSmmDescriptor->BiosHwResourceRequirementsPtr, FALSE)) {
+			ReleaseSpinLock (&mHostContextCommon.SmiVmcallLock);
+			DEBUG ((EFI_D_ERROR, "%ld SmiVmcallProtectResourceHandler - ValidateBiosResourceList fail!\n", Index));
+			return ERROR_STM_MALFORMED_RESOURCE_LIST;
+	  }
+   mGuestContextCommonSmm[SMI_HANDLER].BiosHwResourceRequirementsPtr = (UINT64)(UINTN)DuplicateResource ((STM_RSC *)(UINTN)mHostContextCommon.HostContextPerCpu[0].TxtProcessorSmmDescriptor->BiosHwResourceRequirementsPtr);
+   RegisterBiosResource ((STM_RSC *)(UINTN)mGuestContextCommonSmm[SMI_HANDLER].BiosHwResourceRequirementsPtr);
   }
 
   //
@@ -289,23 +291,23 @@ SmiVmcallGetBiosResourcesHandler (
   // ECX:EBX - STM_RESOURCE_LIST
   // EDX: PageCount
   AcquireSpinLock (&mHostContextCommon.SmiVmcallLock);
-  DEBUG ((EFI_D_INFO, "STM_API_GET_BIOS_RESOURCES:\n"));
+  DEBUG ((EFI_D_INFO, "%ld STM_API_GET_BIOS_RESOURCES:\n", Index));
 
   // BiosHwResourceRequirementsPtr to local BiosResource, delay it to first ProtectResource VMCALL, because BIOS may change resource at runtime.
   if (mGuestContextCommonSmm[SMI_HANDLER].BiosHwResourceRequirementsPtr == 0) {
-    if (!IsResourceListValid ((STM_RSC *)(UINTN)mHostContextCommon.HostContextPerCpu[0].TxtProcessorSmmDescriptor->BiosHwResourceRequirementsPtr, FALSE)) {
-      DEBUG ((EFI_D_ERROR, "ValidateBiosResourceList fail!\n"));
-      ReleaseSpinLock (&mHostContextCommon.SmiVmcallLock);
-      return ERROR_STM_MALFORMED_RESOURCE_LIST;
+	  if (!IsResourceListValid ((STM_RSC *)(UINTN)mHostContextCommon.HostContextPerCpu[0].TxtProcessorSmmDescriptor->BiosHwResourceRequirementsPtr, FALSE)) {
+		  DEBUG ((EFI_D_ERROR, "%ld SmiVmcallGetBiosResourcesHandler - ValidateBiosResourceList fail!\n", Index));
+		  ReleaseSpinLock (&mHostContextCommon.SmiVmcallLock);
+		return ERROR_STM_MALFORMED_RESOURCE_LIST;
     }
-    mGuestContextCommonSmm[SMI_HANDLER].BiosHwResourceRequirementsPtr = (UINT64)(UINTN)DuplicateResource ((STM_RSC *)(UINTN)mHostContextCommon.HostContextPerCpu[0].TxtProcessorSmmDescriptor->BiosHwResourceRequirementsPtr);
+	mGuestContextCommonSmm[SMI_HANDLER].BiosHwResourceRequirementsPtr = (UINT64)(UINTN)DuplicateResource ((STM_RSC *)(UINTN)mHostContextCommon.HostContextPerCpu[0].TxtProcessorSmmDescriptor->BiosHwResourceRequirementsPtr);
     RegisterBiosResource ((STM_RSC *)(UINTN)mGuestContextCommonSmm[SMI_HANDLER].BiosHwResourceRequirementsPtr);
   }
 
   PageNum = (UINT32)Reg->Rdx;
 
   if (!IsGuestAddressValid ((UINTN)AddressParameter, STM_PAGES_TO_SIZE(PageNum + 1), TRUE)) {
-    DEBUG ((EFI_D_ERROR, "Security Violation!\n"));
+    DEBUG ((EFI_D_ERROR, "%ld Security Violation!\n", Index));
     ReleaseSpinLock (&mHostContextCommon.SmiVmcallLock);
     return ERROR_STM_SECURITY_VIOLATION;
   }
@@ -317,14 +319,14 @@ SmiVmcallGetBiosResourcesHandler (
     return ERROR_STM_SECURITY_VIOLATION;
   }
 
-  DEBUG ((EFI_D_INFO, "BiosResource (%d) - %016lx(%08x), PageCount - %d\n", (UINTN)Index, (UINT64)(UINTN)BiosResource, (UINTN)BiosResourceSize, (UINTN)PageNum));
+  DEBUG ((EFI_D_INFO, "%ld BiosResource - %016lx(%08x), PageCount - %d\n", (UINTN)Index, (UINT64)(UINTN)BiosResource, (UINTN)BiosResourceSize, (UINTN)PageNum));
 //  DumpStmResource (BiosResource);
 
   ReleaseSpinLock (&mHostContextCommon.SmiVmcallLock);
 
   if (PageNum >= STM_SIZE_TO_PAGES (BiosResourceSize)) {
     WriteUnaligned32 ((UINT32 *)&Reg->Rdx, 0);
-	DEBUG((EFI_D_INFO, "SmiVmcallGetBiosResourcesHandler - ERROR_STM_PAGE_NOT_FOUND - writing 0 to 0x%x\n", &Reg->Rdx));
+	DEBUG((EFI_D_INFO, "%ld SmiVmcallGetBiosResourcesHandler - ERROR_STM_PAGE_NOT_FOUND - writing 0 to 0x%x\n", Index, &Reg->Rdx));
     return ERROR_STM_PAGE_NOT_FOUND;
   }
   // Write data
@@ -985,7 +987,7 @@ SmiVmcallHandler (
   UINT64                             AddressParameter;
 
   Reg = &mGuestContextCommonSmi.GuestContextPerCpu[Index].Register;
-
+  DEBUG((EFI_D_ERROR, "%ld SmiVmcallHandler - entered\n", Index));
   StmVmcallHandler = GetSmiVmcallHandlerByIndex (ReadUnaligned32 ((UINT32 *)&Reg->Rax));
   if (StmVmcallHandler == NULL) {
     DEBUG ((EFI_D_INFO, "%ld SmiVmcallHandler - GetSmiVmcallHandlerByIndex - %x!\n", Index, (UINTN)ReadUnaligned32 ((UINT32 *)&Reg->Rax)));
@@ -998,7 +1000,7 @@ SmiVmcallHandler (
   } else {
     AddressParameter = ReadUnaligned32 ((UINT32 *)&Reg->Rbx) + LShiftU64 (ReadUnaligned32 ((UINT32 *)&Reg->Rcx), 32);
     Status = StmVmcallHandler (Index, AddressParameter);
-	DEBUG((EFI_D_ERROR, " %ld SmiVmcallHandler done, Status: %x\n", Index, Status));
+	DEBUG((EFI_D_ERROR, "%ld SmiVmcallHandler done, Status: %x\n", Index, Status));
   }
 
   if (Status == STM_SUCCESS) {

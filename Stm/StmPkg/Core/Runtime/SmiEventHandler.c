@@ -33,20 +33,21 @@ SmiEventHandler (
     UINT64                         ExecutiveVmcsPtr;
     UINT64                         VmcsLinkPtr;
     UINT32                         VmcsSize;
-    
+    /***DEBUG***/ DEBUG((EFI_D_ERROR, "%ld SmiEventHandler Entered\n", Index));
     if (!mGuestContextCommonSmm[SMI_HANDLER].GuestContextPerCpu[Index].Actived) {
+		 /***DEBUG***/ DEBUG((EFI_D_ERROR, "%ld SmiEventHandler - not Actived...\n", Index));
         return ;
     }
-    
+
     VmcsSize = GetVmcsSize();
     ExecutiveVmcsPtr = VmRead64 (VMCS_64_CONTROL_EXECUTIVE_VMCS_PTR_INDEX);
     if ((ExecutiveVmcsPtr + VmcsSize > (UINTN)mHostContextCommon.TsegBase) &&
         (ExecutiveVmcsPtr < ((UINTN)mHostContextCommon.TsegBase + mHostContextCommon.TsegLength))) {
         // Overlap TSEG
-        DEBUG ((EFI_D_ERROR, "SmiEventHandler - ExecutiveVmcsPtr violation (SmiEventHandler) - %016lx\n", ExecutiveVmcsPtr));
+        DEBUG ((EFI_D_ERROR, "%ld SmiEventHandler - ExecutiveVmcsPtr violation (SmiEventHandler) - %016lx\n", Index, ExecutiveVmcsPtr));
         return ;
     }
-    
+ 
     VmcsLinkPtr = VmRead64 (VMCS_64_GUEST_VMCS_LINK_PTR_INDEX);
     if ((VmcsLinkPtr + VmcsSize > (UINTN)mHostContextCommon.TsegBase) &&
         (VmcsLinkPtr < ((UINTN)mHostContextCommon.TsegBase + mHostContextCommon.TsegLength))) {
@@ -54,17 +55,19 @@ SmiEventHandler (
         DEBUG ((EFI_D_ERROR, "SmiEventHandler - VmcsLinkPtr violation (SmiEventHandler) - %016lx\n", VmcsLinkPtr));
         return ;
     }
-    
+
     STM_PERF_START (Index, 0, "WriteSyncSmmStateSaveArea", "SmiEventHandler");
     WriteSyncSmmStateSaveArea (Index);
     STM_PERF_END (Index, "WriteSyncSmmStateSaveArea", "SmiEventHandler");
-    
+
     if(PeSmiHandler(Index) == 1)
     {
         return;
     }
-    
-    AsmVmPtrStore (&mGuestContextCommonSmi.GuestContextPerCpu[Index].Vmcs);
+#if 0
+		DEBUG((EFI_D_ERROR, "%ld SmiEventHandler - Starting SMI handler\n", Index));
+#endif
+	AsmVmPtrStore (&mGuestContextCommonSmi.GuestContextPerCpu[Index].Vmcs);
     Rflags = AsmVmPtrLoad (&mGuestContextCommonSmm[SMI_HANDLER].GuestContextPerCpu[Index].Vmcs);
     if ((Rflags & (RFLAGS_CF | RFLAGS_ZF)) != 0) {
         DEBUG ((EFI_D_ERROR, "ERROR: AsmVmPtrLoad(%d) - %016lx : %08x\n", (UINTN)Index, mGuestContextCommonSmm[SMI_HANDLER].GuestContextPerCpu[Index].Vmcs, Rflags));
@@ -74,9 +77,9 @@ SmiEventHandler (
     VmWriteN (VMCS_N_GUEST_RIP_INDEX, (UINTN)mHostContextCommon.HostContextPerCpu[Index].TxtProcessorSmmDescriptor->SmmSmiHandlerRip);
     VmWriteN (VMCS_N_GUEST_RSP_INDEX, (UINTN)mHostContextCommon.HostContextPerCpu[Index].TxtProcessorSmmDescriptor->SmmSmiHandlerRsp);
     VmWriteN (VMCS_N_GUEST_CR3_INDEX, mGuestContextCommonSmm[SMI_HANDLER].GuestContextPerCpu[Index].Cr3);
-#if 0
+#if 0 
     DEBUG ((EFI_D_INFO, "!!!Enter SmmHandler - %d\n", (UINTN)Index));
-#endif
+#endif 
     
     STM_PERF_START (Index, 0, "BiosSmmHandler", "SmiEventHandler");
     
