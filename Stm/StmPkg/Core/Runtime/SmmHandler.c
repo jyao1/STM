@@ -62,9 +62,15 @@ UnknownHandlerSmm (
   IN UINT32 Index
   )
 {
+	UINT32 ExitReason;
   AcquireSpinLock (&mHostContextCommon.DebugLock);
 
-  DEBUG ((EFI_D_ERROR, "!!!UnknownHandlerSmm - %d\n", (UINTN)Index));
+
+  DEBUG ((EFI_D_ERROR, "%ld !!!UnknownHandlerSmm\n", (UINTN)Index));
+
+  ExitReason = VmRead32 (VMCS_32_RO_EXIT_REASON_INDEX);
+  DEBUG((EFI_D_ERROR, "%ld  UnknownHandlerSmm - VMExit Reason: 0x%08x\n", ExitReason));
+
   DumpVmcsAllField ();
   DumpRegContext(&mGuestContextCommonSmm[SMI_HANDLER].GuestContextPerCpu[Index].Register);
   DumpGuestStack(Index);
@@ -107,7 +113,7 @@ StmHandlerSmm (
   X86_REGISTER        *Reg;
   UINT32			  VmType;
   UINT32              pIndex;
-
+ 
   Index = ApicToIndex (ReadLocalApicId ());
   VmType = mHostContextCommon.HostContextPerCpu[Index].GuestVmType;  // any VmType other than SMI_HANDLER is a PeVm
   if(VmType != SMI_HANDLER)
@@ -115,11 +121,11 @@ StmHandlerSmm (
   else
 	  pIndex = Index;
 
-  STM_PERF_END (Index, "BiosSmmHandler", "StmHandlerSmm");
+ //// STM_PERF_END (Index, "BiosSmmHandler", "StmHandlerSmm");
 
   Reg = &mGuestContextCommonSmm[VmType].GuestContextPerCpu[pIndex].Register;
   Register->Rsp = VmReadN (VMCS_N_GUEST_RSP_INDEX);
-  CopyMem (Reg, Register, sizeof(X86_REGISTER));//
+  CopyMem (Reg, Register, sizeof(X86_REGISTER));
 #if 0
   DEBUG ((EFI_D_INFO, "%ld - !!!StmHandlerSmm\n", (UINTN)Index));
 #endif
@@ -137,21 +143,20 @@ StmHandlerSmm (
   // Call dispatch handler
   //
 
-   DEBUG ((EFI_D_ERROR, "%ld - StmHandlerSmm - calling handler reason: %d\n", (UINTN)Index, InfoBasic.Bits.Reason));
+  //DEBUG ((EFI_D_ERROR, "%ld - StmHandlerSmm - calling handler reason: %d\n", (UINTN)Index, InfoBasic.Bits.Reason));
 
   mStmHandlerSmm[InfoBasic.Bits.Reason] (Index);
 
   VmWriteN (VMCS_N_GUEST_RSP_INDEX, Reg->Rsp); // sync RSP
 
-  STM_PERF_START (Index, InfoBasic.Bits.Reason, "BiosSmmHandler", "StmHandlerSmm");
-
+  ////STM_PERF_START (Index, InfoBasic.Bits.Reason, "BiosSmmHandler", "StmHandlerSmm");
   //
   // Resume
   //
   Rflags = AsmVmResume (&mGuestContextCommonSmm[VmType].GuestContextPerCpu[pIndex].Register);
   // BUGBUG: - AsmVmLaunch if AsmVmResume fail
   if (VmRead32 (VMCS_32_RO_VM_INSTRUCTION_ERROR_INDEX) == VmxFailErrorVmResumeWithNonLaunchedVmcs) {
-//    DEBUG ((EFI_D_ERROR, "(STM):-(\n", (UINTN)Index));
+   DEBUG ((EFI_D_ERROR, "(STM):-(\n", (UINTN)Index));
     Rflags = AsmVmLaunch (&mGuestContextCommonSmm[VmType].GuestContextPerCpu[pIndex].Register);
   }
 

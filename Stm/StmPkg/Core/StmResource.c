@@ -1434,8 +1434,9 @@ RegisterProtectedResourceNode (
     return ;
   }
   switch (Resource->Header.RscType) {
-  case MEM_RANGE:
   case MMIO_RANGE:
+	  DEBUG((EFI_D_ERROR, "***DEBUG*** Setting MMIO (Protected Resource) range\n"));
+  case MEM_RANGE:
     EPTSetPageAttributeRange (
      mGuestContextCommonSmm[SMI_HANDLER].EptPointer.Uint64,
       Resource->Mem.Base,
@@ -1444,7 +1445,8 @@ RegisterProtectedResourceNode (
       ((Resource->Mem.RWXAttributes & STM_RSC_MEM_R) != 0) ? 0 : 1,
       ((Resource->Mem.RWXAttributes & STM_RSC_MEM_W) != 0) ? 0 : 1,
       ((Resource->Mem.RWXAttributes & STM_RSC_MEM_X) != 0) ? 0 : 1,
-      EptPageAttributeSet
+      EptPageAttributeAnd,
+	  -1
       );
     Resource->Header.ReturnStatus = 1;
     break;
@@ -1476,7 +1478,8 @@ RegisterProtectedResourceNode (
         ((Resource->PciCfg.RWAttributes & STM_RSC_PCI_CFG_R) != 0) ? 0 : 1,
         ((Resource->PciCfg.RWAttributes & STM_RSC_PCI_CFG_W) != 0) ? 0 : 1,
         0,
-        EptPageAttributeSet
+        EptPageAttributeAnd,
+		0    //uncachable
         );
     }
     Resource->Header.ReturnStatus = 1;
@@ -1548,7 +1551,8 @@ UnRegisterProtectedResourceNode (
       ((Resource->Mem.RWXAttributes & STM_RSC_MEM_R) != 0) ? 1 : 0,
       ((Resource->Mem.RWXAttributes & STM_RSC_MEM_W) != 0) ? 1 : 0,
       ((Resource->Mem.RWXAttributes & STM_RSC_MEM_X) != 0) ? 1 : 0,
-      EptPageAttributeOr
+      EptPageAttributeOr,
+	  -1
       );
     Resource->Header.ReturnStatus = 1;
     break;
@@ -1579,7 +1583,8 @@ UnRegisterProtectedResourceNode (
         ((Resource->PciCfg.RWAttributes & STM_RSC_PCI_CFG_R) != 0) ? 1 : 0,
         ((Resource->PciCfg.RWAttributes & STM_RSC_PCI_CFG_W) != 0) ? 1 : 0,
         0,
-        EptPageAttributeOr
+        EptPageAttributeOr,
+		0   // uncachable
         );
     }
     Resource->Header.ReturnStatus = 1;
@@ -1818,6 +1823,7 @@ RegisterBiosResourceNode (
 {
   UINT8   LastNodeBus;
   UINT64  PciExpressDeviceBase;
+  INT32   MemType = -1; // default memory type
 
   if (Resource->Header.IgnoreResource != 0) {
     return ;
@@ -1833,8 +1839,9 @@ RegisterBiosResourceNode (
       }
     }
     break;
-  case MEM_RANGE:
   case MMIO_RANGE:
+	  MemType = 0;  // set MMIO memory as UC
+  case MEM_RANGE:
 	  EPTSetPageAttributeRange (
      mGuestContextCommonSmm[SMI_HANDLER].EptPointer.Uint64,
       Resource->Mem.Base,
@@ -1843,7 +1850,8 @@ RegisterBiosResourceNode (
       ((Resource->Mem.RWXAttributes & STM_RSC_MEM_R) == STM_RSC_MEM_R) ? 1 : 0,
       ((Resource->Mem.RWXAttributes & STM_RSC_MEM_W) == STM_RSC_MEM_W) ? 1 : 0,
       ((Resource->Mem.RWXAttributes & STM_RSC_MEM_X) == STM_RSC_MEM_X) ? 1 : 0,
-      EptPageAttributeSet
+      EptPageAttributeSet,
+	  MemType
       );
     Resource->Header.ReturnStatus = 1;
     break;
@@ -1852,6 +1860,7 @@ RegisterBiosResourceNode (
   case PCI_CFG_RANGE:
 	  SetIoBitmapRange (0xCF8, 1);
     SetIoBitmapRange (0xCFC, 4);
+	 DEBUG((EFI_D_ERROR, "***DEBUG*** Setting PCI_CFG_RANGE (BIOS Resource) range\n"));
     // STM_RSC_BGI is NOT supported in this version
     if (mHostContextCommon.PciExpressBaseAddress != 0) {
       LastNodeBus = GetLastNodeBus (Resource);
@@ -1864,7 +1873,8 @@ RegisterBiosResourceNode (
         ((Resource->PciCfg.RWAttributes & STM_RSC_PCI_CFG_R) == STM_RSC_PCI_CFG_R) ? 1 : 0,
         ((Resource->PciCfg.RWAttributes & STM_RSC_PCI_CFG_W) == STM_RSC_PCI_CFG_W) ? 1 : 0,
         0,
-        EptPageAttributeSet
+        EptPageAttributeSet,
+		0  // UC memory type
         );
     }
     Resource->Header.ReturnStatus = 1;

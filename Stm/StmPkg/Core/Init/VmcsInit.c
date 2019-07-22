@@ -15,7 +15,7 @@
 #include "StmInit.h"
 #include "PeStm.h"
 
-#define COREBOOT32       // coreboot support
+//#define COREBOOT32       // coreboot support
 /**
 
   This function initialize VMCS for SMI.

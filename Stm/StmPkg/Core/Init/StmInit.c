@@ -737,8 +737,6 @@ BspInit (
       EFI_ACPI_DESCRIPTION_HEADER                   *Xsdt;
 
 	  mHostContextCommon.AcpiRsdp = TxtProcessorSmmDescriptor->AcpiRsdp;
-	  /***DEBUG***/ DEBUG((EFI_D_INFO, "TxtProcessorSmmDescriptor->AcpiRsdp : 0x%016llx (0x%016llx)\n", 
-		  &TxtProcessorSmmDescriptor->AcpiRsdp,  TxtProcessorSmmDescriptor->AcpiRsdp));
       Rsdp = FindAcpiRsdPtr ();
       DEBUG ((EFI_D_INFO, "Rsdp - %08x\n", Rsdp));
 	  if (Rsdp == NULL) {
@@ -971,7 +969,7 @@ BspInit (
   InitStmHandlerSmm ();
 
   InitPe();                    // Initialize protected execution
-  STM_PERF_INIT;
+  //STM_PERF_INIT;
 
   //
   // Initialization done
@@ -1017,7 +1015,7 @@ ApInit (
   
   InterlockedIncrement (&mHostContextCommon.JoinedCpuNum);
 
-  DEBUG ((EFI_D_INFO, "%ld Register - %08x\n", (UINTN)Index, Register));
+  //DEBUG ((EFI_D_INFO, "%ld Register - %08x\n", (UINTN)Index, Register));
   Reg = &mGuestContextCommonSmi.GuestContextPerCpu[Index].Register;
   Register->Rsp = VmReadN (VMCS_N_GUEST_RSP_INDEX);
   CopyMem (Reg, Register, sizeof(X86_REGISTER));
@@ -1262,11 +1260,12 @@ InitializeSmmMonitor (
     Index = GetIndexFromStack (Register);
     ApInit (Index, Register);
   }
-  PrintSmiEnRegister(Index);    /* debug*/
+  //PrintSmiEnRegister(Index);    /* debug*/
   CommonInit (Index);
 
   VmcsInit (Index);
-   PrintSmiEnRegister(Index);   /* DEBUG*/
+   //
+  PrintSmiEnRegister(Index);   /* DEBUG*/
     AsmWbinvd();  // flush caches
   LaunchBack (Index);
   return ;

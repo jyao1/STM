@@ -63,7 +63,6 @@ SmmIoHandler (
   Reg = &mGuestContextCommonSmm[VmType].GuestContextPerCpu[Index].Register;
 
   Qualification.UintN = VmReadN (VMCS_N_RO_EXIT_QUALIFICATION_INDEX);
-  //DEBUG((EFI_D_ERROR, "%ld SmmIoHandler entered\n", Index));
   if (Qualification.IoInstruction.Operand != 0) {
     Port = (UINT16)Qualification.IoInstruction.PortNum;
   } else {
@@ -71,6 +70,7 @@ SmmIoHandler (
   }
   DataPtr = (UINTN *)&Reg->Rax;
 
+ // DEBUG ((EFI_D_ERROR, "%ld SmmIoHandler - Port 0x%x DataPtr 0x%x\n", Index, Port, DataPtr));
   //
   // We need handle case that CF9 is protected, but CF8, CFC need to be pass-through.
   // But DWORD CF8 programming will be caught here.
@@ -78,7 +78,7 @@ SmmIoHandler (
   //
   IoDesc = GetStmResourceIo (mHostContextCommon.MleProtectedResource.Base, Port);
   if (IoDesc != NULL) {
-    DEBUG ((EFI_D_ERROR, "IO violation!\n"));
+    DEBUG ((EFI_D_ERROR, "%ld SmmIoHandler - IO violation!\n", Index));
     AddEventLogForResource (EvtHandledProtectionException, (STM_RSC *)IoDesc);
     SmmExceptionHandler (Index);
     CpuDeadLoop ();
@@ -86,6 +86,7 @@ SmmIoHandler (
 
   IoDesc = GetStmResourceIo ((STM_RSC *)(UINTN)mGuestContextCommonSmm[VmType].BiosHwResourceRequirementsPtr, Port);
   if (IoDesc == NULL) {
+	DEBUG ((EFI_D_ERROR, "%ld SmmIoHandler - IODesc is NULL - BIOS did not claim\n", Index));
     ZeroMem (&LocalIoDesc, sizeof(LocalIoDesc));
     LocalIoDesc.Hdr.RscType = IO_RANGE;
     LocalIoDesc.Hdr.Length = sizeof(LocalIoDesc);
@@ -138,7 +139,9 @@ SmmIoHandler (
                    (Qualification.IoInstruction.Direction != 0) ? STM_RSC_PCI_CFG_R : STM_RSC_PCI_CFG_W
                    );
     if (PciCfgDesc == NULL) {
-      DEBUG((EFI_D_ERROR, "Add unclaimed PCI_RSC!: Port: 0x%x PciAddress 0x%x Bus: 0x%x Device: 0x%x Function: 0x%x Register: 0x%x Direction: 0x%x\n",
+#if 0   // StmReseource.c does not create an entry for this - leave out because it generates a lot of output
+      DEBUG((EFI_D_ERROR, "%ld - Add unclaimed PCI_RSC!: Port: 0x%x PciAddress 0x%x Bus: 0x%x Device: 0x%x Function: 0x%x Register: 0x%x Direction: 0x%x\n",
+				   Index,
 		           Port,
 				   PciAddress,
 				   BUS_FROM_CF8_ADDRESS(PciAddress),
@@ -146,6 +149,7 @@ SmmIoHandler (
                    FUNCTION_FROM_CF8_ADDRESS(PciAddress),
                    REGISTER_FROM_CF8_ADDRESS(PciAddress) + (Port & 0x3),
                    (Qualification.IoInstruction.Direction != 0) ? STM_RSC_PCI_CFG_R : STM_RSC_PCI_CFG_W));
+#endif
       LocalPciCfgDescPtr = (STM_RSC_PCI_CFG_DESC *)LocalPciCfgDescBuf;
       ZeroMem (LocalPciCfgDescBuf, sizeof(LocalPciCfgDescBuf));
       LocalPciCfgDescPtr->Hdr.RscType = PCI_CFG_RANGE;
@@ -161,6 +165,27 @@ SmmIoHandler (
       LocalPciCfgDescPtr->PciDevicePath[0].PciFunction = FUNCTION_FROM_CF8_ADDRESS(PciAddress);
       LocalPciCfgDescPtr->PciDevicePath[0].PciDevice = DEVICE_FROM_CF8_ADDRESS(PciAddress);
       AddEventLogForResource (EvtBiosAccessToUnclaimedResource, (STM_RSC *)LocalPciCfgDescPtr);
+	  // give it BIOS since the MLE did not claim
+	  //bug,bug need to officially add it to the BIOS resource list
+
+	    SetIoBitmapRange (0xCF8, 1);
+		SetIoBitmapRange (0xCFC, 4);
+
+	  if(EPTSetPageAttributeRange (
+					mGuestContextCommonSmm[SMI_HANDLER].EptPointer.Uint64,
+					PciAddress & ~(0x00000FFF),
+					SIZE_4KB,
+					PciAddress & ~(0x00000FFF),
+					((LocalPciCfgDescPtr->RWAttributes & STM_RSC_MEM_R) != 0) ? 0 : 1,
+					((LocalPciCfgDescPtr->RWAttributes & STM_RSC_MEM_W) != 0) ? 0 : 1,
+					0,
+					EptPageAttributeSet,
+					0   // uncachable
+					) != 0)
+				{
+					DEBUG((EFI_D_ERROR, "%ld SmmEPTViolationHandler - STM ERROR unable to add resource to EPT map\n", Index));
+					CpuDeadLoop ();
+				}
     }
   }
 
@@ -179,16 +204,15 @@ SmmIoHandler (
       VmWriteN (VMCS_N_GUEST_RIP_INDEX, VmReadN(VMCS_N_GUEST_RIP_INDEX) + VmRead32(VMCS_32_RO_VMEXIT_INSTRUCTION_LENGTH_INDEX));
       return ;
     }
-  }
+  } 
 
   if (Qualification.IoInstruction.String != 0) {
-    LinearAddr = VmReadN (VMCS_N_RO_GUEST_LINEAR_ADDR_INDEX);
+	  LinearAddr = VmReadN (VMCS_N_RO_GUEST_LINEAR_ADDR_INDEX);
     if (VmReadN (VMCS_N_GUEST_CR0_INDEX) & CR0_PG) {
       DataPtr = (UINTN *)(UINTN)GuestLinearToHostPhysical (Index, LinearAddr);
     } else {
       DataPtr = (UINTN *)LinearAddr;
     }
-
     if ((VmReadN (VMCS_N_GUEST_RFLAGS_INDEX) & RFLAGS_DF) != 0) {
       if (Qualification.IoInstruction.Direction != 0) {
         Reg->Rdi -= Qualification.IoInstruction.Size + 1;
@@ -203,8 +227,8 @@ SmmIoHandler (
       }
     }
   }
-
-  if (Qualification.IoInstruction.Direction != 0) { // IN
+  if (Qualification.IoInstruction.Direction != 0) {
+	  LinearAddr = VmReadN (VMCS_N_RO_GUEST_LINEAR_ADDR_INDEX);
     switch (Qualification.IoInstruction.Size) {
     case 0:
       *(UINT8 *)DataPtr = IoRead8 (Port);
@@ -239,11 +263,10 @@ SmmIoHandler (
       break;
     }
   }
-
   if ((Port == 0xCF8) || ((Port >= 0xCFC) && (Port <= 0xCFF))) {
     ReleaseSpinLock (&mHostContextCommon.PciLock);
   }
-  DEBUG ((EFI_D_INFO, "!!!IoHandler!!!\n"));
+  DEBUG ((EFI_D_INFO, "%ld - !!!IoHandler error !!!\n", Index));
   DumpVmcsAllField ();
 
   CpuDeadLoop ();
@@ -257,7 +280,6 @@ Ret:
     Reg->Rcx --;
     return ;
   }
-
   VmWriteN (VMCS_N_GUEST_RIP_INDEX, VmReadN(VMCS_N_GUEST_RIP_INDEX) + VmRead32(VMCS_32_RO_VMEXIT_INSTRUCTION_LENGTH_INDEX));
   return ;
 }

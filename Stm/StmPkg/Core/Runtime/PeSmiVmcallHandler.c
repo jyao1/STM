@@ -203,7 +203,8 @@ STM_STATUS AddPeVm(UINT32 CpuIndex, PE_MODULE_INFO * callerDataStructure, UINT32
 		TRUE,       /*read*/
 		TRUE,       /*write*/
 		FALSE,       /*execute*/
-		EptPageAttributeSet);
+		EptPageAttributeSet,
+		-1);
 
 	if(rc2 != STM_SUCCESS) {
 		DEBUG((EFI_D_ERROR, "%ld AddPeVm - Unable to map shared page into Prot Exec VM\n", CpuIndex));
@@ -243,7 +244,8 @@ STM_STATUS AddPeVm(UINT32 CpuIndex, PE_MODULE_INFO * callerDataStructure, UINT32
 			TRUE,       /* READ */
 			FALSE,       /* write */
 			FALSE,       /* Execute */
-			EptPageAttributeSet);
+			EptPageAttributeSet,
+			-1);
 
 		if (rc3 != STM_SUCCESS)
 		{
@@ -290,7 +292,8 @@ STM_STATUS AddPeVm(UINT32 CpuIndex, PE_MODULE_INFO * callerDataStructure, UINT32
 					TRUE,       /* READ */
 					FALSE,       /* write */
 					FALSE,       /* Execute */
-					EptPageAttributeSet);
+					EptPageAttributeSet,
+					-1);
 
 				if (rc3 != STM_SUCCESS)
 				{
@@ -336,7 +339,8 @@ STM_STATUS AddPeVm(UINT32 CpuIndex, PE_MODULE_INFO * callerDataStructure, UINT32
 		TRUE,     /* read */
 		FALSE,     /* write */
 		FALSE,    /* execute */
-		EptPageAttributeSet);
+		EptPageAttributeSet,
+		-1);
 
 	if(rc1 != STM_SUCCESS)
 	{
@@ -449,7 +453,8 @@ STM_STATUS setupModulepages(UINT32 PeType, UINT32 CpuIndex)
 			TRUE,  /* read */
 			TRUE,  /* write */
 			FALSE, /* execute */
-			EptPageAttributeSet);
+			EptPageAttributeSet,
+			-1);
 
 		if(rc1 != RETURN_SUCCESS)
 		{
@@ -485,7 +490,8 @@ STM_STATUS setupModulepages(UINT32 PeType, UINT32 CpuIndex)
 		TRUE,       /* READ */
 		TRUE,       /* write */
 		TRUE,       /* Execute */
-		EptPageAttributeSet);
+		EptPageAttributeSet,
+		-1);
 
 	if(rc1 != RETURN_SUCCESS)
 	{
@@ -541,7 +547,8 @@ STM_STATUS setupModulepages(UINT32 PeType, UINT32 CpuIndex)
 			TRUE,     /* read */
 			TRUE,     /* write */
 			ExecuteHeap,    /* execute */
-			EptPageAttributeSet);
+			EptPageAttributeSet,
+			-1);
 
 		if(rc1 != RETURN_SUCCESS)
 		{

@@ -33,9 +33,9 @@ SmiEventHandler (
     UINT64                         ExecutiveVmcsPtr;
     UINT64                         VmcsLinkPtr;
     UINT32                         VmcsSize;
-    /***DEBUG***/ DEBUG((EFI_D_ERROR, "%ld SmiEventHandler Entered\n", Index));
+
     if (!mGuestContextCommonSmm[SMI_HANDLER].GuestContextPerCpu[Index].Actived) {
-		 /***DEBUG***/ DEBUG((EFI_D_ERROR, "%ld SmiEventHandler - not Actived...\n", Index));
+		 //DEBUG((EFI_D_ERROR, "%ld SmiEventHandler - not Actived...\n", Index));
         return ;
     }
 

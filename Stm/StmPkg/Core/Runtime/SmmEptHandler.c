@@ -183,7 +183,7 @@ GetPageTableEntry (
 				((PhyAddress & PAGING_2M_MASK) == 0) &&
 				(PhySize > PAGING_2M_MASK))
   {
-	  DEBUG((EFI_D_INFO, "GetPageTableEntry: replacing L1PageTable: 0x%llx with superpage\n",  L2PageTable[Index2].Uint64));
+	  //DEBUG((EFI_D_INFO, "GetPageTableEntry: replacing L1PageTable: 0x%llx with superpage\n",  L2PageTable[Index2].Uint64));
 	  FreePages((UINT64 *)((UINTN)(L2PageTable[Index2].Uint64 & PAGING_4K_ADDRESS_MASK_64)), 1); // free up the L2
 
 	  L2PageTable[Index2].Uint64 = 0;
@@ -222,7 +222,8 @@ ConvertPageEntryAttribute (
   IN UINT32                             Ra,
   IN UINT32                             Wa,
   IN UINT32                             Xa,
-  IN EPT_PAGE_ATTRIBUTE_SETTING         EptPageAttributeSetting
+  IN EPT_PAGE_ATTRIBUTE_SETTING         EptPageAttributeSetting,
+  IN UINT32								EMT
   )
 {
   UINT64  CurrentPageEntry;
@@ -251,8 +252,14 @@ ConvertPageEntryAttribute (
 
   if(PageEntry->Bits32.Wa == 1)
 	  PageEntry->Bits.Ra = 1;    // have to have read with write(vol 3c 28.2.3.1)
+  if(PageEntry->Bits32.Xa == 1)
+	  PageEntry->Bits32.Ra = 1; //have to have read with execute (except for some processors)
 
-  PageEntry->Bits32.Emt = GetMemoryType((PageEntry->Uint64) & PAGING_4K_MASK );
+  if(EMT == -1)
+	  PageEntry->Bits32.Emt = GetMemoryType((PageEntry->Uint64) & PAGING_4K_MASK );
+  else
+	  PageEntry->Bits32.Emt =  EMT;   // let caller set the memory type (at his own risk)
+
 #ifdef DEBUGPRINT
   DEBUG((EFI_D_INFO, "ConvertPageEntryAttribute - 0x%llx->0x%llx (%1x%1x%1x) Emt: %3x\n",
 	  (UINT64) CurrentPageEntry, 
@@ -329,7 +336,7 @@ SplitPage (
     ASSERT (SplitAttribute == Page4K);
     if (SplitAttribute == Page4K) {
       NewPageEntry = (EPT_ENTRY *)AllocatePages (1);
-      DEBUG ((EFI_D_INFO, "Split - 0x%x\n", NewPageEntry));
+      //DEBUG ((EFI_D_INFO, "Split - 0x%x\n", NewPageEntry));
       if (NewPageEntry == NULL) {
         return RETURN_OUT_OF_RESOURCES;
       }
@@ -559,7 +566,8 @@ EPTSetPageAttributeRange (
                           IN UINT32                     Ra,
                           IN UINT32                     Wa,
                           IN UINT32                     Xa,
-                          IN EPT_PAGE_ATTRIBUTE_SETTING EptPageAttributeSetting
+                          IN EPT_PAGE_ATTRIBUTE_SETTING EptPageAttributeSetting,
+						  IN INT32						EMT
                           )
 {
   EPT_ENTRY                         *PageEntry;
@@ -571,9 +579,9 @@ EPTSetPageAttributeRange (
   UINT64							EptPointer;
   UINT64							Offset;       // offset of address into the page
   UINT64							OLength;      // Length plus offset
-
-  DEBUG ((EFI_D_INFO, "EPTSetPageAttributeRange - Base: 0x%016lx - Length: 0x%016lx - PhysMem: 0x%016lx (%1x%1x%1x)\n", Base, Length, PhysMem, Ra, Wa,Xa));
-  
+#if 0
+  DEBUG ((EFI_D_INFO, "EPTSetPageAttributeRange - Base: 0x%016lx - Length: 0x%016lx - PhysMem: 0x%016lx (%1x%1x%1x) EMT:%d\n", Base, Length, PhysMem, Ra, Wa,Xa, EMT));
+#endif  
     // assumption, the user does not change PhysMem on us
     
   EptPointer = EptPointerIN & PAGING_4K_ADDRESS_MASK_64;  // make sure we have only the address
@@ -603,7 +611,7 @@ EPTSetPageAttributeRange (
     PageEntryLength = PageAttributeToLength (PageAttribute);
     SplitAttribute = NeedSplitPage (Base, Length, PageAttribute);
     if (SplitAttribute == PageNone) {
-      ConvertPageEntryAttribute (PageEntry, Ra, Wa, Xa, EptPageAttributeSetting);
+      ConvertPageEntryAttribute (PageEntry, Ra, Wa, Xa, EptPageAttributeSetting, EMT);
       //
       // Convert success, move to next
       //
@@ -720,7 +728,8 @@ SmmEPTViolationHandler (
 					((LocalMemDesc.RWXAttributes & STM_RSC_MEM_R) != 0) ? 0 : 1,
 					((LocalMemDesc.RWXAttributes & STM_RSC_MEM_W) != 0) ? 0 : 1,
 					((LocalMemDesc.RWXAttributes & STM_RSC_MEM_X) != 0) ? 0 : 1,
-					EptPageAttributeSet
+					EptPageAttributeSet,
+					-1
 					) != 0)
 				{
 					DEBUG((EFI_D_ERROR, "%ld SmmEPTViolationHandler - STM ERROR unable to add resource to EPT map\n", Index));

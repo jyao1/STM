@@ -420,7 +420,8 @@ EPTSetPageAttributeRange (
   IN UINT32                     Ra,
   IN UINT32                     Wa,
   IN UINT32                     Xa,
-  IN EPT_PAGE_ATTRIBUTE_SETTING EptPageAttributeSetting
+  IN EPT_PAGE_ATTRIBUTE_SETTING EptPageAttributeSetting,
+  IN INT32                     EMT
   );
 
 /**

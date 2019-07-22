@@ -270,7 +270,7 @@ GetMemoryType (
   // memory type.
   //
   if (PossibleMemoryTypeNumber == 0) {
-    return (UINT8)mMtrrInfo.MtrrDefType & 0xFF;
+	return (UINT8)mMtrrInfo.MtrrDefType & 0xFF;
   }
 
   //
@@ -556,6 +556,10 @@ EptDumpPageTable (
   This function initialize EPT.
 
 **/
+
+extern UINT64 GetMsegInfoFromTxt (OUT UINT64  *MsegBase, OUT UINT64  *MsegLength);
+extern UINT64 GetMsegInfoFromMsr (OUT UINT64  *MsegBase, OUT UINT64  *MsegLength);
+
 VOID
 EptInit (
   VOID
@@ -636,23 +640,43 @@ EptInit (
       1,
       1,
       1,
-      EptPageAttributeSet
+      EptPageAttributeSet,
+	  -1
       );
   //}
 
   //
   // Protect MSEG
   //
+
+  UINT64 MsegBase;
+  UINT64 MsegLength;
+
+  if (IsSentryEnabled()) {
+    GetMsegInfoFromTxt (&MsegBase, &MsegLength);
+    DEBUG ((EFI_D_INFO, "TXT MsegBase- %08x\n", (UINTN)MsegBase));
+    DEBUG ((EFI_D_INFO, "TXT MsegLength - %08x\n", (UINTN)MsegLength));
+  } else {
+    GetMsegInfoFromMsr (&MsegBase, &MsegLength);
+  }
+  DEBUG ((EFI_D_INFO, "MsegBase (MSR) - %08x\n", (UINTN)MsegBase));
+  DEBUG ((EFI_D_INFO, "MsegLength (end of TSEG) - %08x\n", (UINTN)MsegLength));
+  if (MsegBase == 0) {
+    DEBUG ((EFI_D_ERROR, "MsegBase == 0\n"));
+    CpuDeadLoop ();
+  }
+
   DEBUG ((EFI_D_INFO, "Protect MSEG\n"));
   EPTSetPageAttributeRange (
 	mGuestContextCommonSmm[SMI_HANDLER].EptPointer.Uint64,
-    (UINT64)(UINTN)mHostContextCommon.StmHeader,
-    (UINT64)(UINTN)mHostContextCommon.StmSize,
-	(UINT64)(UINTN)mHostContextCommon.StmHeader,
+    MsegBase, //(UINT64)(UINTN)mHostContextCommon.StmHeader,
+    MsegLength, //(UINT64)(UINTN)mHostContextCommon.StmSize,
+	MsegBase, //(UINT64)(UINTN)mHostContextCommon.StmHeader,
     0,
     0,
     0,
-    EptPageAttributeSet
+    EptPageAttributeSet,
+	-1
     );
  // EptDumpPageTable (&mGuestContextCommonSmm[SMI_HANDLER].EptPointer);
   AsmWbinvd ();  // make sure all the table info gets flushed

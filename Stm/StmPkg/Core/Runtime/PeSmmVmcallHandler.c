@@ -134,7 +134,8 @@ STM_STATUS
 		TRUE,   /* Read    */
 		FALSE,  /* Write   */
 		FALSE,  /* Execute */
-		EptPageAttributeSet);	
+		EptPageAttributeSet,
+		-1);	
 
 	return STM_SUCCESS;
 }

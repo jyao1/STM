@@ -987,15 +987,15 @@ SmiVmcallHandler (
   UINT64                             AddressParameter;
 
   Reg = &mGuestContextCommonSmi.GuestContextPerCpu[Index].Register;
-  DEBUG((EFI_D_ERROR, "%ld SmiVmcallHandler - entered\n", Index));
+  //DEBUG((EFI_D_ERROR, "%ld SmiVmcallHandler - entered\n", Index));
   StmVmcallHandler = GetSmiVmcallHandlerByIndex (ReadUnaligned32 ((UINT32 *)&Reg->Rax));
   if (StmVmcallHandler == NULL) {
-    DEBUG ((EFI_D_INFO, "%ld SmiVmcallHandler - GetSmiVmcallHandlerByIndex - %x!\n", Index, (UINTN)ReadUnaligned32 ((UINT32 *)&Reg->Rax)));
-    DumpVmcsAllField ();
-    DEBUG ((EFI_D_ERROR, "%ld SmiVmcallHandler - ***Error*** Halting STM\n", Index));
+    DEBUG ((EFI_D_INFO, "%ld SmiVmcallHandler - GetSmiVmcallHandlerByIndex- Invalid API entry  - %x!\n", Index, (UINTN)ReadUnaligned32 ((UINT32 *)&Reg->Rax)));
+    //DumpVmcsAllField ();
+    //DEBUG ((EFI_D_ERROR, "%ld SmiVmcallHandler - ***Error*** Halting STM\n", Index));
    
 	// Should not happen
-    CpuDeadLoop ();
+    //CpuDeadLoop ();
     Status = ERROR_INVALID_API;
   } else {
     AddressParameter = ReadUnaligned32 ((UINT32 *)&Reg->Rbx) + LShiftU64 (ReadUnaligned32 ((UINT32 *)&Reg->Rcx), 32);

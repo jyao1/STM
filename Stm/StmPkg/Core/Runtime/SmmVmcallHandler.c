@@ -27,6 +27,7 @@ StmTxtReset (
   IN UINT32  ErrorCode
   )
 {
+	DEBUG((EFI_D_ERROR, "StmTxTReset issued - Error Code: %d\n", ErrorCode));
   if (IsSentryEnabled()) {
     // TXT reset
     TxtPriWrite32 (TXT_ERRORCODE, ErrorCode);
