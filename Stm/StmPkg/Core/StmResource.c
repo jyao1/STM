@@ -1860,7 +1860,6 @@ RegisterBiosResourceNode (
   case PCI_CFG_RANGE:
 	  SetIoBitmapRange (0xCF8, 1);
     SetIoBitmapRange (0xCFC, 4);
-	 DEBUG((EFI_D_ERROR, "***DEBUG*** Setting PCI_CFG_RANGE (BIOS Resource) range\n"));
     // STM_RSC_BGI is NOT supported in this version
     if (mHostContextCommon.PciExpressBaseAddress != 0) {
       LastNodeBus = GetLastNodeBus (Resource);
