@@ -1,0 +1,26 @@
+
+#include <Base.h>
+
+#define _PCD_VALUE_PcdMaximumUnicodeStringLength  1000000U
+#define _PCD_VALUE_PcdMaximumAsciiStringLength  1000000U
+#define _PCD_VALUE_PcdDebugPrintErrorLevel  0x80000040U
+#define _PCD_VALUE_PcdDebugPropertyMask  0x0fU
+#define _PCD_VALUE_PcdDebugClearMemoryValue  0xAFU
+#define _PCD_PATCHABLE_VALUE_PcdPciExpressBaseAddress  ((UINT64)0x00000000ULL)
+#define _PCD_VALUE_PcdPerformanceLibraryPropertyMask  0x00U
+
+
+const UINT32 _gPcd_FixedAtBuild_PcdMaximumUnicodeStringLength = _PCD_VALUE_PcdMaximumUnicodeStringLength;
+
+const UINT32 _gPcd_FixedAtBuild_PcdMaximumAsciiStringLength = _PCD_VALUE_PcdMaximumAsciiStringLength;
+
+const UINT32 _gPcd_FixedAtBuild_PcdDebugPrintErrorLevel = _PCD_VALUE_PcdDebugPrintErrorLevel;
+
+const UINT8 _gPcd_FixedAtBuild_PcdDebugPropertyMask = _PCD_VALUE_PcdDebugPropertyMask;
+
+const UINT8 _gPcd_FixedAtBuild_PcdDebugClearMemoryValue = _PCD_VALUE_PcdDebugClearMemoryValue;
+
+volatile  UINT64 _gPcd_BinaryPatch_PcdPciExpressBaseAddress = _PCD_PATCHABLE_VALUE_PcdPciExpressBaseAddress;
+
+const UINT8 _gPcd_FixedAtBuild_PcdPerformanceLibraryPropertyMask = _PCD_VALUE_PcdPerformanceLibraryPropertyMask;
+

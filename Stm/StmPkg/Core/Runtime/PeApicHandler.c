@@ -36,6 +36,17 @@ static UINTN apicAddress;
 #define xAPIC_MODE          APIC_EN
 #define x2APIC_MODE         APIC_EN|APIC_EXTD
 
+#ifndef __writemsr
+static __inline__ __attribute__((always_inline)) void __writemsr (UINT32 msr, UINT64 Value)
+{
+	__asm__ __volatile__ (
+	  "wrmsr"
+	  :
+	  : "c" (msr), "A" (Value)
+	  );
+}
+#endif
+
 // from LocalApic.h
 
 // lower half of Interrupt Command Register (ICR)

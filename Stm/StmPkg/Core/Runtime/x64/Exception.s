@@ -198,7 +198,7 @@ CommonInterruptEntry:
   movzwl  (%rcx), %ecx
   cmpl    $32,%ecx        # Intel reserved vector for exceptions?
   jae     NoErrorCode
-  btl     %ecx, ASM_PFX(mErrorCodeFlag)
+  btl     %ecx, ASM_PFX(mErrorCodeFlag)(%rip)
   jc      L1
 
 NoErrorCode:

@@ -1,0 +1,51 @@
+
+add_library(StmLib SHARED
+  Vmx.c
+  Smx.c
+  x64/Vmx64.c
+  #x64/AsmInvEpt.asm
+  #x64/AsmInvVpid.asm
+  #x64/AsmVmCall.asm
+  #x64/AsmVmClear.asm
+  #x64/AsmVmLaunch.asm
+  #x64/AsmVmPtrLoad.asm
+  #x64/AsmVmPtrStore.asm
+  #x64/AsmVmRead.asm
+  #x64/AsmVmResume.asm
+  #x64/AsmVmWrite.asm
+  #x64/AsmVmxOff.asm
+  #x64/AsmVmxOn.asm
+  x64/AsmInvEpt.s
+  #x64/AsmInvVpid.s
+  #x64/AsmVmCall.s
+  x64/AsmVmClear.s
+  x64/AsmVmLaunch.s
+  x64/AsmVmPtrLoad.s
+  x64/AsmVmPtrStore.s
+  x64/AsmVmRead.s
+  x64/AsmVmResume.s
+  x64/AsmVmWrite.s
+  #x64/AsmVmxOff.s
+  #x64/AsmVmxOn.s
+  #x64/AsmXSave.asm
+  #x64/AsmXRestore.asm
+  #x64/AsmXGetBv.asm
+  #x64/AsmXSetBv.asm
+  #x64/AsmXSave.s
+  #x64/AsmXRestore.s
+  #x64/AsmXGetBv.s
+  #x64/AsmXSetBv.s
+  #x64/AsmTestAndSet.asm
+  #x64/AsmTestAndReset.asm
+  x64/AsmTestAndSet.s
+  x64/AsmTestAndReset.s
+  #x64/AsmSendInt2.asm
+  x64/AsmSendInt2.s
+)
+
+target_link_libraries(StmLib PUBLIC
+	BaseLib
+	IoLib
+	DebugLib
+	PcdData
+)

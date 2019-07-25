@@ -8,7 +8,7 @@ add license stuff
 #ifndef _VMCSOFFSETS_H_
 #define _VMCSOFFSETS_H_
 
-#include "Library/vmx.h"
+#include "Library/Vmx.h"
 
 typedef struct VmcsFieldOffset
 {
