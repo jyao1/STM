@@ -1,4 +1,4 @@
-add_library(BasePciCf8Lib SHARED
+add_library(BasePciCf8Lib STATIC
   PciCf8Lib.c
 )
 

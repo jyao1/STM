@@ -9,6 +9,7 @@ Gov't Copyright stuff
 #include "VmcsOffsets.h"
 
 #define VmcsSizeInPages 1    // current VMCS size in pages
+#define memcpy CopyMem
 
 
 VMCSFIELDOFFSET VmcsFieldOffsetTable[] =
@@ -297,6 +298,13 @@ VMCSFIELDPRINT VmcsFieldPrintTable[] =
 	{ VMCS_N_HOST_RIP_INDEX, "VMCS_N_HOST_RIP_INDEX" }, //                                  0x6C16
 	{ 0xFFFF, NULL }
 };
+int strlen1(const char *str)
+{
+	const char * s;
+	int counter = 0;
+	for (s=str; (*s != 0) && (counter < 40); ++s, ++counter);
+	return counter;  // only try 40
+}
 
 static UINT32 VmcsMapInit = 0;  // used to trigger VmcsMap initialization
 
@@ -345,15 +353,19 @@ void MapVmcs ()
 		VmcsFieldOffsetTable[i].FieldEncoding != 0xFFFF;
 		i++)
 	{
-		Line[0] = '\0';   // start at the beginning...
+		int count = 9;
 		FieldValue = VmRead64(VmcsFieldOffsetTable[i].FieldEncoding);
 		FieldOffset = FieldValue & 0xFFFFull;
 
 		VmcsFieldOffsetTable[i].FieldOffset = FieldOffset;
 
-		strcat(Line, "MapVmcs: ");
-		strcat(Line, VmcsFieldPrintTable[i].FieldPrint);  // get around a bug
-		strcat(Line, " :   0x%08x : 0x%08lx : FV 0x%016llx\n");
+	        memcpy(Line, "MapVmcs: ", count);
+ 		memcpy(&Line[count], VmcsFieldPrintTable[i].FieldPrint, strlen1(VmcsFieldPrintTable[i].FieldPrint));
+		count = count + strlen1(VmcsFieldPrintTable[i].FieldPrint);
+#define FORMAT1 " :   0x%08x : 0x%08lx : FV 0x%016llx\n"
+		memcpy(&Line[count], FORMAT1, strlen1(FORMAT1));
+		count = count + strlen1(FORMAT1);
+		Line[count] = '\0';
 
 		//DEBUG((EFI_D_ERROR, "MapVmcs: %s  :   %d : %016llx : FV %016llx\n", VmcsFieldPrintTable[i].FieldPrint,
 		DEBUG((EFI_D_ERROR, Line,
@@ -380,13 +392,16 @@ void MapVmcs ()
 
 		if(VmcsFieldOffsetTable[i].FieldOffset != 0) // zero offset is not valid
 		{
-			Line[0] = '\0';   // start at the beginning...
 		VmReadValue = VmRead64(VmcsFieldOffsetTable[i].FieldEncoding);
 		OffReadValue = *(UINT64*)((UINTN)CurrentVMCSSave + (UINTN)VmcsFieldOffsetTable[i].FieldOffset);
-
-			strcat(Line, "MapVmcs: ");
-			strcat(Line, VmcsFieldPrintTable[i].FieldPrint);  // get around a bug
-			strcat(Line, "  VMREAD: 0x%016llx  Offset read: 0x%016llx\n");
+			int count = 9;
+			memcpy(Line, "MapVmcs: ", 9);
+#define FORMAT2 "  VMREAD: 0x%016llx  Offset read: 0x%016llx\n"
+			memcpy(&Line[count], VmcsFieldPrintTable[i].FieldPrint, strlen1(VmcsFieldPrintTable[i].FieldPrint));
+			count = count + strlen1(VmcsFieldPrintTable[i].FieldPrint);
+			memcpy(&Line[count], FORMAT2, strlen1(FORMAT2));
+			count = count + strlen1(FORMAT2);
+			Line[count] = '\0';
 
 			//DEBUG((EFI_D_ERROR, "MapVmcs: %s  :   %d : %016llx : FV %016llx\n", VmcsFieldPrintTable[i].FieldPrint,
 			DEBUG((EFI_D_ERROR, Line,

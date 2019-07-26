@@ -15,6 +15,8 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 #include "StmRuntime.h"
 #include "PeStm.h"
 
+#define memcpy CopyMem
+
 extern PE_VM_DATA PeVmData[4];   // right now support a max of 3 PE VM (VM 0 is the SMI_HANDLER)
 extern PE_SMI_CONTROL PeSmiControl;
 

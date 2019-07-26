@@ -1,4 +1,4 @@
-add_library(PciExpressLib SHARED
+add_library(PciExpressLib STATIC
   PciExpressLib.c
 )
 

@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.8)
 
 project(stm C ASM-ATT)
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -include PcdData.h")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -nostdlib -fno-jump-tables -fpic -fno-stack-protector -fno-stack-check -include PcdData.h")
 
 
 set(CMAKE_ASM-ATT_FLAGS "${CFLAGS} -x assembler-with-cpp -include BaseAsm.h")

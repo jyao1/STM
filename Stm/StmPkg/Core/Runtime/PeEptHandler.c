@@ -31,6 +31,8 @@ Setup VM/PE EPT tables.
 
 */
 
+#define memcpy CopyMem
+
 extern UINT8 GetMemoryType (IN UINT64 BaseAddress);  // call to base EPT functionality - hope to eventually do more of this
 extern UINT64 EndTimeStamp;
 
@@ -120,10 +122,14 @@ void PeEPTViolationHandler( IN UINT32 CpuIndex)
 
 	//sprintf(Line, "%ld PeEPTViolationHandler - Access Allowed: %s\n", CpuIndex, AccessAllowed);
 
-	Line[0] = '\0';
-	strcat(Line, "PeEPTViolationHandler - Access Allowed: ");
-	strcat(Line, AccessAllowed);
-	strcat(Line, "\n");
+	//Line[0] = '\0';
+#define Message1 "PeEPTViolationHandler - Access Allowed: "
+        int count = sizeof(Message1);
+        memcpy(Line, Message1, count - 1);
+        memcpy(&Line[count], AccessAllowed, 3);
+        count = count + 3;
+        Line[count] = '\n';
+	Line[count+ 1] = '\0';
 	DEBUG((EFI_D_ERROR, Line));
 
 	//DEBUG((EFI_D_ERROR, "%ld PeEPTViolationHandler - Access Allowed: %s\n", CpuIndex, AccessAllowed));
@@ -145,22 +151,30 @@ void PeEPTViolationHandler( IN UINT32 CpuIndex)
 
 	AccessRequested[3] = '\0';
 
-	Line[0] = '\0';
-    strcat(Line, "PeEPTViolationHandler - Access Attempted causing Violation: ");
+	///Line[0] = '\0';
+#define Message2 "PeEPTViolationHandler - Access Attempted causing Violation: "
+        count = sizeof(Message2);
 	//sprintf(Line, "%ld PeEPTViolationHandler - Access Attempted: %s\n", CpuIndex, AccessRequested);
-	strcat(Line, AccessRequested);
-	strcat(Line, "\n");
+	memcpy(Line, Message2, count - 1 ); // account for null
+	memcpy(&Line[count], AccessRequested, 3);
+        count = count + 3;
+        Line[count] = '\n';
+	Line[count + 1] = '\0';
 
     DEBUG((EFI_D_ERROR, Line));
 
 	if(VmexitQualification.EptViolation.GlaValid == 1)
-		LinearAddressValid = "Valid";
+		LinearAddressValid = "Valid  ";
 	else
 		LinearAddressValid = "Invalid";
-	Line[0] = '\0';
-	strcat(Line, "PeEPTViolationHandler - Linear address is ");
-	strcat(Line, LinearAddressValid);
-	strcat(Line, "\n");
+	//Line[0] = '\0';
+#define Message3 "PeEPTViolationHandler - Linear address is "
+	count = sizeof(Message3);
+        memcpy(Line, Message3, count);
+        memcpy(&Line[count], LinearAddressValid, 7);
+        count = count + 7;
+        Line[count] = '\n';
+        Line[count + 1] = '\0';
 
 	//sprintf(Line, "%ld PeEPTViolationHandler - Linear address is %s\n", CpuIndex, LinearAddressValid);
 
@@ -171,14 +185,16 @@ void PeEPTViolationHandler( IN UINT32 CpuIndex)
 		if(VmexitQualification.EptViolation.Gpa == 1)
 			AddressViolation = "Guest Physical EPT violation ";
 		else
-			AddressViolation = "Paging structure error";
+			AddressViolation = "Paging structure error       ";
 
-    Line[0] = '\0';
-	strcat(Line, "PeEPTViolationHandler - Linear address is ");
-	strcat(Line, AddressViolation);
-	strcat(Line, "\n");
+    //Line[0] = '\0';
 	//sprintf(Line, "%ld PeEPTViolationHandler - Linear address is %s\n", CpuIndex, AddressViolation);
-
+	count = sizeof(Message3);
+        memcpy(Line, Message3, count);
+        memcpy(&Line[count], AddressViolation, 28);
+        count = count + 28;
+        Line[count] = '\n';
+        Line[count + 1] = '\0';
 	DEBUG((EFI_D_ERROR, Line));
 	}
 	// take down the VM

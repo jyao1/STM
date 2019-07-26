@@ -56,3 +56,6 @@ add_library(PcdData STATIC PcdData.c)
 
 #GCC:*_*_X64_DLINK_FLAGS  == -o $(DEBUG_DIR)/Stm.dll -nostdlib -n -q --gc-sections -z common-page-size=0x40 --entry _ModuleEntryPoint -u _ModuleEntryPoint -Map $(DEST_DIR_DEBUG)/$(BASE_NAME).map -m elf_x86_64 --oformat=elf64-x86-64 --defsym=PECOFF_HEADER_SIZE=0x228 #--script=$(MODULE_DIR)/Stm.lds
 #GCC:*_*_IA32_DLINK_FLAGS == -o $(DEBUG_DIR)/Stm.dll -nostdlib -n -q --gc-sections -z common-page-size=0x40 --entry _ModuleEntryPoint -u _ModuleEntryPoint -Map $(DEST_DIR_DEBUG)/$(BASE_NAME).map -m elf_i386   --oformat=elf32-i386   --defsym=PECOFF_HEADER_SIZE=0x220 #--script=$(MODULE_DIR)/Stm.lds
+
+#INTEL:*_*_X64_DLINK_FLAGS  = /BASE:0x0 /ALIGN:32 /FILEALIGN:32 /STACK:0x8000,0x8000 /HEAP:0x240000,0x240000 /OUT:$(DEBUG_DIR)\Stm.dll
+# INTEL:*_*_IA32_DLINK_FLAGS = /BASE:0x0 /ALIGN:32 /FILEALIGN:32 /STACK:0x8000,0x8000 /HEAP:0x240000,0x240000 /OUT:$(DEBUG_DIR)\Stm.dll

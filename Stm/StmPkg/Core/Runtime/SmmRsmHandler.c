@@ -66,7 +66,7 @@ VOID
 
 	AsmVmPtrStore (&mGuestContextCommonSmm[SMI_HANDLER].GuestContextPerCpu[Index].Vmcs);
 
-	if((PeSmiControl.PeCpuIndex == ((INT32) Index)))
+	if(PeSmiControl.PeCpuIndex == ((INT32) Index))
 	{
 		PeType = mHostContextCommon.HostContextPerCpu[Index].NonSmiHandler;
 		//PeType = mHostContextCommon.HostContextPerCpu[Index].GuestVmType;

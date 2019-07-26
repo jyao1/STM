@@ -1,4 +1,4 @@
-add_library(PciLib SHARED
+add_library(PciLib STATIC
   PciLib.c
 )
 

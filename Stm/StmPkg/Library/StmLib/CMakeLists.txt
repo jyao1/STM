@@ -1,5 +1,5 @@
 
-add_library(StmLib SHARED
+add_library(StmLib STATIC
   Vmx.c
   Smx.c
   x64/Vmx64.c
