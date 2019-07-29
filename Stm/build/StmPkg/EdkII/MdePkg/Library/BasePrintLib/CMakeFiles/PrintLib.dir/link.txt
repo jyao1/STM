@@ -1,2 +1,0 @@
-/usr/bin/ar qc libPrintLib.a  CMakeFiles/PrintLib.dir/PrintLibInternal.c.o CMakeFiles/PrintLib.dir/PrintLib.c.o
-/usr/bin/ranlib libPrintLib.a

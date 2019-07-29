@@ -1,2 +1,0 @@
-/usr/bin/ar qc libPcdLib.a  CMakeFiles/PcdLib.dir/PcdLib.c.o
-/usr/bin/ranlib libPcdLib.a

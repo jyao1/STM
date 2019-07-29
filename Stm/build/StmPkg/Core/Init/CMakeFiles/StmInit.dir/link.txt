@@ -1,2 +1,0 @@
-/usr/bin/ar qc libStmInit.a  CMakeFiles/StmInit.dir/Paging.c.o CMakeFiles/StmInit.dir/VmcsInit.c.o CMakeFiles/StmInit.dir/IoInit.c.o CMakeFiles/StmInit.dir/MsrInit.c.o CMakeFiles/StmInit.dir/Relocate.c.o CMakeFiles/StmInit.dir/PeVmcsInit.c.o
-/usr/bin/ranlib libStmInit.a

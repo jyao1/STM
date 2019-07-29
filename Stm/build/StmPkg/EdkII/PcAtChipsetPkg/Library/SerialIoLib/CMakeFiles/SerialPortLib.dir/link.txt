@@ -1,2 +1,0 @@
-/usr/bin/ar qc libSerialPortLib.a  CMakeFiles/SerialPortLib.dir/SerialPortLib.c.o
-/usr/bin/ranlib libSerialPortLib.a

@@ -1,2 +1,0 @@
-/usr/bin/ar qc libBasePciCf8Lib.a  CMakeFiles/BasePciCf8Lib.dir/PciCf8Lib.c.o
-/usr/bin/ranlib libBasePciCf8Lib.a

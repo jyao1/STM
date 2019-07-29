@@ -1,2 +1,0 @@
-/usr/bin/ar qc libEptLib.a  CMakeFiles/EptLib.dir/Init/EptInit.c.o CMakeFiles/EptLib.dir/Runtime/SmmEptHandler.c.o CMakeFiles/EptLib.dir/Runtime/PeEptHandler.c.o
-/usr/bin/ranlib libEptLib.a

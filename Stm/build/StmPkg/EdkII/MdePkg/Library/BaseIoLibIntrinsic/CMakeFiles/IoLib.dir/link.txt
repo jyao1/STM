@@ -1,2 +1,0 @@
-/usr/bin/ar qc libIoLib.a  CMakeFiles/IoLib.dir/IoLibMmioBuffer.c.o CMakeFiles/IoLib.dir/IoHighLevel.c.o CMakeFiles/IoLib.dir/IoLibGcc.c.o CMakeFiles/IoLib.dir/IoLib.c.o
-/usr/bin/ranlib libIoLib.a

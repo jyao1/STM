@@ -1,2 +1,0 @@
-/usr/bin/ar qc libSynchronizationLib.a  CMakeFiles/SynchronizationLib.dir/X64/GccInline.c.o CMakeFiles/SynchronizationLib.dir/SynchronizationGcc.c.o
-/usr/bin/ranlib libSynchronizationLib.a

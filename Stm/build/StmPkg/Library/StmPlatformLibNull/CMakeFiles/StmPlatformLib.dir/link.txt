@@ -1,2 +1,0 @@
-/usr/bin/ar qc libStmPlatformLib.a  CMakeFiles/StmPlatformLib.dir/StmPlatformLibNull.c.o
-/usr/bin/ranlib libStmPlatformLib.a

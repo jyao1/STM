@@ -1,2 +1,0 @@
-/usr/bin/ar qc libPcdData.a  CMakeFiles/PcdData.dir/PcdData.c.o
-/usr/bin/ranlib libPcdData.a

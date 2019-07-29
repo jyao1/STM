@@ -1,2 +1,0 @@
-/usr/bin/ar qc libEventLog.a  CMakeFiles/EventLog.dir/EventLog.c.o
-/usr/bin/ranlib libEventLog.a
