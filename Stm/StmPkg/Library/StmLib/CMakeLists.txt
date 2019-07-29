@@ -15,16 +15,17 @@ add_library(StmLib STATIC
   #x64/AsmVmWrite.asm
   #x64/AsmVmxOff.asm
   #x64/AsmVmxOn.asm
-  x64/AsmInvEpt.s
+  #x64/AsmInvEpt.s
+  x64/AsmInvEpt.S
   #x64/AsmInvVpid.s
   #x64/AsmVmCall.s
-  x64/AsmVmClear.s
-  x64/AsmVmLaunch.s
-  x64/AsmVmPtrLoad.s
-  x64/AsmVmPtrStore.s
-  x64/AsmVmRead.s
-  x64/AsmVmResume.s
-  x64/AsmVmWrite.s
+  x64/AsmVmClear.S
+  x64/AsmVmLaunch.S
+  x64/AsmVmPtrLoad.S
+  x64/AsmVmPtrStore.S
+  x64/AsmVmRead.S
+  x64/AsmVmResume.S
+  x64/AsmVmWrite.S
   #x64/AsmVmxOff.s
   #x64/AsmVmxOn.s
   #x64/AsmXSave.asm
@@ -37,10 +38,10 @@ add_library(StmLib STATIC
   #x64/AsmXSetBv.s
   #x64/AsmTestAndSet.asm
   #x64/AsmTestAndReset.asm
-  x64/AsmTestAndSet.s
-  x64/AsmTestAndReset.s
+  x64/AsmTestAndSet.S
+  x64/AsmTestAndReset.S
   #x64/AsmSendInt2.asm
-  x64/AsmSendInt2.s
+  x64/AsmSendInt2.S
 )
 
 target_link_libraries(StmLib PUBLIC

@@ -1,0 +1,2 @@
+/usr/bin/ar qc libResource.a  CMakeFiles/Resource.dir/StmResource.c.o
+/usr/bin/ranlib libResource.a

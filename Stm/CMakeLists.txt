@@ -1,13 +1,12 @@
 
-cmake_minimum_required(VERSION 3.8)
+cmake_minimum_required(VERSION 3.5)
 
-project(stm C ASM-ATT)
+project(stm C ASM)
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -nostdlib -fno-jump-tables -fpic -fno-stack-protector -fno-stack-check -include PcdData.h")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -nostdlib -fno-jump-tables -fPIC -fno-stack-protector -fno-stack-check -include PcdData.h")
 
-
-set(CMAKE_ASM-ATT_FLAGS "${CFLAGS} -x assembler-with-cpp -include BaseAsm.h")
-set(CMAKE_ASM-ATT_CREATE_SHARED_LIBRARY "-o")
+set(CMAKE_ASM_FLAGS "-include BaseAsm.h")
+set(CMAKE_ASM_CREATE_SHARED_LIBRARY "gcc ${CFLAGS}  -o *.o")
 
 include_directories("${PROJECT_SOURCE_DIR}/StmPkg/Core"
 	"${PROJECT_SOURCE_DIR}/StmPkg/EdkII/MdePkg/Include/"

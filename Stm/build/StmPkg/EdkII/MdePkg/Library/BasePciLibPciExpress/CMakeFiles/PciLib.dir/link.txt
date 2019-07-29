@@ -1,0 +1,2 @@
+/usr/bin/ar qc libPciLib.a  CMakeFiles/PciLib.dir/PciLib.c.o
+/usr/bin/ranlib libPciLib.a

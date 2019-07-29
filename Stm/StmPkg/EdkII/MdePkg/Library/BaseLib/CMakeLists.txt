@@ -1,3 +1,4 @@
+
 add_library(BaseLib STATIC  
   SwapBytes32.c
   SwapBytes16.c
@@ -64,12 +65,12 @@ add_library(BaseLib STATIC
   #X64/CpuIdEx.asm
   #X64/CpuId.asm
   #X64/CpuId.S
-   X64/CpuId.s
-   X64/CpuIdEx.s
-  #X64/LongJump.asm
-   X64/LongJump.s
-  #X64/SetJump.asm
-   X64/SetJump.s
+  #X64/CpuId.s
+  #X64/CpuIdEx.s
+  # X64/LongJump.asm
+  #X64/LongJump.s
+  # X64/SetJump.asm
+  #X64/SetJump.s
   #X64/EnableCache.asm
   #X64/DisableCache.asm
 
@@ -92,11 +93,11 @@ add_library(BaseLib STATIC
   X64/GccInline.c 
   X64/SetJump.S 
   X64/LongJump.S  
-  X64/EnableDisableInterrupts.S  
+  #X64/EnableDisableInterrupts.S  
   X64/CpuId.S  
   X64/CpuIdEx.S  
-  X64/EnableCache.S 
-  X64/DisableCache.S
+  #X64/EnableCache.S 
+  #X64/DisableCache.S
 )
 
 target_link_libraries(BaseLib PUBLIC

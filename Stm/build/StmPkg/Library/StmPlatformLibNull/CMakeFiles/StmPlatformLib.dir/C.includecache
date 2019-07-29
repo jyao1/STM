@@ -1,0 +1,22 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+../StmPkg/EdkII/MdePkg/Include/Base.h
+ProcessorBind.h
+-
+
+../StmPkg/EdkII/MdePkg/Include/X64/ProcessorBind.h
+
+../StmPkg/Include/Library/StmPlatformLib.h
+
+/home/test/Documents/STMPE/STM-PE/Stm/StmPkg/Library/StmPlatformLibNull/StmPlatformLibNull.c
+Base.h
+-
+Library/StmPlatformLib.h
+-
+

@@ -1,0 +1,46 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+../StmPkg/EdkII/MdePkg/Include/Base.h
+ProcessorBind.h
+-
+
+../StmPkg/EdkII/MdePkg/Include/Library/BaseLib.h
+
+../StmPkg/EdkII/MdePkg/Include/Library/DebugLib.h
+
+../StmPkg/EdkII/MdePkg/Include/Library/IoLib.h
+
+../StmPkg/EdkII/MdePkg/Include/X64/ProcessorBind.h
+
+/home/test/Documents/STMPE/STM-PE/Stm/StmPkg/EdkII/MdePkg/Library/BaseIoLibIntrinsic/BaseIoLibIntrinsicInternal.h
+Base.h
+-
+Library/IoLib.h
+-
+Library/BaseLib.h
+-
+Library/DebugLib.h
+-
+
+/home/test/Documents/STMPE/STM-PE/Stm/StmPkg/EdkII/MdePkg/Library/BaseIoLibIntrinsic/IoHighLevel.c
+BaseIoLibIntrinsicInternal.h
+/home/test/Documents/STMPE/STM-PE/Stm/StmPkg/EdkII/MdePkg/Library/BaseIoLibIntrinsic/BaseIoLibIntrinsicInternal.h
+
+/home/test/Documents/STMPE/STM-PE/Stm/StmPkg/EdkII/MdePkg/Library/BaseIoLibIntrinsic/IoLib.c
+BaseIoLibIntrinsicInternal.h
+/home/test/Documents/STMPE/STM-PE/Stm/StmPkg/EdkII/MdePkg/Library/BaseIoLibIntrinsic/BaseIoLibIntrinsicInternal.h
+
+/home/test/Documents/STMPE/STM-PE/Stm/StmPkg/EdkII/MdePkg/Library/BaseIoLibIntrinsic/IoLibGcc.c
+BaseIoLibIntrinsicInternal.h
+/home/test/Documents/STMPE/STM-PE/Stm/StmPkg/EdkII/MdePkg/Library/BaseIoLibIntrinsic/BaseIoLibIntrinsicInternal.h
+
+/home/test/Documents/STMPE/STM-PE/Stm/StmPkg/EdkII/MdePkg/Library/BaseIoLibIntrinsic/IoLibMmioBuffer.c
+BaseIoLibIntrinsicInternal.h
+/home/test/Documents/STMPE/STM-PE/Stm/StmPkg/EdkII/MdePkg/Library/BaseIoLibIntrinsic/BaseIoLibIntrinsicInternal.h
+

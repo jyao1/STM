@@ -1,0 +1,2 @@
+/usr/bin/ar qc libSmmExcept.a  CMakeFiles/SmmExcept.dir/x64/SmmException.c.o CMakeFiles/SmmExcept.dir/x64/Exception.S.o
+/usr/bin/ranlib libSmmExcept.a

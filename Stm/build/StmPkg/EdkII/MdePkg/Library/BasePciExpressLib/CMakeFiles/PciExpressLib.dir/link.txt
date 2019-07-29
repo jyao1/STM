@@ -1,0 +1,2 @@
+/usr/bin/ar qc libPciExpressLib.a  CMakeFiles/PciExpressLib.dir/PciExpressLib.c.o
+/usr/bin/ranlib libPciExpressLib.a

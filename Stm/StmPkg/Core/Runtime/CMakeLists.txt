@@ -1,7 +1,7 @@
 
 add_library(SmmExcept STATIC
 	 x64/SmmException.c
-	 x64/Exception.s
+	 x64/Exception.S
 )
 
 target_include_directories(SmmExcept PUBLIC
@@ -51,11 +51,11 @@ add_library(StmRuntime STATIC
   PeVmcsInit.c
   VmcsMapper.c
   #x64/VmExit.asm
-  x64/VmExit.s
+  x64/VmExit.S
   #x64/PeVmExit.asm
-  x64/PeVmExit.s
+  x64/PeVmExit.S
   #x64/Exception.asm
-  #x64/Exception.s
+  #x64/Exception.S
   #x64/SmmException.c
   x64/SmmStateSyncIa32eGpr.c
 )
