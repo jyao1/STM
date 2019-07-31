@@ -8,6 +8,7 @@ add_library(StmInit STATIC
   MsrInit.c
   Relocate.c
   PeVmcsInit.c
+  x64/AsmStmInit.S
 )
 
 target_include_directories(StmInit PUBLIC

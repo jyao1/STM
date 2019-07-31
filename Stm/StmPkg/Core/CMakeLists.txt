@@ -1,7 +1,7 @@
 add_subdirectory(Runtime)
 add_subdirectory(Init)
  
-add_library(Stm MODULE
+add_executable( Stm
   Cpu.c
   Dump.c
   VmcsRecord.c
@@ -10,12 +10,30 @@ add_library(Stm MODULE
   Init/StmInit.c
 )
 
+add_custom_command(
+        OUTPUT stm.tmp
+        DEPENDS Stm
+   #     POST_BUILD
+        COMMAND ${CMAKE_OBJCOPY} Stm stm.tmp -O binary -S
+	COMMAND ${CMAKE_COMMAND} -E copy stm.tmp stm.bin
+        COMMENT "objcopy Stm to stm.bin"
+)
+
+add_custom_target(stm.bin ALL DEPENDS stm.tmp)
+set_directory_properties(PROPERTIES ADDITIIONAL_MAKE_CLEAN_FILES "stm.bin stm.tmp stm.lds")
+
+
 add_library(Resource STATIC
   StmResource.c
 )
 
 add_library(EventLog STATIC
   EventLog.c
+)
+
+target_link_libraries(Resource PUBLIC
+	PciLib
+	PciExpressLib
 )
 
 add_library(EptLib STATIC
@@ -30,13 +48,13 @@ target_include_directories(EptLib PUBLIC
 )
 
 target_link_libraries(Stm PUBLIC 
- #BaseLib 
+ BaseLib 
  #BaseMemoryLib 
  #IoLib 
  PciLib 
  #SynchronizationLib 
  #DebugLib 
- StmLib 
+ #StmLib 
  PcdLib
  StmPlatformLib
  StmRuntime
@@ -51,6 +69,7 @@ target_include_directories(Stm PUBLIC
 
 target_include_directories(Resource PUBLIC
 	Runtime)
+
 
 add_library(PcdData STATIC PcdData.c)
 

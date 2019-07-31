@@ -66,6 +66,8 @@ target_include_directories(StmRuntime PUBLIC
 
 target_link_libraries(StmRuntime PUBLIC
  SynchronizationLib
+ StmPlatformLib
  EventLog
+ StmLib
 )
 
