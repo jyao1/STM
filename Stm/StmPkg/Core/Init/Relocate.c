@@ -15,6 +15,8 @@
 #include "StmInit.h"
 #include <IndustryStandard/PeImage.h>
 
+#include <elf.h>
+
 /**
 
   This function relocate image at ImageBase.
@@ -188,6 +190,53 @@ PeCoffRelocateImageOnTheSpot (
   }
 }
 
+// elf_process_reloc_table - a very simple relocation processor
+//
+//     it does only X64 relative relocations -- others are flagged
+//     
+//     Parameters:
+//                UINT64 BaseLocation      - location of module im memory, in this case start of MSEG
+//                UINT64 RelativeLocation  - for setup - location of module in memory
+//                                           for teardown - 0 - to reset values to make sinit happy
+//
+extern UINT64 _ElfRelocTablesEnd,  _ElfRelocTablesStart;
+
+static int elf_process_reloc_table(UINT64 BaseLocation, UINT64 RelativeLocation ) {
+	int size;
+	int idx;
+	Elf64_Rela * reloc_table = (Elf64_Rela *) ((UINT64)&_ElfRelocTablesStart + BaseLocation);
+
+	DEBUG((EFI_D_INFO, "ELF Relocation in progress\n"));
+
+	size = (UINT64)((UINT64)&_ElfRelocTablesEnd - (UINT64)&_ElfRelocTablesStart)/ sizeof(Elf64_Rela);
+        DEBUG((EFI_D_INFO, "%d locations to be relocated\n", size));
+
+	for(idx = 0; idx < size; idx++) 
+	{
+
+		if(ELF64_R_TYPE(reloc_table->r_info) != R_X86_64_RELATIVE)
+		{
+			DEBUG((EFI_D_INFO, "WARNING only X86_64 relative relocations done\n"));
+		}	
+		else
+		{
+			UINT64 * OFFSET = (UINT64*) (reloc_table[idx].r_offset + BaseLocation);
+			*OFFSET = reloc_table[idx].r_addend + RelativeLocation;
+#ifdef PRINTRELOC
+			 DEBUG((EFI_D_INFO, "Relocation r_offset %x r_addend %x OFFSET %x *OFFSET %x\n",
+                                        reloc_table[idx].r_offset,
+                                        reloc_table[idx].r_addend,
+                                        OFFSET,
+                                        *OFFSET));
+#endif
+		}
+	
+	}
+	DEBUG((EFI_D_INFO, "ELF Relocation done\n"));
+
+	return 0;
+}
+
 /**
 
   This function relocate this STM image.
@@ -233,6 +282,7 @@ RelocateStmImage (
     //
     // Not a valid PE image so Exit
     //
+	elf_process_reloc_table(StmImage, StmImage );
     return ;
   }
 

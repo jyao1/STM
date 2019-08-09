@@ -14,6 +14,7 @@
 
 #include <Base.h>
 #include <Library/BaseLib.h>
+#include <Library/DebugLib.h>
 
 /**
   Executes an infinite loop.
@@ -31,5 +32,6 @@ CpuDeadLoop (
   )
 {
   volatile UINTN  Index;
+  DEBUG((EFI_D_INFO, "In CpuDeadLoop\n"));
   for (Index = 0; Index == 0;);
 }

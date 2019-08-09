@@ -123,23 +123,26 @@ VOID
 	Register->Rsp = VmReadN (VMCS_N_GUEST_RSP_INDEX);
 	CopyMem (Reg, Register, sizeof(X86_REGISTER));
 #if 0
-	DEBUG ((EFI_D_INFO, "%ld - !!!StmHandlerSmi\n", (UINTN)Index));
+	DEBUG ((EFI_D_INFO, "%ld - !!!StmHandlerSmi InfoBasic %x reason %x \n", 
+		(UINTN)Index,
+		InfoBasic.Uint32,
+		InfoBasic.Bits.Reason));
 #endif
 	//
 	// Dispatch
 	//
 	if (InfoBasic.Bits.Reason >= VmExitReasonMax) {
-		DEBUG ((EFI_D_ERROR, "!!!UnknownReason!!!\n"));
+		DEBUG ((EFI_D_ERROR, "%ld !!!UnknownReason: %d!!!\n", Index, InfoBasic.Bits.Reason));
 		DumpVmcsAllField ();
 
 		CpuDeadLoop ();
 	}
-
 	mGuestContextCommonSmi.GuestContextPerCpu[Index].InfoBasic.Uint32 = InfoBasic.Uint32;
 
 	//
 	// Call dispatch handler
 	//
+
 	mStmHandlerSmi[InfoBasic.Bits.Reason] (Index);
 
 	VmWriteN (VMCS_N_GUEST_RSP_INDEX, Reg->Rsp); // sync RSP

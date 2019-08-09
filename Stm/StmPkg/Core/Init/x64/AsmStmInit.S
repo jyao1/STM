@@ -21,8 +21,9 @@ ASM_GLOBAL ASM_PFX(_ModuleEntryPoint)
 .equ STM_API_START,                 0x00010001
 .equ STM_API_INITIALIZE_PROTECTION, 0x00010007
 
-.equ STM_STACK_SIZE,                0x020000
+.equ STM_STACK_SIZE,                0x8000
 
+.align 16
 #------------------------------------------------------------------------------
 # VOID
 # AsmInitializeSmmMonitor (
@@ -40,12 +41,16 @@ GoBsp:
   # ESP is pointer to stack bottom, NOT top
   movl $STM_STACK_SIZE, %eax     # eax = STM_STACK_SIZE, 
   lock xaddl %eax, (%esp)        # eax = ThisOffset, ThisOffset += STM_STACK_SIZE (LOCK instruction)
+
   addl $STM_STACK_SIZE, %eax     # eax = ThisOffset + STM_STACK_SIZE
   addl %eax, %esp                # esp += ThisOffset + STM_STACK_SIZE
 
   #
   # Jump to C code
   #
+  subq $512, %rsp
+  fxsave (%rsp)
+
   push %r15
   push %r14
   push %r13
@@ -63,10 +68,11 @@ GoBsp:
   push %rcx
   movl $STM_API_INITIALIZE_PROTECTION, %eax
   push %rax
-  movq %rsp, %rcx # parameter
-  subq $0x20, %rsp
+  movq %rsp, %rcx # parameter 1 for MS
+  movq %rsp, %rdi # parameter 1 for GNU
+  subq $0x30, %rsp
   call ASM_PFX(InitializeSmmMonitor)
-  addq $0x20, %rsp
+  addq $0x30, %rsp
   # should never get here
   jmp  DeadLoop
 
@@ -87,12 +93,17 @@ GoAp:
   # ESP is pointer to stack bottom, NOT top
   movl $STM_STACK_SIZE, %eax      # eax = STM_STACK_SIZE, 
   lock xaddl %eax, (%esp)         # eax = ThisOffset, ThisOffset += STM_STACK_SIZE (LOCK instruction)
+
   addl $STM_STACK_SIZE, %eax      # eax = ThisOffset + STM_STACK_SIZE
   addl %eax, %esp                 # esp += ThisOffset + STM_STACK_SIZE
 
   #
   # Jump to C code
   #
+  
+  subq $512, %rsp
+  fxsave (%rsp)
+
   push %r15
   push %r14
   push %r13
@@ -110,10 +121,11 @@ GoAp:
   push %rcx
   movl $STM_API_START, %eax
   push %rax
-  movq %rsp, %rcx # parameter
-  subq $0x20, %rsp
+  movq %rsp, %rcx # parameter #1 for MS
+  movq %rsp, %rdi # parameter #1 for GNU
+  subq $0x30, %rsp
   call ASM_PFX(InitializeSmmMonitor)
-  addq $0x20, %rsp
+  addq $0x30, %rsp
   # should never get here
 DeadLoop:
   jmp .

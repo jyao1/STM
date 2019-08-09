@@ -21,7 +21,7 @@ ASM_GLOBAL ASM_PFX(_ModuleEntryPoint)
 .equ STM_API_START,                 0x00010001
 .equ STM_API_INITIALIZE_PROTECTION, 0x00010007
 
-.equ STM_STACK_SIZE,                0x020000
+.equ STM_STACK_SIZE,                0x8000
 
 #------------------------------------------------------------------------------
 # VOID

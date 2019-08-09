@@ -5,7 +5,7 @@
   in final PE/COFF image, so that we can let StmLoad load binrary to memory directly.
 
   Copyright (c) 2015, Intel Corporation. All rights reserved.<BR>
-  This program and the accompanying materials
+  This  program and the accompanying materials
   are licensed and made available under the terms and conditions of the BSD License
   which accompanies this distribution.  The full text of the license may be found at
   http://opensource.org/licenses/bsd-license.php
@@ -15,6 +15,11 @@
 
 **/
 
+SizeOfPerProcessorStack = 0x8000;
+HeapSize = 0x246000;
+PageTableSize = 0x6000;
+STM_SMM_REV_ID = 0x80010100;
+
 SECTIONS
 {
 	/* HARDWARE_STM_HEADER */
@@ -22,26 +27,27 @@ SECTIONS
 	.StmHeaderRevision : {LONG(0)}
 	.MonitorFeatures   : {LONG(1)}
 	.GdtrLimit	   : {LONG(0x47)}
-	.GdtrBaseOffset    : {LONG(0x1000)}
+	.GdtrBaseOffset    : {LONG(_StmGdtr)}
 	.CsSelector	   : {LONG(0x38)}
 	.EipOffset         : {LONG(_ModuleEntryPoint)}
-	.EspOffset         : {LONG(0)}
-	.Cr3Offset         : {LONG(0)}
-
+	.EspOffset         : {LONG(_StmPageTables + HeapSize + PageTableSize)}
+	.Cr3Offset         : {LONG(_StmPageTables)}
+	.fill1 		   : { FILL(0x0); . = ALIGN(2048); } 
 	/* SOFTWARE_STM_HEADER */
 
 	.StmSpecVerMajor ALIGN(2048) : {BYTE(1)}
 	.StmSpecVerMinor   	     : {BYTE(0)}
 	.Reserved                    : {SHORT(0)}
-	.StaticImageSize             : {LONG(0)}
-	.PerProcDynamicMemorySize    : {LONG(0x8000)}
-	.AdditionalDynamicMemorySize : {LONG(0x246000)}
+	/* page tables are at the end of the static section and the data section */
+	.StaticImageSize             : {LONG(_StmImageEnd)} 
+	.PerProcDynamicMemorySize    : {LONG(SizeOfPerProcessorStack)}
+	.AdditionalDynamicMemorySize : {LONG(HeapSize + PageTableSize)}
 
-	.StmFeatures	   : {LONG(0)}
-	.NumberOfRevIDs    : {LONG(0)}
-	.StmSmmRevIDs0     : {LONG(0)}
-	. = ALIGN(0x1000);
-	
+	.StmFeatures	   : {LONG(0x3)} /* EPT support and Intel mode 64 support */
+	.NumberOfRevIDs    : {LONG(1)}
+	.StmSmmRevIDs0     : {LONG(STM_SMM_REV_ID)}
+	.fill2		   : { FILL(0x0); . = ALIGN(0x1000);}
+        _StmGdtr = .;	
 	/* GDT Entriess */
 	.LimitLow0 	   : {SHORT(0)}
 	.BaseLow0	   : {SHORT(0)}
@@ -107,29 +113,46 @@ SECTIONS
         .BaseHi8           : {BYTE(0)}      
 
 	
-    . = ALIGN(0x1000);
-    .text      : {
-      *(.text)
-    }
-    . = ALIGN(0x20);
-    .data : {
-      *(.data)
-    }
-    . = ALIGN(0x20);
-    .rdata : {
-      *(.rdata)
-    }
-    . = ALIGN(0x20);
-    .bss : {
-      *(.bss)
-      *(COMMON)
-      /* dummy */
-      /* LONG (0x12345678) */
-    }
-    . = ALIGN(0x20);
-    .edata : {
-    }
-    . = ALIGN(0x20);
-    .reloc : {
-    }
+    	.fill3 : { FILL(0x0); . = ALIGN(0x1000);}
+
+    	.text   : {
+      	 *(.text.*)
+   	 }
+	
+    	. = ALIGN(0x20);
+    	.rodata : {
+	*(.rodata.*)
+	}  =0x0
+	_StmImageEnd = .;
+
+	 . = ALIGN(0X1000);
+        .data : {
+        *(.data.*)
+        }
+
+	. = ALIGN(0x20);
+    	.rdata : {
+      	*(.rdata.*)
+    	}
+    	. = ALIGN(0x20);
+    	.bss : {
+      	*(.bss.*)
+      	*(COMMON)
+      	/* dummy */
+      	/* LONG (0x12345678) */
+    	}
+    	. = ALIGN(0x20);
+    	.edata : {
+    	}
+    	. = ALIGN(0x20);
+
+	_ElfRelocTablesStart = .;
+    	.reloc : {
+	 *(.rela.*)
+    	}
+	_ElfRelocTablesEnd = .;
+
+	. = ALIGN(0x1000);
+    	_StmPageTables = .;
+    	. = . + 24K;    /* 6 pages for STM page tables, filled by BIOS and/or SINIT */
 }

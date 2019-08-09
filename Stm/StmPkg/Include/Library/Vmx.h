@@ -15,6 +15,12 @@
 #ifndef _VMX_H_
 #define _VMX_H_
 
+#ifdef __GNUC__
+#define MSABI __attribute__((ms_abi))
+#else
+#define MSABI
+#endif
+
 #include "CpuArchSpecific.h"
 
 #define IA32_SMM_MONITOR_CTL_MSR_INDEX      0x9B
@@ -842,7 +848,7 @@ AsmVmxOff (
 UINTN
 AsmVmClear (
   IN UINT64 *Vmcs
-  );
+  ) MSABI;
 
 /**
 
@@ -856,7 +862,7 @@ AsmVmClear (
 UINTN
 AsmVmPtrStore (
   IN UINT64 *Vmcs
-  );
+  ) MSABI;
 
 /**
 
@@ -870,7 +876,7 @@ AsmVmPtrStore (
 UINTN
 AsmVmPtrLoad (
   IN UINT64 *Vmcs
-  );
+  ) MSABI;
 
 /**
 
@@ -884,7 +890,7 @@ AsmVmPtrLoad (
 UINTN
 AsmVmLaunch (
   IN X86_REGISTER *Register
-  );
+  ) MSABI;
 
 /**
 
@@ -898,7 +904,7 @@ AsmVmLaunch (
 UINTN
 AsmVmResume (
   IN X86_REGISTER *Register
-  );
+  ) MSABI;
 
 /**
 
@@ -914,7 +920,7 @@ UINTN
 AsmVmRead (
   IN UINT32  Index,
   OUT UINTN  *Data
-  );
+  ) MSABI;
 
 /**
 
@@ -930,7 +936,7 @@ UINTN
 AsmVmWrite (
   IN UINT32  Index,
   IN UINTN   Data
-  );
+  ) MSABI;
 
 typedef struct {
   UINT64 Lo;
@@ -954,7 +960,7 @@ UINTN
 AsmInvEpt (
   IN UINTN    Type,
   IN UINT_128 *Addr
-  );
+  ) MSABI;
 
 #define  INVVPID_TYPE_INDIVIDUAL_ADDRESS_INVALIDATION                           1
 #define  INVVPID_TYPE_SINGLE_CONTEXT_INVALIDATION                               2
@@ -975,7 +981,7 @@ UINTN
 AsmInvVpid (
   IN UINTN    Type,
   IN UINT_128 *Addr
-  );
+  ) MSABI;
 
 /**
 
@@ -995,6 +1001,6 @@ AsmVmCall (
   IN UINT32  Ebx,
   IN UINT32  Ecx,
   IN UINT32  Edx
-  );
+  ) MSABI;
 
 #endif

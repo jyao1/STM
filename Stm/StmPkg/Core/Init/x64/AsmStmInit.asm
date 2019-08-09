@@ -42,6 +42,7 @@ GoBsp:
   ; ESP is pointer to stack bottom, NOT top
   mov  eax, STM_STACK_SIZE     ; eax = STM_STACK_SIZE, 
   lock xadd [esp], eax         ; eax = ThisOffset, ThisOffset += STM_STACK_SIZE (LOCK instruction)
+
   add  eax, STM_STACK_SIZE     ; eax = ThisOffset + STM_STACK_SIZE
   add  esp, eax                ; esp += ThisOffset + STM_STACK_SIZE
 

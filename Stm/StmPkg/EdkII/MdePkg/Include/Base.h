@@ -78,6 +78,12 @@ VERIFY_SIZE_OF (CHAR16, 2);
   #define GLOBAL_REMOVE_IF_UNREFERENCED
 #endif
 
+#ifdef __GNUC__
+#define MSABI __attribute__((ms_abi))
+#else
+#define MSABI
+#endif
+
 //
 // For symbol name in GNU assembly code, an extra "_" is necessary
 //

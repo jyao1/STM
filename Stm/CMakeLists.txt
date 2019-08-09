@@ -3,7 +3,12 @@ cmake_minimum_required(VERSION 3.5)
 
 project(stm C ASM)
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Os -Xlinker -Map=stm.map  -s -pie --entry _ModuleEntryPoint -u _ModuleEntryPoint -nostdlib -n -z common-page-size=0x40 -fno-asynchronous-unwind-tables  -fno-jump-tables -fPIC -fno-stack-protector -fno-stack-check -include PcdData.h -T ${PROJECT_SOURCE_DIR}/StmPkg/Core/Stm.lds")
+if("${BIOS}" STREQUAL "coreboot")
+	add_definitions( -DCOREBOOT32 )
+	message("Building for Coreboot")
+	endif()
+
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Xlinker -Map=stm.map -Os -falign-functions -ffreestanding -s -pie --entry _ModuleEntryPoint -u _ModuleEntryPoint -nostdlib -n -z common-page-size=0x40 -fno-asynchronous-unwind-tables  -fno-jump-tables -fPIC -fno-stack-protector -fno-stack-check -include PcdData.h -T ${PROJECT_SOURCE_DIR}/StmPkg/Core/Stm.lds")
 
 set(CMAKE_ASM_FLAGS "-include BaseAsm.h -fPIC")
 set(CMAKE_ASM_CREATE_SHARED_LIBRARY "gcc ${CFLAGS} -o *.o")

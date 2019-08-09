@@ -316,6 +316,7 @@ L1:
 
 ## call into exception handler
    movq    8(%rbp), %rcx
+   movq    8(%rbp), %rdi   ##for GCC
    movq    ASM_PFX(mExternalVectorTablePtr)(%rip), %rax
    movq    (%rax, %rcx, 8), %rax
    orq     %rax, %rax
@@ -324,6 +325,7 @@ L1:
 
 ## Prepare parameter and call
    movq    %rsp, %rdx
+   movq    %rsp, %rsi   # second parameter for GCC
   #
   # Per X64 calling convention, allocate maximum parameter stack space
   # and make sure RSP is 16-byte aligned

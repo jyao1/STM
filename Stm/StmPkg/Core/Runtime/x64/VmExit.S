@@ -21,6 +21,10 @@ ASM_GLOBAL ASM_PFX(AsmHostEntrypointSmi)
 ASM_GLOBAL ASM_PFX(AsmHostEntrypointSmm)
 
 ASM_PFX(AsmHostEntrypointSmi):
+
+  subq $512, %rsp
+  fxsave (%rsp)
+
   push %r15
   push %r14
   push %r13
@@ -37,13 +41,17 @@ ASM_PFX(AsmHostEntrypointSmi):
   push %rdx
   push %rcx
   push %rax
-  movq %rsp, %rcx # parameter
-  subq $0x20, %rsp
+  movq %rsp, %rcx # parameter for MS
+  movq %rsp, %rdi # parameter for GCC
+  subq $0x30, %rsp
   call ASM_PFX(StmHandlerSmi)
-  addq $0x20, %rsp
+  addq $0x30, %rsp
   jmp .
 
 ASM_PFX(AsmHostEntrypointSmm):
+  subq $512, %rsp
+  fxsave (%rsp)
+
   push %r15
   push %r14
   push %r13
@@ -60,9 +68,10 @@ ASM_PFX(AsmHostEntrypointSmm):
   push %rdx
   push %rcx
   push %rax
-  movq %rsp, %rcx # parameter
-  subq $0x20, %rsp
+  movq %rsp, %rcx # parameter for MS
+  movq %rsp, %rdi # parameter for GCC
+  subq $0x30, %rsp
   call ASM_PFX(StmHandlerSmm)
-  addq $0x20, %rsp
+  addq $0x30, %rsp
   jmp .
 

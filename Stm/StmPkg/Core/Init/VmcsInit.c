@@ -189,7 +189,8 @@ InitializeSmmVmcs (
   Data64 = AsmReadMsr64 (IA32_VMX_ENTRY_CTLS_MSR_INDEX);
   VmEntryCtrls.Uint32 = (UINT32)Data64 & (UINT32)RShiftU64 (Data64, 32);
   VmEntryCtrls.Bits.Ia32eGuest = mHostContextCommon.HostContextPerCpu[Index].TxtProcessorSmmDescriptor->SmmEntryState.Intel64Mode;
-#ifdef COREBOOT32
+#if defined(COREBOOT32)
+  DEBUG((EFI_D_INFO, "Setting up SMI Handler for 32 bit mode\n"));
   mGuestContextCommonSmm[SMI_HANDLER].GuestContextPerCpu[Index].Efer = 0;//mGuestContextCommonSmm[SMI_HANDLER].GuestContextPerCpu[Index].Efer & (~((1 << 9) & (1 << 10))); // turn off IA32 bits																					// need to find the proper defines
 #endif
   VmEntryCtrls.Bits.EntryToSmm = 1;
@@ -295,7 +296,7 @@ InitializeSmmVmcs (
       VmWriteN  (VMCS_N_GUEST_CR4_INDEX,                 VmReadN(VMCS_N_GUEST_CR4_INDEX) | CR4_PSE);
     }
   }
-#ifdef COREBOOT32       // coreboot support
+#if defined(COREBOOT32)       // coreboot support
 #define CR0_CLEAR_FLAGS CR0_CD|CR0_NW|CR0_PG|CR0_WP|CR0_NE|CR0_TS
    VmWriteN  (VMCS_N_GUEST_CR0_INDEX,  ((VmReadN(VMCS_N_GUEST_CR0_INDEX) & ~(CR0_PG)) | CR0_PE ));
    VmWriteN  (VMCS_N_GUEST_CR4_INDEX,    (VmReadN(VMCS_N_GUEST_CR4_INDEX) | CR4_PAE));   // must be set because host address size vmexit control is 1

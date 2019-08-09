@@ -17,6 +17,14 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 #ifndef __BASE_LIB__
 #define __BASE_LIB__
 
+// GCC 
+
+#ifdef __GNUC__
+#define MSABI __attribute__((ms_abi))
+#else
+#define MSABI
+#endif
+
 //
 // Definitions for architecture-specific types
 //
@@ -3455,7 +3463,7 @@ EFIAPI
 AsmFlushCacheRange (
   IN      VOID                      *Address,
   IN      UINTN                     Length
-  );
+  ) MSABI;
 
 
 /**
@@ -3473,7 +3481,7 @@ UINT64
 EFIAPI
 AsmFc (
   IN  UINT64  Address
-  );
+  ) MSABI;
 
 
 /**
@@ -3491,7 +3499,7 @@ UINT64
 EFIAPI
 AsmFci (
   IN  UINT64  Address
-  );
+  ) MSABI;
 
 
 /**
@@ -3514,7 +3522,7 @@ UINT64
 EFIAPI
 AsmReadCpuid (
   IN  UINT8   Index
-  );
+  ) MSABI;
 
 
 /**
@@ -3528,7 +3536,7 @@ UINT64
 EFIAPI
 AsmReadPsr (
   VOID
-  );
+  ) MSABI;
 
 
 /**
@@ -3548,7 +3556,7 @@ UINT64
 EFIAPI
 AsmWritePsr (
   IN UINT64  Value
-  );
+  )  MSABI;
 
 
 /**
@@ -3564,7 +3572,7 @@ UINT64
 EFIAPI
 AsmReadKr0 (
   VOID
-  );
+  ) MSABI;
 
 
 /**
@@ -3580,7 +3588,7 @@ UINT64
 EFIAPI
 AsmReadKr1 (
   VOID
-  );
+  ) MSABI;
 
 
 /**
@@ -3596,7 +3604,7 @@ UINT64
 EFIAPI
 AsmReadKr2 (
   VOID
-  );
+  ) MSABI;
 
 
 /**
@@ -3612,7 +3620,7 @@ UINT64
 EFIAPI
 AsmReadKr3 (
   VOID
-  );
+  ) MSABI;
 
 
 /**
@@ -3628,7 +3636,7 @@ UINT64
 EFIAPI
 AsmReadKr4 (
   VOID
-  );
+  ) MSABI;
 
 
 /**
@@ -3644,7 +3652,7 @@ UINT64
 EFIAPI
 AsmReadKr5 (
   VOID
-  );
+  ) MSABI;
 
 
 /**
@@ -3660,7 +3668,7 @@ UINT64
 EFIAPI
 AsmReadKr6 (
   VOID
-  );
+  ) MSABI;
 
 
 /**
@@ -3676,7 +3684,7 @@ UINT64
 EFIAPI
 AsmReadKr7 (
   VOID
-  );
+  ) MSABI;
 
 
 /**
@@ -3694,7 +3702,7 @@ UINT64
 EFIAPI
 AsmWriteKr0 (
   IN UINT64  Value
-  );
+  ) MSABI;
 
 
 /**
@@ -3712,7 +3720,7 @@ UINT64
 EFIAPI
 AsmWriteKr1 (
   IN UINT64  Value
-  );
+  )  MSABI;
 
 
 /**
@@ -3730,7 +3738,7 @@ UINT64
 EFIAPI
 AsmWriteKr2 (
   IN UINT64  Value
-  );
+  ) MSABI;
 
 
 /**
@@ -3748,7 +3756,7 @@ UINT64
 EFIAPI
 AsmWriteKr3 (
   IN UINT64  Value
-  );
+  ) MSABI;
 
 
 /**
@@ -3766,7 +3774,7 @@ UINT64
 EFIAPI
 AsmWriteKr4 (
   IN UINT64  Value
-  );
+  ) MSABI;
 
 
 /**
@@ -3784,7 +3792,7 @@ UINT64
 EFIAPI
 AsmWriteKr5 (
   IN UINT64  Value
-  );
+  ) MSABI;
 
 
 /**
@@ -3802,7 +3810,7 @@ UINT64
 EFIAPI
 AsmWriteKr6 (
   IN UINT64  Value
-  );
+  ) MSABI;
 
 
 /**
@@ -3820,7 +3828,7 @@ UINT64
 EFIAPI
 AsmWriteKr7 (
   IN UINT64  Value
-  );
+  ) MSABI;
 
 
 /**
@@ -5105,7 +5113,7 @@ AsmCpuid (
   OUT     UINT32                    *Ebx,  OPTIONAL
   OUT     UINT32                    *Ecx,  OPTIONAL
   OUT     UINT32                    *Edx   OPTIONAL
-  );
+  ) MSABI;
 
 
 /**
@@ -5149,7 +5157,7 @@ AsmCpuidEx (
   OUT     UINT32                    *Ebx,  OPTIONAL
   OUT     UINT32                    *Ecx,  OPTIONAL
   OUT     UINT32                    *Edx   OPTIONAL
-  );
+  ) MSABI;
 
 
 /**
@@ -5163,7 +5171,7 @@ VOID
 EFIAPI
 AsmDisableCache (
   VOID
-  );
+  ) MSABI;
 
 
 /**
@@ -5177,7 +5185,7 @@ VOID
 EFIAPI
 AsmEnableCache (
   VOID
-  );
+  ) MSABI;
 
 
 /**
@@ -5198,7 +5206,7 @@ UINT32
 EFIAPI
 AsmReadMsr32 (
   IN      UINT32                    Index
-  );
+  ) ;
 
 
 /**
@@ -5223,7 +5231,7 @@ EFIAPI
 AsmWriteMsr32 (
   IN      UINT32                    Index,
   IN      UINT32                    Value
-  );
+  ) ;
 
 
 /**
@@ -5250,7 +5258,7 @@ EFIAPI
 AsmMsrOr32 (
   IN      UINT32                    Index,
   IN      UINT32                    OrData
-  );
+  ) ;
 
 
 /**
@@ -5277,7 +5285,7 @@ EFIAPI
 AsmMsrAnd32 (
   IN      UINT32                    Index,
   IN      UINT32                    AndData
-  );
+  ) ;
 
 
 /**
@@ -5308,7 +5316,7 @@ AsmMsrAndThenOr32 (
   IN      UINT32                    Index,
   IN      UINT32                    AndData,
   IN      UINT32                    OrData
-  );
+  ) ;
 
 
 /**
@@ -5339,7 +5347,7 @@ AsmMsrBitFieldRead32 (
   IN      UINT32                    Index,
   IN      UINTN                     StartBit,
   IN      UINTN                     EndBit
-  );
+  ) ;
 
 
 /**
@@ -5373,7 +5381,7 @@ AsmMsrBitFieldWrite32 (
   IN      UINTN                     StartBit,
   IN      UINTN                     EndBit,
   IN      UINT32                    Value
-  );
+  ) ;
 
 
 /**
@@ -5409,7 +5417,7 @@ AsmMsrBitFieldOr32 (
   IN      UINTN                     StartBit,
   IN      UINTN                     EndBit,
   IN      UINT32                    OrData
-  );
+  ) ;
 
 
 /**
@@ -5445,7 +5453,7 @@ AsmMsrBitFieldAnd32 (
   IN      UINTN                     StartBit,
   IN      UINTN                     EndBit,
   IN      UINT32                    AndData
-  );
+  ) ;
 
 
 /**
@@ -5485,7 +5493,7 @@ AsmMsrBitFieldAndThenOr32 (
   IN      UINTN                     EndBit,
   IN      UINT32                    AndData,
   IN      UINT32                    OrData
-  );
+  ) ;
 
 
 /**
@@ -5506,7 +5514,7 @@ UINT64
 EFIAPI
 AsmReadMsr64 (
   IN      UINT32                    Index
-  );
+  ) ;
 
 
 /**
@@ -5531,7 +5539,7 @@ EFIAPI
 AsmWriteMsr64 (
   IN      UINT32                    Index,
   IN      UINT64                    Value
-  );
+  ) ;
 
 
 /**
@@ -5557,7 +5565,7 @@ EFIAPI
 AsmMsrOr64 (
   IN      UINT32                    Index,
   IN      UINT64                    OrData
-  );
+  ) ;
 
 
 /**
@@ -5583,7 +5591,7 @@ EFIAPI
 AsmMsrAnd64 (
   IN      UINT32                    Index,
   IN      UINT64                    AndData
-  );
+  ) ;
 
 
 /**
@@ -5613,7 +5621,7 @@ AsmMsrAndThenOr64 (
   IN      UINT32                    Index,
   IN      UINT64                    AndData,
   IN      UINT64                    OrData
-  );
+  ) ;
 
 
 /**
@@ -5644,7 +5652,7 @@ AsmMsrBitFieldRead64 (
   IN      UINT32                    Index,
   IN      UINTN                     StartBit,
   IN      UINTN                     EndBit
-  );
+  ) ;
 
 
 /**
@@ -5677,7 +5685,7 @@ AsmMsrBitFieldWrite64 (
   IN      UINTN                     StartBit,
   IN      UINTN                     EndBit,
   IN      UINT64                    Value
-  );
+  ) ;
 
 
 /**
@@ -5713,7 +5721,7 @@ AsmMsrBitFieldOr64 (
   IN      UINTN                     StartBit,
   IN      UINTN                     EndBit,
   IN      UINT64                    OrData
-  );
+  ) ;
 
 
 /**
@@ -5749,7 +5757,7 @@ AsmMsrBitFieldAnd64 (
   IN      UINTN                     StartBit,
   IN      UINTN                     EndBit,
   IN      UINT64                    AndData
-  );
+  ) ;
 
 
 /**
@@ -5788,7 +5796,7 @@ AsmMsrBitFieldAndThenOr64 (
   IN      UINTN                     EndBit,
   IN      UINT64                    AndData,
   IN      UINT64                    OrData
-  );
+  ) ;
 
 
 /**
@@ -5805,7 +5813,7 @@ UINTN
 EFIAPI
 AsmReadEflags (
   VOID
-  );
+  ) ;
 
 
 /**
@@ -5822,7 +5830,7 @@ UINTN
 EFIAPI
 AsmReadCr0 (
   VOID
-  );
+  ) ;
 
 
 /**
@@ -5839,7 +5847,7 @@ UINTN
 EFIAPI
 AsmReadCr2 (
   VOID
-  );
+  ) ;
 
 
 /**
@@ -5856,7 +5864,7 @@ UINTN
 EFIAPI
 AsmReadCr3 (
   VOID
-  );
+ ) ;
 
 
 /**
@@ -5873,7 +5881,7 @@ UINTN
 EFIAPI
 AsmReadCr4 (
   VOID
-  );
+  ) ;
 
 
 /**
@@ -5891,7 +5899,7 @@ UINTN
 EFIAPI
 AsmWriteCr0 (
   UINTN  Cr0
-  );
+  ) ;
 
 
 /**
@@ -5909,7 +5917,7 @@ UINTN
 EFIAPI
 AsmWriteCr2 (
   UINTN  Cr2
-  );
+  ) ;
 
 
 /**
@@ -5927,7 +5935,7 @@ UINTN
 EFIAPI
 AsmWriteCr3 (
   UINTN  Cr3
-  );
+  ) ;
 
 
 /**
@@ -5945,7 +5953,7 @@ UINTN
 EFIAPI
 AsmWriteCr4 (
   UINTN  Cr4
-  );
+  ) ;
 
 
 /**
@@ -5962,7 +5970,7 @@ UINTN
 EFIAPI
 AsmReadDr0 (
   VOID
-  );
+  ) ;
 
 
 /**
@@ -5979,7 +5987,7 @@ UINTN
 EFIAPI
 AsmReadDr1 (
   VOID
-  );
+  ) ;
 
 
 /**
@@ -5996,7 +6004,7 @@ UINTN
 EFIAPI
 AsmReadDr2 (
   VOID
-  );
+  ) ;
 
 
 /**
@@ -6013,7 +6021,7 @@ UINTN
 EFIAPI
 AsmReadDr3 (
   VOID
-  );
+  ) ;
 
 
 /**
@@ -6030,7 +6038,7 @@ UINTN
 EFIAPI
 AsmReadDr4 (
   VOID
-  );
+  ) ;
 
 
 /**
@@ -6047,7 +6055,7 @@ UINTN
 EFIAPI
 AsmReadDr5 (
   VOID
-  );
+  ) ;
 
 
 /**
@@ -6064,7 +6072,7 @@ UINTN
 EFIAPI
 AsmReadDr6 (
   VOID
-  );
+  ) ;
 
 
 /**
@@ -6081,7 +6089,7 @@ UINTN
 EFIAPI
 AsmReadDr7 (
   VOID
-  );
+  ) ;
 
 
 /**
@@ -6099,7 +6107,7 @@ UINTN
 EFIAPI
 AsmWriteDr0 (
   UINTN  Dr0
-  );
+  ) ;
 
 
 /**
@@ -6117,7 +6125,7 @@ UINTN
 EFIAPI
 AsmWriteDr1 (
   UINTN  Dr1
-  );
+  ) ;
 
 
 /**
@@ -6135,7 +6143,7 @@ UINTN
 EFIAPI
 AsmWriteDr2 (
   UINTN  Dr2
-  );
+  ) ;
 
 
 /**
@@ -6153,7 +6161,7 @@ UINTN
 EFIAPI
 AsmWriteDr3 (
   UINTN  Dr3
-  );
+  ) ;
 
 
 /**
@@ -6171,7 +6179,7 @@ UINTN
 EFIAPI
 AsmWriteDr4 (
   UINTN  Dr4
-  );
+  ) ;
 
 
 /**
@@ -6189,7 +6197,7 @@ UINTN
 EFIAPI
 AsmWriteDr5 (
   UINTN  Dr5
-  );
+  ) ;
 
 
 /**
@@ -6207,7 +6215,7 @@ UINTN
 EFIAPI
 AsmWriteDr6 (
   UINTN  Dr6
-  );
+  ) ;
 
 
 /**
@@ -6225,7 +6233,7 @@ UINTN
 EFIAPI
 AsmWriteDr7 (
   UINTN  Dr7
-  );
+  ) ;
 
 
 /**
@@ -6241,7 +6249,7 @@ UINT16
 EFIAPI
 AsmReadCs (
   VOID
-  );
+  ) ;
 
 
 /**
@@ -6257,7 +6265,7 @@ UINT16
 EFIAPI
 AsmReadDs (
   VOID
-  );
+  ) ;
 
 
 /**
@@ -6273,7 +6281,7 @@ UINT16
 EFIAPI
 AsmReadEs (
   VOID
-  );
+  ) ;
 
 
 /**
@@ -6289,7 +6297,7 @@ UINT16
 EFIAPI
 AsmReadFs (
   VOID
-  );
+  ) ;
 
 
 /**
@@ -6305,7 +6313,7 @@ UINT16
 EFIAPI
 AsmReadGs (
   VOID
-  );
+  ) ;
 
 
 /**
@@ -6321,7 +6329,7 @@ UINT16
 EFIAPI
 AsmReadSs (
   VOID
-  );
+  ) ;
 
 
 /**
@@ -6337,7 +6345,7 @@ UINT16
 EFIAPI
 AsmReadTr (
   VOID
-  );
+  ) ;
 
 
 /**
@@ -6355,7 +6363,7 @@ VOID
 EFIAPI
 AsmReadGdtr (
   OUT     IA32_DESCRIPTOR           *Gdtr
-  );
+  ) ;
 
 
 /**
@@ -6373,7 +6381,7 @@ VOID
 EFIAPI
 AsmWriteGdtr (
   IN      CONST IA32_DESCRIPTOR     *Gdtr
-  );
+  ) ;
 
 
 /**
@@ -6391,7 +6399,7 @@ VOID
 EFIAPI
 AsmReadIdtr (
   OUT     IA32_DESCRIPTOR           *Idtr
-  );
+  ) ;
 
 
 /**
@@ -6425,7 +6433,7 @@ UINT16
 EFIAPI
 AsmReadLdtr (
   VOID
-  );
+  ) ;
 
 
 /**
@@ -6441,7 +6449,7 @@ VOID
 EFIAPI
 AsmWriteLdtr (
   IN      UINT16                    Ldtr
-  );
+  ) ;
 
 
 /**
@@ -6461,7 +6469,7 @@ VOID
 EFIAPI
 AsmFxSave (
   OUT     IA32_FX_BUFFER            *Buffer
-  );
+  ) ;
 
 
 /**
@@ -6482,7 +6490,7 @@ VOID
 EFIAPI
 AsmFxRestore (
   IN      CONST IA32_FX_BUFFER      *Buffer
-  );
+  ) ;
 
 
 /**
@@ -6498,7 +6506,7 @@ UINT64
 EFIAPI
 AsmReadMm0 (
   VOID
-  );
+  ) ;
 
 
 /**
@@ -6514,7 +6522,7 @@ UINT64
 EFIAPI
 AsmReadMm1 (
   VOID
-  );
+  ) ;
 
 
 /**
@@ -6530,8 +6538,7 @@ UINT64
 EFIAPI
 AsmReadMm2 (
   VOID
-  );
-
+  ) ;
 
 /**
   Reads the current value of 64-bit MMX Register #3 (MM3).
@@ -6546,7 +6553,7 @@ UINT64
 EFIAPI
 AsmReadMm3 (
   VOID
-  );
+  ) ;
 
 
 /**
@@ -6562,7 +6569,7 @@ UINT64
 EFIAPI
 AsmReadMm4 (
   VOID
-  );
+  ) ;
 
 
 /**
@@ -6578,7 +6585,7 @@ UINT64
 EFIAPI
 AsmReadMm5 (
   VOID
-  );
+  ) ;
 
 
 /**
@@ -6594,7 +6601,7 @@ UINT64
 EFIAPI
 AsmReadMm6 (
   VOID
-  );
+  ) ;
 
 
 /**
@@ -6610,7 +6617,7 @@ UINT64
 EFIAPI
 AsmReadMm7 (
   VOID
-  );
+  ) ;
 
 
 /**
@@ -6626,7 +6633,7 @@ VOID
 EFIAPI
 AsmWriteMm0 (
   IN      UINT64                    Value
-  );
+  ) ;
 
 
 /**
@@ -6642,7 +6649,7 @@ VOID
 EFIAPI
 AsmWriteMm1 (
   IN      UINT64                    Value
-  );
+  ) ;
 
 
 /**
@@ -6658,7 +6665,7 @@ VOID
 EFIAPI
 AsmWriteMm2 (
   IN      UINT64                    Value
-  );
+  ) ;
 
 
 /**
@@ -6674,7 +6681,7 @@ VOID
 EFIAPI
 AsmWriteMm3 (
   IN      UINT64                    Value
-  );
+  ) ;
 
 
 /**
@@ -6690,7 +6697,7 @@ VOID
 EFIAPI
 AsmWriteMm4 (
   IN      UINT64                    Value
-  );
+  ) ;
 
 
 /**
@@ -6706,7 +6713,7 @@ VOID
 EFIAPI
 AsmWriteMm5 (
   IN      UINT64                    Value
-  );
+  ) ;
 
 
 /**
@@ -6722,7 +6729,7 @@ VOID
 EFIAPI
 AsmWriteMm6 (
   IN      UINT64                    Value
-  );
+  ) ;
 
 
 /**
@@ -6738,7 +6745,7 @@ VOID
 EFIAPI
 AsmWriteMm7 (
   IN      UINT64                    Value
-  );
+  ) ;
 
 
 /**
@@ -6754,7 +6761,7 @@ UINT64
 EFIAPI
 AsmReadTsc (
   VOID
-  );
+  ) ;
 
 
 /**
@@ -6772,7 +6779,7 @@ UINT64
 EFIAPI
 AsmReadPmc (
   IN      UINT32                    Index
-  );
+  ) ;
 
 
 /**
@@ -6797,7 +6804,7 @@ AsmMonitor (
   IN      UINTN                     Eax,
   IN      UINTN                     Ecx,
   IN      UINTN                     Edx
-  );
+  ) ;
 
 
 /**
@@ -6819,7 +6826,7 @@ EFIAPI
 AsmMwait (
   IN      UINTN                     Eax,
   IN      UINTN                     Ecx
-  );
+  ) ;
 
 
 /**
@@ -6833,7 +6840,7 @@ VOID
 EFIAPI
 AsmWbinvd (
   VOID
-  );
+  ) ;
 
 
 /**
@@ -6847,7 +6854,7 @@ VOID
 EFIAPI
 AsmInvd (
   VOID
-  );
+  ) ;
 
 
 /**
@@ -6869,7 +6876,7 @@ VOID *
 EFIAPI
 AsmFlushCacheLine (
   IN      VOID                      *LinearAddress
-  );
+  ) ;
 
 
 /**
@@ -6916,7 +6923,7 @@ AsmEnablePaging32 (
   IN      VOID                      *Context1,  OPTIONAL
   IN      VOID                      *Context2,  OPTIONAL
   IN      VOID                      *NewStack
-  );
+  ) MSABI;
 
 
 /**
@@ -6960,7 +6967,7 @@ AsmDisablePaging32 (
   IN      VOID                      *Context1,  OPTIONAL
   IN      VOID                      *Context2,  OPTIONAL
   IN      VOID                      *NewStack
-  );
+  ) MSABI;
 
 
 /**
@@ -7003,7 +7010,7 @@ AsmEnablePaging64 (
   IN      UINT64                    Context1,  OPTIONAL
   IN      UINT64                    Context2,  OPTIONAL
   IN      UINT64                    NewStack
-  );
+  ) MSABI;
 
 
 /**
@@ -7044,7 +7051,7 @@ AsmDisablePaging64 (
   IN      UINT32                    Context1,  OPTIONAL
   IN      UINT32                    Context2,  OPTIONAL
   IN      UINT32                    NewStack
-  );
+  ) MSABI;
 
 
 //
@@ -7077,7 +7084,7 @@ EFIAPI
 AsmGetThunk16Properties (
   OUT     UINT32                    *RealModeBufferSize,
   OUT     UINT32                    *ExtraStackSize
-  );
+  ) MSABI;
 
 
 /**
@@ -7098,7 +7105,7 @@ VOID
 EFIAPI
 AsmPrepareThunk16 (
   OUT     THUNK_CONTEXT             *ThunkContext
-  );
+  ) MSABI;
 
 
 /**
@@ -7158,7 +7165,7 @@ VOID
 EFIAPI
 AsmThunk16 (
   IN OUT  THUNK_CONTEXT             *ThunkContext
-  );
+  ) MSABI;
 
 
 /**
@@ -7185,7 +7192,7 @@ VOID
 EFIAPI
 AsmPrepareAndThunk16 (
   IN OUT  THUNK_CONTEXT             *ThunkContext
-  );
+  ) MSABI;
 
 #endif
 #endif

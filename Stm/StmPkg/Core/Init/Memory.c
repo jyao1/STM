@@ -15,7 +15,7 @@
 #include "StmInit.h"
 #include "PeStm.h"
 
-void HeapList(void);
+void HeapList(int id);
 //#define HEAPCHECK
 
 /**
@@ -83,7 +83,7 @@ AllocatePages (
         DEBUG((EFI_D_ERROR, "AllocatePages(0x%x) fail - no freeblock of the correct size\n", Pages));
 #ifdef HEAPCHECK
        // ReleaseSpinLock (&mHostContextCommon.MemoryLock);
-        HeapList();
+        HeapList(1);
 #endif
         ReleaseSpinLock (&mHostContextCommon.MemoryLock);
         return NULL;
@@ -130,10 +130,9 @@ AllocatePages (
     //Address = mHostContextCommon.HeapTop - STM_PAGES_TO_SIZE(Pages);
     //mHostContextCommon.HeapTop = Address;
 #ifdef HEAPCHECK   
-    HeapList();
+    HeapList(2);
 #endif
     ReleaseSpinLock (&mHostContextCommon.MemoryLock);
-
     ZeroMem ((VOID *)(UINTN)Address, STM_PAGES_TO_SIZE (Pages));
 #ifdef HEAPCHECK
     DEBUG((EFI_D_ERROR, "****Allocating 0x%x pages at 0x%016llx - %d Cleared\n", Pages, Address, STM_PAGES_TO_SIZE (Pages)));
@@ -251,17 +250,17 @@ FreePages (
  //       mHostContextCommon.HeapTop += STM_PAGES_TO_SIZE(Pages);
  //   }
 #ifdef HEAPCHECK
-    HeapList();
+    HeapList(3);
 #endif
     ReleaseSpinLock (&mHostContextCommon.MemoryLock);
     return ;
 }
 
-void HeapList(void)
+void HeapList(int id)
 {
     HEAP_HEADER * CurrentBlock = (HEAP_HEADER *)(UINTN) mHostContextCommon.HeapFree;
 
-    DEBUG((EFI_D_ERROR, " ***HeapList Start***\n"));
+    DEBUG((EFI_D_ERROR, " ***HeapList %d Start***\n", id));
 
     while(CurrentBlock != 0L)
     {
@@ -269,5 +268,5 @@ void HeapList(void)
         CurrentBlock = CurrentBlock->NextBlock;
     }
 
-    DEBUG((EFI_D_ERROR, " ***HeapList Done***\n"));
+    DEBUG((EFI_D_ERROR, " ***HeapList %d Done***\n", id));
 }

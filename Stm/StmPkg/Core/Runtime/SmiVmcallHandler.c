@@ -285,7 +285,6 @@ SmiVmcallGetBiosResourcesHandler (
   UINTN                              BiosResourceSize;
   UINT32                             PageNum;
   X86_REGISTER                       *Reg;
-  
   Reg = &mGuestContextCommonSmi.GuestContextPerCpu[Index].Register;
 
   // ECX:EBX - STM_RESOURCE_LIST
@@ -939,10 +938,10 @@ STM_VMCALL_HANDLER_STRUCT  mSmiVmcallHandler[] = {
   {STM_API_MANAGE_VMCS_DATABASE,               SmiVmcallManageVmcsDatabaseHandler},
   {STM_API_INITIALIZE_PROTECTION,              SmiVmcallInitializeProtectionHandler},
   {STM_API_MANAGE_EVENT_LOG,                   SmiVmcallManageEventLogHandler},
-  {STM_API_ADD_TEMP_PE_VM,				       SmiVmcallAddTempPeVmHandler},
-  {STM_API_ADD_PERM_PE_VM,					   SmiVmcallAddPermPeVmHandler},
-  {STM_API_ADD_PERM_PE_VM_NORUN,			   SmiVmcallAddPermPeVmNoRunHandler},
-  {STM_API_RUN_PE_VM,						   SmiVmcallRunPeVmHandler},
+  {STM_API_ADD_TEMP_PE_VM,		       SmiVmcallAddTempPeVmHandler},
+  {STM_API_ADD_PERM_PE_VM,			SmiVmcallAddPermPeVmHandler},
+  {STM_API_ADD_PERM_PE_VM_NORUN,		SmiVmcallAddPermPeVmNoRunHandler},
+  {STM_API_RUN_PE_VM,				SmiVmcallRunPeVmHandler},
   {STM_API_END_ADD_PERM_PE_VM,                 SmiVmcallEndPermVmHandler}
 };
 
@@ -985,9 +984,9 @@ SmiVmcallHandler (
   STM_STATUS                         Status;
   STM_VMCALL_HANDLER                 StmVmcallHandler;
   UINT64                             AddressParameter;
+  //DEBUG((EFI_D_ERROR, "%ld SmiVmcallHandler - entereda\n", Index));
 
   Reg = &mGuestContextCommonSmi.GuestContextPerCpu[Index].Register;
-  //DEBUG((EFI_D_ERROR, "%ld SmiVmcallHandler - entered\n", Index));
   StmVmcallHandler = GetSmiVmcallHandlerByIndex (ReadUnaligned32 ((UINT32 *)&Reg->Rax));
   if (StmVmcallHandler == NULL) {
     DEBUG ((EFI_D_INFO, "%ld SmiVmcallHandler - GetSmiVmcallHandlerByIndex- Invalid API entry  - %x!\n", Index, (UINTN)ReadUnaligned32 ((UINT32 *)&Reg->Rax)));
@@ -999,8 +998,8 @@ SmiVmcallHandler (
     Status = ERROR_INVALID_API;
   } else {
     AddressParameter = ReadUnaligned32 ((UINT32 *)&Reg->Rbx) + LShiftU64 (ReadUnaligned32 ((UINT32 *)&Reg->Rcx), 32);
+
     Status = StmVmcallHandler (Index, AddressParameter);
-	DEBUG((EFI_D_ERROR, "%ld SmiVmcallHandler done, Status: %x\n", Index, Status));
   }
 
   if (Status == STM_SUCCESS) {

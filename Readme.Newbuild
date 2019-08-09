@@ -1,0 +1,32 @@
+
+This is the initial release of the linux based build system for the STM.
+
+Any issues or suggestions please contact me via github.
+
+Steps for building:
+
+    (1) Create a build directory in the Stm directory.
+    (2) Inside the build directory issue "cmake .. " then make
+        --> For coreboot do "cmake .. -DBIOS=coreboot" then make
+    (3) The StmPkg/Core directory will contain the results of the build
+	--> for coreboot move stm.bin to 3rdparty/blobs/cpu/intel/stm
+                         then configure the stm in the coreboot config menus
+			 rebuild by doing "make clean && make"
+	Other files in the StmPkg directory:
+			(1) Stm - an elf based load module, this is passed through
+			          objdump to produce stm.bin
+                        (2) stm.map - loader map
+
+    Current issues:
+
+        (1) When the coreboot smi handler is handling an SMI, the STM traps an
+            attempted illegal access for address 0x177 when the smm_stub.S executes 
+            the fxsave instruction.  This will be resolved in a future release.
+
+        (2) The STM data areas need to be reorganized to better support D-RTM (or TXT)
+            and STM teardown.  This will be fixed in a future release.
+
+        (3) Since this is an initial build of the STM via a different the user is cautioned
+            about using this on a production system
+	    
+

@@ -472,9 +472,13 @@ GetMinMsegSize (
 {
   UINTN                     MinMsegSize;
 
-  MinMsegSize = (STM_PAGES_TO_SIZE (STM_SIZE_TO_PAGES (StmHeader->SwStmHdr.StaticImageSize)) +
+  //MinMsegSize = (STM_PAGES_TO_SIZE (STM_SIZE_TO_PAGES (StmHeader->SwStmHdr.StaticImageSize)) +
+  /* we use the page table offset in this calculation because the static memory size does
+     not account for the data and bss locations which come before the page tables and 
+     are cleared by sinit */
+  MinMsegSize = StmHeader->HwStmHdr.Cr3Offset +
                  StmHeader->SwStmHdr.AdditionalDynamicMemorySize +
-                 (StmHeader->SwStmHdr.PerProcDynamicMemorySize + GetVmcsSize () * 2) * mHostContextCommon.CpuNum);
+                 ((StmHeader->SwStmHdr.PerProcDynamicMemorySize + GetVmcsSize () * 2) * mHostContextCommon.CpuNum);
 
   return MinMsegSize;
 }
@@ -594,6 +598,10 @@ InitHeap (
     CpuDeadLoop ();
   }
 
+  DEBUG ((EFI_D_INFO, "Cr30Offset - %08x\n", StmHeader->HwStmHdr.Cr3Offset));
+  DEBUG ((EFI_D_INFO, "Page Table Start - %08x\n", MsegBase + StmHeader->HwStmHdr.Cr3Offset));
+
+
   // make sure that the tseg size was set correctly
   // right now we will assume a max size of 3mb for mseg, bug, bug
 
@@ -601,12 +609,9 @@ InitHeap (
                                             StmHeader->HwStmHdr.Cr3Offset +
                                             STM_PAGES_TO_SIZE(6)); // reserve 6 page for page table
 
-  mHostContextCommon.HeapTop = MsegBase + MsegLength;
-#ifdef SizeFromLoad
   mHostContextCommon.HeapTop    = (UINT64)((UINTN)StmHeader + 
                                             STM_PAGES_TO_SIZE (STM_SIZE_TO_PAGES (StmHeader->SwStmHdr.StaticImageSize)) + 
                                             StmHeader->SwStmHdr.AdditionalDynamicMemorySize);
-#endif
 
   mHostContextCommon.HeapFree = mHostContextCommon.HeapBottom;
   HeaderPointer = (HEAP_HEADER *)((UINTN) mHostContextCommon.HeapFree);
@@ -631,6 +636,8 @@ InitBasicContext (
   mGuestContextCommonSmm[SMI_HANDLER].GuestContextPerCpu = AllocatePages (STM_SIZE_TO_PAGES(sizeof(STM_GUEST_CONTEXT_PER_CPU)) * mHostContextCommon.CpuNum);
 }
 
+extern void GetMtrr();  // found in eptinit.c...
+
 /**
 
   This function initialize BSP.
@@ -653,20 +660,26 @@ BspInit (
   UINTN                          XStateSize;
   UINT32                         RegEax;
   IA32_VMX_MISC_MSR              VmxMisc;
-  UINT32						 BiosStmVer = 100;   // initially assume that the BIOS supports v1.0 of the Intel ref
+  UINT32			 BiosStmVer = 100;   // initially assume that the BIOS supports v1.0 of the Intel ref
   IA32_DESCRIPTOR IdtrLoad;
+
+  GetMtrr();  //Needed in various inits
+  AsmWbinvd();  // make sure it gets out
  
   StmHeader = (STM_HEADER *)(UINTN)((UINT32)AsmReadMsr64(IA32_SMM_MONITOR_CTL_MSR_INDEX) & 0xFFFFF000);
 
     // on a platform that does not start with TXT, cannot assume the data space has been set to zero
   ZeroMem(&mHostContextCommon, sizeof(STM_HOST_CONTEXT_COMMON));
+  ZeroMem(&mGuestContextCommonSmi, sizeof(STM_HOST_CONTEXT_COMMON));
+  ZeroMem(&mGuestContextCommonSmm, sizeof(STM_HOST_CONTEXT_COMMON) * NUM_PE_TYPE);
+
   InitHeap (StmHeader);
   // after that we can use mHostContextCommon
  
   InitializeSpinLock (&mHostContextCommon.DebugLock);
  // after that we can use DEBUG
 
-  DEBUG ((EFI_D_ERROR, "   ********************** STM/PE *********************\n"));
+  DEBUG ((EFI_D_INFO, "   ********************** STM/PE *********************\n"));
   DEBUG ((EFI_D_INFO, "!!!STM build time - %a %a!!!\n", (CHAR8 *)__DATE__, (CHAR8 *)__TIME__));
   DEBUG ((EFI_D_INFO, "!!!STM Relocation DONE!!!\n"));
   DEBUG ((EFI_D_INFO, "!!!Enter StmInit (BSP)!!! - %d (%x)\n", (UINTN)0, (UINTN)ReadUnaligned32 ((UINT32 *)&Register->Rax)));
@@ -736,7 +749,7 @@ BspInit (
       EFI_ACPI_DESCRIPTION_HEADER                   *Rsdt;
       EFI_ACPI_DESCRIPTION_HEADER                   *Xsdt;
 
-	  mHostContextCommon.AcpiRsdp = TxtProcessorSmmDescriptor->AcpiRsdp;
+	mHostContextCommon.AcpiRsdp = TxtProcessorSmmDescriptor->AcpiRsdp;
       Rsdp = FindAcpiRsdPtr ();
       DEBUG ((EFI_D_INFO, "Rsdp - %08x\n", Rsdp));
 	  if (Rsdp == NULL) {
@@ -781,7 +794,7 @@ BspInit (
     DEBUG ((EFI_D_INFO, "TXT Descriptor Signature ERROR - %016lx!\n", TxtProcessorSmmDescriptor->Signature));
     CpuDeadLoop ();
   }
-  if(TxtProcessorSmmDescriptor->Size != sizeof(TXT_PROCESSOR_SMM_DESCRIPTOR) + 9)  // are we dealing with a .99 Bios
+  if(TxtProcessorSmmDescriptor->Size == sizeof(TXT_PROCESSOR_SMM_DESCRIPTOR) - 9)  // are we dealing with a .99 Bios
   {
 	  BiosStmVer = 99; // version .99 has nine less bytes, etc
 	  DEBUG((EFI_D_INFO, "Version .99 Bios detected Found Size: %08x SizeOf %08x\n", TxtProcessorSmmDescriptor->Size, sizeof(TXT_PROCESSOR_SMM_DESCRIPTOR)));
@@ -830,7 +843,22 @@ BspInit (
   // Check MSEG BASE/SIZE in TXT region
   //
   mHostContextCommon.StmSize = GetMinMsegSize (StmHeader);
-  DEBUG ((EFI_D_INFO, "MinMsegSize - %08x!\n", (UINTN)mHostContextCommon.StmSize));
+  {
+	UINT64 MsegBase, MsegLength;
+	INT32 AvailMseg;
+
+    if (IsSentryEnabled()) {
+      GetMsegInfoFromTxt (&MsegBase, &MsegLength);
+    } else {
+      GetMsegInfoFromMsr (&MsegBase, &MsegLength);
+    }
+    AvailMseg = MsegLength - mHostContextCommon.StmSize;
+
+    DEBUG ((EFI_D_INFO, "MinMsegSize - 0x%08x MsegLength 0x%08x AvailMseg 0x%08x \n", 
+				(UINTN)mHostContextCommon.StmSize,
+				MsegLength,
+				AvailMseg));
+  }
 
   if(BiosStmVer == 99)
   {
@@ -974,6 +1002,7 @@ BspInit (
   //
   // Initialization done
   //
+
   mIsBspInitialized = TRUE;
    AsmWbinvd ();  // let everyone else know 
   return ;
@@ -995,6 +1024,7 @@ ApInit (
 {
   X86_REGISTER        *Reg;
   IA32_DESCRIPTOR IdtrLoad;
+
   while (!mIsBspInitialized) {
     //
     // Wait here
@@ -1095,15 +1125,17 @@ VmcsInit (
   IN UINT32  Index
   )
 {
-  UINT64                             CurrentVmcs;
+  UINT64                             CurrentVmcs; 
   UINTN                              VmcsBase;
   UINT32                             VmcsSize;
   STM_HEADER                         *StmHeader;
   UINTN                              Rflags;
 
   StmHeader = mHostContextCommon.StmHeader;
+	/* have to use Cr3Offset because StaticImageSize ignores BSS and Data sections */
   VmcsBase = (UINTN)StmHeader + 
-                    STM_PAGES_TO_SIZE (STM_SIZE_TO_PAGES (StmHeader->SwStmHdr.StaticImageSize)) + 
+                    //STM_PAGES_TO_SIZE (STM_SIZE_TO_PAGES (StmHeader->SwStmHdr.StaticImageSize)) + 
+		    StmHeader->HwStmHdr.Cr3Offset + 
                     StmHeader->SwStmHdr.AdditionalDynamicMemorySize + 
                     StmHeader->SwStmHdr.PerProcDynamicMemorySize * mHostContextCommon.CpuNum;
   VmcsSize = GetVmcsSize();
@@ -1115,10 +1147,11 @@ VmcsInit (
   DEBUG ((EFI_D_INFO, "%d SmmVmcsPtr - %016lx\n", (UINTN)Index, mGuestContextCommonSmm[SMI_HANDLER].GuestContextPerCpu[Index].Vmcs));
 
   AsmVmPtrStore (&CurrentVmcs);
-  DEBUG ((EFI_D_INFO, "%d CurrentVmcs - %016lx\n", (UINTN)Index, CurrentVmcs));
+  DEBUG ((EFI_D_INFO, "%d CurrentVmcs - %016lx VmcsSize %x\n", (UINTN)Index, CurrentVmcs, VmcsSize));
   if (IsOverlap (CurrentVmcs, VmcsSize, mHostContextCommon.TsegBase, mHostContextCommon.TsegLength)) {
     // Overlap TSEG
     DEBUG ((EFI_D_ERROR, "%d CurrentVmcs violation - %016lx\n", (UINTN)Index, CurrentVmcs));
+    DumpVmcsAllField();
     CpuDeadLoop() ;
   }
   Rflags = AsmVmClear (&CurrentVmcs);
@@ -1236,7 +1269,6 @@ LaunchBack (
 
 **/
 
-extern void GetMtrr();  // found in eptinit.c...
 extern void PrintSmiEnRegister(UINT32 Index); // found in PcPciHandler.c
 VOID
 InitializeSmmMonitor (
@@ -1245,28 +1277,25 @@ InitializeSmmMonitor (
 {
   UINT32  Index;
 
-  GetMtrr();  //Needed in various inits
-  AsmWbinvd();  // make sure it gets out
-
   Index = GetIndexFromStack (Register);
   if (Index == 0) {
     // The build process should make sure "virtual address" is same as "file pointer to raw data",
     // in final PE/COFF image, so that we can let StmLoad load binrary to memory directly.
     // If no, GenStm tool will "load image". So here, we just need "relocate image"
     RelocateStmImage (FALSE);
-
     BspInit (Register);
   } else {
     Index = GetIndexFromStack (Register);
     ApInit (Index, Register);
   }
   //PrintSmiEnRegister(Index);    /* debug*/
+
   CommonInit (Index);
 
   VmcsInit (Index);
    //
   PrintSmiEnRegister(Index);   /* DEBUG*/
-    AsmWbinvd();  // flush caches
+  AsmWbinvd();  // flush caches
   LaunchBack (Index);
   return ;
 }

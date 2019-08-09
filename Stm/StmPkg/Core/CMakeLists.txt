@@ -14,7 +14,7 @@ add_custom_command(
         OUTPUT stm.tmp
         DEPENDS Stm
    #     POST_BUILD
-        COMMAND ${CMAKE_OBJCOPY} Stm stm.tmp -O binary -S
+        COMMAND ${CMAKE_OBJCOPY} Stm stm.tmp -O binary --strip-unneeded
 	COMMAND ${CMAKE_COMMAND} -E copy stm.tmp stm.bin
         COMMENT "objcopy Stm to stm.bin"
 )
