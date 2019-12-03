@@ -666,8 +666,8 @@ SmmEPTViolationHandler (
     Qualification.UintN = VmReadN (VMCS_N_RO_EXIT_QUALIFICATION_INDEX);
     
     DEBUG ((EFI_D_ERROR, "%ld !!!EPTViolationHandler!!!\n", (UINTN)Index));
-    DEBUG ((EFI_D_ERROR, "  Qualification - %016lx\n", (UINT64)Qualification.UintN));
-    DEBUG ((EFI_D_ERROR, "  GuestPhysicalAddress - %016lx\n", VmRead64 (VMCS_64_RO_GUEST_PHYSICAL_ADDR_INDEX)));
+    DEBUG ((EFI_D_ERROR, "%ld  Qualification - %016lx\n", (UINTN) Index, (UINT64)Qualification.UintN));
+    DEBUG ((EFI_D_ERROR, "%ld  GuestPhysicalAddress - %016lx\n", (UINTN) Index, VmRead64 (VMCS_64_RO_GUEST_PHYSICAL_ADDR_INDEX)));
     
     StmVmPeNmiExCount++;   // make sure there is no smi processors waiting
     
@@ -807,8 +807,8 @@ SmmEPTMisconfigurationHandler (
     //
     // Should not happen
     //
-    DEBUG ((EFI_D_ERROR, "!!!EPTMisconfigurationHandler!!!\n"));
-    DumpVmcsAllField ();
+    DEBUG ((EFI_D_ERROR, "%ld !!!EPTMisconfigurationHandler!!!\n", Index));
+    DumpVmcsAllField (Index);
     
     CpuDeadLoop ();
     
@@ -827,8 +827,8 @@ SmmInvEPTHandler (
                   IN UINT32  Index
                   )
 {
-    DEBUG ((EFI_D_ERROR, "!!!InvEPTHandler!!!\n"));
-    DumpVmcsAllField ();
+    DEBUG ((EFI_D_ERROR, "%ld !!!InvEPTHandler!!!\n", Index));
+    DumpVmcsAllField (Index);
     
     CpuDeadLoop ();
     

@@ -22,6 +22,7 @@ void PePreEmptionTimerHandler(IN UINT32 CpuIndex)
 {
 	EndTimeStamp = AsmReadTsc();
 	DEBUG((EFI_D_ERROR, "%ld - PE/VM terminated because of a Premption Timer Runout \n", CpuIndex));
-	DumpVmcsAllField();
+	DumpVmcsAllField(CpuIndex);
 	PostPeVmProc(PE_SUCCESS, CpuIndex, RELEASE_VM);
 }
+

@@ -1,5 +1,5 @@
 
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.13)
 
 project(stm C ASM)
 
@@ -8,17 +8,31 @@ if("${BIOS}" STREQUAL "coreboot")
 	message("Building for Coreboot")
 	endif()
 
+if("${UART}")
+	add_definitions( -DUARTBASE=${UART} )
+	message("UART Base: ${UART}")
+	endif()
+
+if("${HEAPSIZE}")
+	message("Custom Heapsize set: ${HEAPSIZE}")
+	else()
+	set(HEAPSIZE 0x246000)
+	message("Default Heapsize set: ${HEAPSIZE}")
+	endif()
+
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Xlinker -Map=stm.map -Os -falign-functions -ffreestanding -s -pie --entry _ModuleEntryPoint -u _ModuleEntryPoint -nostdlib -n -z common-page-size=0x40 -fno-asynchronous-unwind-tables  -fno-jump-tables -fPIC -fno-stack-protector -fno-stack-check -include PcdData.h -T ${PROJECT_SOURCE_DIR}/StmPkg/Core/Stm.lds")
 
 set(CMAKE_ASM_FLAGS "-include BaseAsm.h -fPIC")
 set(CMAKE_ASM_CREATE_SHARED_LIBRARY "gcc ${CFLAGS} -o *.o")
 
 include_directories("${PROJECT_SOURCE_DIR}/StmPkg/Core"
+	"${PROJECT_SOURCE_DIR}/StmPkg/EDKII/BaseTools/Source/C/Include/X64"
 	"${PROJECT_SOURCE_DIR}/StmPkg/EdkII/MdePkg/Include/"
 	"${PROJECT_SOURCE_DIR}/StmPkg/EdkII/MdePkg/Include/X64"
         "${PROJECT_SOURCE_DIR}/StmPkg/Include"
         "${PROJECT_SOURCE_DIR}/StmPkg/Include/x64"
-	"$(PROJECT_SOURCE_DIR}/StmPkg/Core/Runtime")
+	"${PROJECT_SOURCE_DIR}/StmPkg/Core/Runtime"
+)
 
 add_subdirectory(StmPkg/EdkII/MdePkg/Library/BaseLib)
 add_subdirectory(StmPkg/EdkII/MdePkg/Library/BaseMemoryLib)

@@ -208,7 +208,7 @@ void PeEPTMisconfigurationHandler( IN UINT32 CpuIndex)
 {		
 	EndTimeStamp = AsmReadTsc();
 	DEBUG((EFI_D_ERROR, "%ld PeEPTMisconfigurationHandler - PE EPT Misconfiguration VMEXIT\n", CpuIndex));
-	DumpVmcsAllField ();
+	DumpVmcsAllField (CpuIndex);
 	DEBUG((EFI_D_ERROR, "ld PeEPTMisconfigurationHandler - CpuDeadLoop\n", CpuIndex));
 	CpuDeadLoop();
 	return;

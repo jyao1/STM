@@ -17,6 +17,18 @@
 
 #include <elf.h>
 
+//#define PRINTRELOC
+
+extern UINT64 GetMsegInfoFromTxt (
+                    OUT UINT64  *MsegBase,
+                    OUT UINT64  *MsegLength
+                    );
+
+extern UINT64 GetMsegInfoFromMsr (
+                    OUT UINT64  *MsegBase,
+                    OUT UINT64  *MsegLength
+                    );
+
 /**
 
   This function relocate image at ImageBase.
@@ -204,9 +216,20 @@ extern UINT64 _ElfRelocTablesEnd,  _ElfRelocTablesStart;
 static int elf_process_reloc_table(UINT64 BaseLocation, UINT64 RelativeLocation ) {
 	int size;
 	int idx;
-	Elf64_Rela * reloc_table = (Elf64_Rela *) ((UINT64)&_ElfRelocTablesStart + BaseLocation);
+	Elf64_Rela * reloc_table = (Elf64_Rela *) ((UINT64)&_ElfRelocTablesStart);  
 
-	DEBUG((EFI_D_INFO, "ELF Relocation in progress\n"));
+	// The following conditional is necessary because of differences in compler behaviors
+	// in handling the "&"
+	// Depending on the compiler and in some instances the version the "&" can be
+	// interpeted either as a LEA or as a relative address (where a base address has
+	// to be added)
+
+	if((((UINT64) reloc_table) & BaseLocation) == 0)
+	{
+		Elf64_Rela * reloc_table = (Elf64_Rela *) ((UINT64)&_ElfRelocTablesStart + (UINT64)BaseLocation);
+	}
+
+	DEBUG((EFI_D_INFO, "ELF Relocation in progress Base %x Reloc tables %x\n", BaseLocation, &_ElfRelocTablesStart));
 
 	size = (UINT64)((UINT64)&_ElfRelocTablesEnd - (UINT64)&_ElfRelocTablesStart)/ sizeof(Elf64_Rela);
         DEBUG((EFI_D_INFO, "%d locations to be relocated\n", size));
@@ -214,21 +237,29 @@ static int elf_process_reloc_table(UINT64 BaseLocation, UINT64 RelativeLocation 
 	for(idx = 0; idx < size; idx++) 
 	{
 
-		if(ELF64_R_TYPE(reloc_table->r_info) != R_X86_64_RELATIVE)
+		if(ELF64_R_TYPE(reloc_table[idx].r_info) != R_X86_64_RELATIVE)
 		{
-			DEBUG((EFI_D_INFO, "WARNING only X86_64 relative relocations done\n"));
+			DEBUG((EFI_D_INFO, "(%d) WARNING only X86_64 relative relocations done - Loc %x r_offset %x r_addend %x Type %d\n",
+				 idx,
+				 &reloc_table[idx],
+				 reloc_table[idx].r_offset,
+                                 reloc_table[idx].r_addend,
+			         ELF64_R_TYPE(reloc_table[idx].r_info)
+				));
 		}	
 		else
 		{
 			UINT64 * OFFSET = (UINT64*) (reloc_table[idx].r_offset + BaseLocation);
 			*OFFSET = reloc_table[idx].r_addend + RelativeLocation;
-#ifdef PRINTRELOC
-			 DEBUG((EFI_D_INFO, "Relocation r_offset %x r_addend %x OFFSET %x *OFFSET %x\n",
+
+			#ifdef PRINTRELOC
+			 DEBUG((EFI_D_INFO, "(%d) Relocation r_offset %x r_addend %x OFFSET %x *OFFSET %x Type %d\n",
+					idx,
                                         reloc_table[idx].r_offset,
                                         reloc_table[idx].r_addend,
                                         OFFSET,
                                         *OFFSET));
-#endif
+			#endif
 		}
 	
 	}
@@ -251,14 +282,21 @@ RelocateStmImage (
   IN BOOLEAN   IsTeardown
   )
 {
-  UINTN                               StmImage;
-  UINTN                               ImageBase;
-  UINTN                               PeImageBase;
+  UINT64                               StmImage;
+  UINT64                               MsegLength;
+  UINT64                              ImageBase;
+  UINT64                               PeImageBase;
   EFI_IMAGE_DOS_HEADER                *DosHdr;
   EFI_IMAGE_OPTIONAL_HEADER_PTR_UNION Hdr;
   UINT16                              Magic;
 
-  StmImage = (UINTN)((UINT32)AsmReadMsr64(IA32_SMM_MONITOR_CTL_MSR_INDEX) & 0xFFFFF000);
+  //StmImage = (UINT64)((UINT32)AsmReadMsr64(IA32_SMM_MONITOR_CTL_MSR_INDEX) & 0xFFFFF000);
+
+  if (IsSentryEnabled()) {
+      GetMsegInfoFromTxt (&StmImage, &MsegLength);
+    } else {
+      GetMsegInfoFromMsr (&StmImage, &MsegLength);
+    }
 
   ImageBase = StmImage + STM_CODE_OFFSET;
   

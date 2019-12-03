@@ -49,12 +49,7 @@ target_include_directories(EptLib PUBLIC
 
 target_link_libraries(Stm PUBLIC 
  BaseLib 
- #BaseMemoryLib 
- #IoLib 
  PciLib 
- #SynchronizationLib 
- #DebugLib 
- #StmLib 
  PcdLib
  StmPlatformLib
  StmRuntime
@@ -63,6 +58,8 @@ target_link_libraries(Stm PUBLIC
  StmInit
  SmmExcept
 )
+
+target_link_options(Stm PUBLIC "LINKER:--defsym=HeapSize=${HEAPSIZE}")
 
 target_include_directories(Stm PUBLIC
 	Runtime)

@@ -133,7 +133,7 @@ VOID
 
 	if (InfoBasic.Bits.Reason >= VmExitReasonMax) {
 		DEBUG ((EFI_D_ERROR, "%ld PeStmHandlerSmm - !!!Unknown VmExit Reason!!!\n", Index));
-		DumpVmcsAllField ();
+		DumpVmcsAllField (Index);
 		DEBUG((EFI_D_ERROR, "%ld PeStmHandlerSmm - CpuDeadLoop\n", Index));
 
 		CpuDeadLoop ();
@@ -173,8 +173,8 @@ VOID
 	DEBUG ((EFI_D_ERROR, "%ld PeStmHandlerSmm - !!!ResumePeGuestSmm FAIL!!!\n", (UINTN)Index));
 	DEBUG ((EFI_D_ERROR, "%ld PeStmHandlerSmm - Rflags: %08x\n", Index, Rflags));
 	DEBUG ((EFI_D_ERROR, "%ld PeStmHandlerSmm - VMCS_32_RO_VM_INSTRUCTION_ERROR: %08x\n", Index, (UINTN)VmRead32 (VMCS_32_RO_VM_INSTRUCTION_ERROR_INDEX)));
-	DumpVmcsAllField ();
-	DumpRegContext (&mGuestContextCommonSmm[VmType].GuestContextPerCpu[pIndex].Register);
+	DumpVmcsAllField (Index);
+	DumpRegContext (&mGuestContextCommonSmm[VmType].GuestContextPerCpu[pIndex].Register, Index);
 	DumpGuestStack(Index);
 	ReleaseSpinLock (&mHostContextCommon.DebugLock);
 	DEBUG((EFI_D_ERROR, "%ld PeStmHandlerSmm - CpuDeadLoop\n", Index));

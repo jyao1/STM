@@ -31,7 +31,7 @@ ResumeToBiosExceptionHandler (
   STM_PROTECTION_EXCEPTION_STACK_FRAME_X64  *StackFrame;
   UINTN                                     Rflags;
   X86_REGISTER                              *Reg;
-  UINT32									VmType = SMI_HANDLER;
+  UINT32				    VmType = SMI_HANDLER;
 
   Reg = &mGuestContextCommonSmm[VmType].GuestContextPerCpu[Index].Register;
 
@@ -42,6 +42,7 @@ ResumeToBiosExceptionHandler (
   //
   if (StmProtectionExceptionHandler->SpeRip == 0) {
     DEBUG ((EFI_D_INFO, "%ld ResumeToBiosExceptionHandler - SMI Handler does not support SpeRip!\n", Index));
+     DumpRegContext(Reg, Index);
     // Unsupported;
     return ;
   }
@@ -164,8 +165,8 @@ ResumeToBiosExceptionHandler (
   DEBUG ((EFI_D_ERROR, "!!!ResumeToBiosExceptionHandler FAIL!!!\n"));
   DEBUG ((EFI_D_ERROR, "Rflags: %08x\n", Rflags));
   DEBUG ((EFI_D_ERROR, "VMCS_32_RO_VM_INSTRUCTION_ERROR: %08x\n", (UINTN)VmRead32 (VMCS_32_RO_VM_INSTRUCTION_ERROR_INDEX)));
-  DumpVmcsAllField ();
-  DumpRegContext (Reg);
+  DumpVmcsAllField (Index);
+  DumpRegContext (Reg, Index);
   DumpGuestStack(Index);
   ReleaseSpinLock (&mHostContextCommon.DebugLock);
   CpuDeadLoop ();
@@ -256,8 +257,8 @@ ReturnFromBiosExceptionHandler (
   DEBUG ((EFI_D_ERROR, "!!!ReturnFromBiosExceptionHandler FAIL!!!\n"));
   DEBUG ((EFI_D_ERROR, "Rflags: %08x\n", Rflags));
   DEBUG ((EFI_D_ERROR, "VMCS_32_RO_VM_INSTRUCTION_ERROR: %08x\n", (UINTN)VmRead32 (VMCS_32_RO_VM_INSTRUCTION_ERROR_INDEX)));
-  DumpVmcsAllField ();
-  DumpRegContext (Reg);
+  DumpVmcsAllField (Index);
+  DumpRegContext (Reg, Index);
   DumpGuestStack(Index);
   ReleaseSpinLock (&mHostContextCommon.DebugLock);
   CpuDeadLoop ();

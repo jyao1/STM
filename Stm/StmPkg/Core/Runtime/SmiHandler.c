@@ -52,8 +52,8 @@ VOID
 {
 	AcquireSpinLock (&mHostContextCommon.DebugLock);
 
-	DEBUG ((EFI_D_ERROR, "!!!UnknownHandlerSmi - %d\n", (UINTN)Index));
-	DumpVmcsAllField ();
+	DEBUG ((EFI_D_ERROR, "%ld !!!UnknownHandlerSmi\n", (UINTN)Index));
+	DumpVmcsAllField (Index);
 
 	ReleaseSpinLock (&mHostContextCommon.DebugLock);
 
@@ -133,7 +133,7 @@ VOID
 	//
 	if (InfoBasic.Bits.Reason >= VmExitReasonMax) {
 		DEBUG ((EFI_D_ERROR, "%ld !!!UnknownReason: %d!!!\n", Index, InfoBasic.Bits.Reason));
-		DumpVmcsAllField ();
+		DumpVmcsAllField (Index);
 
 		CpuDeadLoop ();
 	}
@@ -168,8 +168,8 @@ VOID
 	DEBUG ((EFI_D_ERROR, "%ld StmHandlerSmi - !!!ResumeGuestSmi FAIL!!!", (UINTN)Index));
 	DEBUG ((EFI_D_ERROR, "%ld StmHandlerSmi - Rflags: %08x\n", Index, Rflags));
 	DEBUG ((EFI_D_ERROR, "%ld StmHandlerSmi - VMCS_32_RO_VM_INSTRUCTION_ERROR: %08x\n", Index, (UINTN)VmRead32 (VMCS_32_RO_VM_INSTRUCTION_ERROR_INDEX)));
-	DumpVmcsAllField ();
-	DumpRegContext (&mGuestContextCommonSmi.GuestContextPerCpu[Index].Register);
+	DumpVmcsAllField (Index);
+	DumpRegContext (&mGuestContextCommonSmi.GuestContextPerCpu[Index].Register, Index);
 	DumpGuestStack(Index);
 	ReleaseSpinLock (&mHostContextCommon.DebugLock);
 

@@ -16,7 +16,7 @@
 **/
 
 SizeOfPerProcessorStack = 0x8000;
-HeapSize = 0x246000;
+/*HeapSize = 0x246000;*/
 PageTableSize = 0x6000;
 STM_SMM_REV_ID = 0x80010100;
 
@@ -123,6 +123,21 @@ SECTIONS
     	.rodata : {
 	*(.rodata.*)
 	}  =0x0
+	
+	. = ALIGN(0x20);
+	.data.rel.ro : {
+	*(.data.rel.ro)
+	*(.data.rel.ro.local)
+	} =0x0
+
+	. = ALIGN(0x20);
+
+	_ElfRelocTablesStart = .;
+    	.reloc : {
+	 *(.rela.*)
+    	}
+	_ElfRelocTablesEnd = .;
+
 	_StmImageEnd = .;
 
 	 . = ALIGN(0X1000);
@@ -141,16 +156,11 @@ SECTIONS
       	/* dummy */
       	/* LONG (0x12345678) */
     	}
+
     	. = ALIGN(0x20);
     	.edata : {
     	}
     	. = ALIGN(0x20);
-
-	_ElfRelocTablesStart = .;
-    	.reloc : {
-	 *(.rela.*)
-    	}
-	_ElfRelocTablesEnd = .;
 
 	. = ALIGN(0x1000);
     	_StmPageTables = .;

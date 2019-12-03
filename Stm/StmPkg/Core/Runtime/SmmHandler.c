@@ -66,13 +66,13 @@ UnknownHandlerSmm (
   AcquireSpinLock (&mHostContextCommon.DebugLock);
 
 
-  DEBUG ((EFI_D_ERROR, "%ld !!!UnknownHandlerSmm\n", (UINTN)Index));
+  //DEBUG ((EFI_D_ERROR, "%ld !!!UnknownHandlerSmm\n", (UINTN)Index));
 
   ExitReason = VmRead32 (VMCS_32_RO_EXIT_REASON_INDEX);
-  DEBUG((EFI_D_ERROR, "%ld  UnknownHandlerSmm - VMExit Reason: 0x%08x\n", ExitReason));
+  DEBUG((EFI_D_ERROR, "%ld  UnknownHandlerSmm - VMExit Reason: 0x%08x\n", (UINTN) Index, ExitReason));
 
-  DumpVmcsAllField ();
-  DumpRegContext(&mGuestContextCommonSmm[SMI_HANDLER].GuestContextPerCpu[Index].Register);
+  DumpVmcsAllField (Index);
+  DumpRegContext(&mGuestContextCommonSmm[SMI_HANDLER].GuestContextPerCpu[Index].Register, Index);
   DumpGuestStack(Index);
 
   {
@@ -127,7 +127,7 @@ StmHandlerSmm (
   Register->Rsp = VmReadN (VMCS_N_GUEST_RSP_INDEX);
   CopyMem (Reg, Register, sizeof(X86_REGISTER));
 #if 0
-  DEBUG ((EFI_D_INFO, "%ld - !!!StmHandlerSmm\n", (UINTN)Index));
+  DEBUG ((EFI_D_INFO, "%ld - !!!StmHandlerSmm X86_REG_Size %d\n", (UINTN)Index));
 #endif
   //
   // Dispatch
@@ -135,7 +135,7 @@ StmHandlerSmm (
   InfoBasic.Uint32 = VmRead32 (VMCS_32_RO_EXIT_REASON_INDEX);
   if (InfoBasic.Bits.Reason >= VmExitReasonMax) {
     DEBUG ((EFI_D_ERROR, "%ld - StmHandlerSmm !!!UnknownReason!!!: %d\n", (UINTN)Index, InfoBasic.Bits.Reason));
-    DumpVmcsAllField ();
+    DumpVmcsAllField (Index);
 
     CpuDeadLoop ();
   }
@@ -165,8 +165,8 @@ StmHandlerSmm (
   DEBUG ((EFI_D_ERROR, "!!!ResumeGuestSmm FAIL!!! - %d\n", (UINTN)Index));
   DEBUG ((EFI_D_ERROR, "Rflags: %08x\n", Rflags));
   DEBUG ((EFI_D_ERROR, "VMCS_32_RO_VM_INSTRUCTION_ERROR: %08x\n", (UINTN)VmRead32 (VMCS_32_RO_VM_INSTRUCTION_ERROR_INDEX)));
-  DumpVmcsAllField ();
-  DumpRegContext (&mGuestContextCommonSmm[VmType].GuestContextPerCpu[pIndex].Register);
+  DumpVmcsAllField (Index);
+  DumpRegContext (&mGuestContextCommonSmm[VmType].GuestContextPerCpu[pIndex].Register, Index);
   DumpGuestStack(Index);
   ReleaseSpinLock (&mHostContextCommon.DebugLock);
 

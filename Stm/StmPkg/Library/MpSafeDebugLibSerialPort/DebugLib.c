@@ -36,6 +36,8 @@
 
 SPIN_LOCK  mInternalDebugLock = SPIN_LOCK_RELEASED; // TBD: need call InitializeSpinLock
 
+static int serial_initialized = 0;
+
 /**
   Prints a debug message to the debug output device if the specified error level is enabled.
 
@@ -66,6 +68,12 @@ DebugPrint (
   // If Format is NULL, then ASSERT().
   //
   ASSERT (Format != NULL);
+
+  if(serial_initialized == 0)
+  {
+	serial_initialized = 1;
+	SerialPortInitialize();
+  }
 
   //
   // Check driver debug mask value and global mask
@@ -121,6 +129,12 @@ DebugAssert (
   )
 {
   CHAR8  Buffer[MAX_DEBUG_MESSAGE_LENGTH];
+
+  if(serial_initialized == 0 )
+  {
+	serial_initialized = 1;
+	SerialPortInitialize();
+  }
 
   //
   // Generate the ASSERT() message in Ascii format

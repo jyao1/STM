@@ -978,6 +978,7 @@ BspInit (
     mHostContextCommon.HostContextPerCpu[SubIndex].HostMsrEntryCount = 1;
     mGuestContextCommonSmi.GuestContextPerCpu[SubIndex].GuestMsrEntryCount = 1;
     mGuestContextCommonSmm[SMI_HANDLER].GuestContextPerCpu[SubIndex].GuestMsrEntryCount = 1;
+    mHostContextCommon.HostContextPerCpu[SubIndex].GuestVmType = SMI_HANDLER;
   }
   mHostContextCommon.HostContextPerCpu[0].HostMsrEntryAddress = (UINT64)(UINTN)AllocatePages (STM_SIZE_TO_PAGES (sizeof(VM_EXIT_MSR_ENTRY) * mHostContextCommon.HostContextPerCpu[0].HostMsrEntryCount * mHostContextCommon.CpuNum));
   mGuestContextCommonSmi.GuestContextPerCpu[0].GuestMsrEntryAddress = (UINT64)(UINTN)AllocatePages (STM_SIZE_TO_PAGES (sizeof(VM_EXIT_MSR_ENTRY) * mGuestContextCommonSmi.GuestContextPerCpu[0].GuestMsrEntryCount * mHostContextCommon.CpuNum));
@@ -1151,7 +1152,7 @@ VmcsInit (
   if (IsOverlap (CurrentVmcs, VmcsSize, mHostContextCommon.TsegBase, mHostContextCommon.TsegLength)) {
     // Overlap TSEG
     DEBUG ((EFI_D_ERROR, "%d CurrentVmcs violation - %016lx\n", (UINTN)Index, CurrentVmcs));
-    DumpVmcsAllField();
+    DumpVmcsAllField(Index);
     CpuDeadLoop() ;
   }
   Rflags = AsmVmClear (&CurrentVmcs);

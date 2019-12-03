@@ -41,6 +41,7 @@ SmmCrHandler (
 {
   VM_EXIT_QUALIFICATION   Qualification;
   UINTN                   *GptRegPtr;
+  UINT64                   Rip;
   VM_ENTRY_CONTROLS       VmEntryControls;
   STM_REGISTER_VIOLATION_DESC     RegisterViolation;
   UINT32				  VmType;
@@ -53,13 +54,16 @@ SmmCrHandler (
 
   Qualification.UintN = VmReadN (VMCS_N_RO_EXIT_QUALIFICATION_INDEX);
   GptRegPtr = (UINTN *)&mGuestContextCommonSmm[VmType].GuestContextPerCpu[Index].Register;
+  Rip = VmReadN(VMCS_N_GUEST_RIP_INDEX);
 
-  DEBUG((EFI_D_ERROR, "%ld SmmCrHandler - CrNum %d AccessType %d GptRegPtr[%d] 0x%llx\n", 
+  DEBUG((EFI_D_ERROR, "%ld SmmCrHandler - VmType %ld CrNum %d AccessType %d GptRegPtr[%d] 0x%llx Rip 0x%llx\n", 
 				cIndex,
+				VmType,
 				Qualification.CrAccess.CrNum,
 				Qualification.CrAccess.AccessType,
 				Qualification.CrAccess.GpReg,
-				GptRegPtr[Qualification.CrAccess.GpReg]));
+				GptRegPtr[Qualification.CrAccess.GpReg],
+				Rip ));
 
   switch (Qualification.CrAccess.CrNum) {
   case 3: // Cr3
@@ -266,7 +270,7 @@ SmmCrHandler (
   }
 
   DEBUG ((EFI_D_INFO, "%ld SmmCrHandler - !!!CrAccessHandler!!!\n", cIndex));
-  DumpVmcsAllField ();
+  DumpVmcsAllField (Index);
 
   CpuDeadLoop ();
 
@@ -274,3 +278,4 @@ Ret:
   VmWriteN (VMCS_N_GUEST_RIP_INDEX, VmReadN(VMCS_N_GUEST_RIP_INDEX) + VmRead32(VMCS_32_RO_VMEXIT_INSTRUCTION_LENGTH_INDEX));
   return ;
 }
+

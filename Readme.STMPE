@@ -69,13 +69,13 @@ STM_API_ADD_PERM_PE_VM_NORUN 0x0001000d
 
  Information block used to pass information about the PE module to the STM:
 
-	 struct module_info {
-	  u64 module_address;        - physical address of VM/PE (SMM) module to load
-	  u64 module_load_address;   - guest-physical load address of module (must be
+   struct module_info {
+      u64 module_address;        - physical address of VM/PE (SMM) module to load
+      u64 module_load_address;   - guest-physical load address of module (must be
 		                         - within the range of address_space_start and
 			                     - address_space_start+addresss_space_size)
-	  u32 module_size;           - size of module in bytes
-	  u32 module_entry_point;    - relative offset from start of module
+      u32 module_size;           - size of module in bytes
+      u32 module_entry_point;    - relative offset from start of module
       u64 address_space_start;   - guest-physical address space start of module
       u32 address_space_size;    - module size in bytes
       u32 vmconfig;              - flags specifying how VM supporting module should
@@ -86,7 +86,7 @@ STM_API_ADD_PERM_PE_VM_NORUN 0x0001000d
                                  - be in SMRAM space).  segment will have R/W
                                  - permission. value placed in RBX register of STM
                                  - module.
-	  struct region *segment;    - guest-physical address of an array of R/O
+      struct region *segment;    - guest-physical address of an array of R/O
                                  - segments terminated with a null element.
                                  - value placed in RCX register of STM module.
       u32 shared_page_size;      - size of shared page
@@ -138,16 +138,16 @@ error returns - placed in eax upon return to caller:
                                              - guest VM state
 	PE_VM_BAD_ACCESS             0x8004000C  - PE VM attempted to access protected
                                                memory out of bounds)
-    PE_VM_SETUP_ERROR_D_L        0x8004000D  - CS_D and CS_L cannot be set to one at
+        PE_VM_SETUP_ERROR_D_L        0x8004000D  - CS_D and CS_L cannot be set to one at
                                                the same time
 	PE_VM_SETUP_ERROR_IA32E_D    0x8004000E  - SET_IA32E must be set when CS_L is
                                                set
-    PE_VM_TRIPLE_FAULT           0x8004000F  - PE VM crashed with a triple fault
-    PE_VM_PAGE_FAULT             0x80040010  - PE VM crashed with a page fault
+        PE_VM_TRIPLE_FAULT           0x8004000F  - PE VM crashed with a triple fault
+        PE_VM_PAGE_FAULT             0x80040010  - PE VM crashed with a page fault
 
 Region list structure
 
-	struct region {
+    struct region {
 	u64 address;                           - page aligned physical address
 	u32 size;                              - size of segment
 	u32 padding;                           - align structure to 64-bits
@@ -186,13 +186,17 @@ Notes:
   
   Access attempts to I/O ports are generally ignored except for 0x3D8 and 0x3F8.
 
-  0x3D8 and 0x3F8 (aka COM2 and COM1 respectively) can be used to send character strings through the STM console port.  
-  No formatting, etc is done (any byte combinations that can pose a security issue will be delt with a necessary).
+  0x3D8 and 0x3F8 (aka COM2 and COM1 respectively) can be used to send character
+  strings through the STM console port.  
+  
+  No formatting, etc is done (any byte combinations that can pose a security
+  issue will be delt with a necessary).
 
   for debugging a VM/PE debugging output can be sent through:
 
         RDX:    port -   0x3F8 or 0x3D8
-        RCX:    number of bytes (maximun length is 200.  Stings longer than that will be truncated)
+        RCX:    number of bytes (maximun length is 200.  Stings longer than that 
+                    will be truncated)
         DS:ESI  location in PE/VM where output is located
 	            Use either instruction OUTSB/OUTSW/OUTSD  (0x6E or Ox6F)
 	            Note: do not use a loop with a rep statement (which is what is normally done)

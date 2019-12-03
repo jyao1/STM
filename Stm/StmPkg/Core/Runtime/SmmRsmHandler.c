@@ -136,8 +136,8 @@ VOID
 	DEBUG ((EFI_D_ERROR, "%ld !!!RsmHandler FAIL!!!\n", (UINTN)Index));
 	DEBUG ((EFI_D_ERROR, "%ld RsmHandler Rflags: %08x\n", (UINTN)Index, Rflags));
 	DEBUG ((EFI_D_ERROR, "%ld RsmHandler VMCS_32_RO_VM_INSTRUCTION_ERROR: %08x\n", (UINTN)Index, (UINTN)VmRead32 (VMCS_32_RO_VM_INSTRUCTION_ERROR_INDEX)));
-	DumpVmcsAllField ();
-	DumpRegContext (&mGuestContextCommonSmi.GuestContextPerCpu[Index].Register);
+	DumpVmcsAllField (Index);
+	DumpRegContext (&mGuestContextCommonSmi.GuestContextPerCpu[Index].Register, Index);
 	DumpGuestStack(Index);
 	ReleaseSpinLock (&mHostContextCommon.DebugLock);
 

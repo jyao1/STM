@@ -70,8 +70,8 @@ SmmTeardown (
     DEBUG ((EFI_D_ERROR, "!!!SmmTeardown FAIL!!!\n"));
     DEBUG ((EFI_D_ERROR, "Rflags: %08x\n", Rflags));
     DEBUG ((EFI_D_ERROR, "VMCS_32_RO_VM_INSTRUCTION_ERROR: %08x\n", (UINTN)VmRead32 (VMCS_32_RO_VM_INSTRUCTION_ERROR_INDEX)));
-    DumpVmcsAllField ();
-    DumpRegContext (&mGuestContextCommonSmm[VmType].GuestContextPerCpu[Index].Register);
+    DumpVmcsAllField (Index);
+    DumpRegContext (&mGuestContextCommonSmm[VmType].GuestContextPerCpu[Index].Register, Index);
 	DumpGuestStack(Index);
     ReleaseSpinLock (&mHostContextCommon.DebugLock);
     CpuDeadLoop ();

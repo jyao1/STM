@@ -267,7 +267,7 @@ SmmIoHandler (
     ReleaseSpinLock (&mHostContextCommon.PciLock);
   }
   DEBUG ((EFI_D_INFO, "%ld - !!!IoHandler error !!!\n", Index));
-  DumpVmcsAllField ();
+  DumpVmcsAllField (Index);
 
   CpuDeadLoop ();
 

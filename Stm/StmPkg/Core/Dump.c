@@ -43,6 +43,8 @@ DATA_STR mVmxCapabilityMsrStr[] = {
   {IA32_VMX_EPT_VPID_CAP_MSR_INDEX,    "VMX_EPT_VPID_CAP_MSR     "},
 };
 
+VOID DumpMemory(IN UINT32 Index, UINT64 Address, UINT32 Length);
+
 /**
 
   This function dump VMX capability MSR.
@@ -50,7 +52,7 @@ DATA_STR mVmxCapabilityMsrStr[] = {
 **/
 VOID
 DumpVmxCapabillityMsr (
-  VOID
+  UINT32 CpuIndex
   )
 {
   UINT64  Data64;
@@ -58,7 +60,7 @@ DumpVmxCapabillityMsr (
 
   for (Index = 0; Index < sizeof(mVmxCapabilityMsrStr)/sizeof(mVmxCapabilityMsrStr[0]); Index++) {
     Data64 = AsmReadMsr64 (mVmxCapabilityMsrStr[Index].Index);
-    DEBUG ((EFI_D_INFO, "%a: %016lx\n", mVmxCapabilityMsrStr[Index].Str, Data64));
+    DEBUG ((EFI_D_INFO, "%ld %a: %016lx\n", CpuIndex, mVmxCapabilityMsrStr[Index].Str, Data64));
   }
 }
 
@@ -71,10 +73,10 @@ DumpVmxCapabillityMsr (
 **/
 VOID
 DumpVmcs16Filed (
-  IN DATA_STR  *DataStr
+  IN DATA_STR  *DataStr, UINT32 CpuIndex
   )
 {
-  DEBUG ((EFI_D_INFO, "%a: %04x\n", DataStr->Str, (UINTN)VmRead16 (DataStr->Index)));
+  DEBUG ((EFI_D_INFO, "%ld %a: %04x\n", CpuIndex, DataStr->Str, (UINTN)VmRead16 (DataStr->Index)));
 }
 
 /**
@@ -86,10 +88,10 @@ DumpVmcs16Filed (
 **/
 VOID
 DumpVmcs64Filed (
-  IN DATA_STR  *DataStr
+  IN DATA_STR  *DataStr, UINT32 CpuIndex
   )
 {
-  DEBUG ((EFI_D_INFO, "%a: %016lx\n", DataStr->Str, VmRead64 (DataStr->Index)));
+  DEBUG ((EFI_D_INFO, "%ld %a: %016lx\n", CpuIndex, DataStr->Str, VmRead64 (DataStr->Index)));
 }
 
 /**
@@ -101,10 +103,10 @@ DumpVmcs64Filed (
 **/
 VOID
 DumpVmcs32Filed (
-  IN DATA_STR  *DataStr
+  IN DATA_STR  *DataStr, UINT32 CpuIndex
   )
 {
-  DEBUG ((EFI_D_INFO, "%a: %08x\n", DataStr->Str, (UINTN)VmRead32 (DataStr->Index)));
+  DEBUG ((EFI_D_INFO, "%ld %a: %08x\n", CpuIndex, DataStr->Str, (UINTN)VmRead32 (DataStr->Index)));
 }
 
 /**
@@ -116,13 +118,14 @@ DumpVmcs32Filed (
 **/
 VOID
 DumpVmcsNFiled (
-  IN DATA_STR  *DataStr
+  IN DATA_STR  *DataStr,
+  IN UINT32 CpuIndex
   )
 {
   if (sizeof(UINTN) == sizeof(UINT64)) {
-    DumpVmcs64Filed (DataStr);
+    DumpVmcs64Filed (DataStr, CpuIndex);
   } else {
-    DumpVmcs32Filed (DataStr);
+    DumpVmcs32Filed (DataStr, CpuIndex);
   }
 }
 
@@ -187,25 +190,25 @@ DATA_STR mVmcsNControlFiledStr[] = {
 **/
 VOID
 DumpVmcsControlField (
-  VOID
+  UINT32 CpuIndex
   )
 {
   UINT32  Index;
 
   for (Index = 0; Index < sizeof(mVmcs16ControlFiledStr)/sizeof(mVmcs16ControlFiledStr[0]); Index++) {
-    DumpVmcs16Filed (&mVmcs16ControlFiledStr[Index]);
+    DumpVmcs16Filed (&mVmcs16ControlFiledStr[Index], CpuIndex);
   }
 
   for (Index = 0; Index < sizeof(mVmcs64ControlFiledStr)/sizeof(mVmcs64ControlFiledStr[0]); Index++) {
-    DumpVmcs64Filed (&mVmcs64ControlFiledStr[Index]);
+    DumpVmcs64Filed (&mVmcs64ControlFiledStr[Index], CpuIndex);
   }
 
   for (Index = 0; Index < sizeof(mVmcs32ControlFiledStr)/sizeof(mVmcs32ControlFiledStr[0]); Index++) {
-    DumpVmcs32Filed (&mVmcs32ControlFiledStr[Index]);
+    DumpVmcs32Filed (&mVmcs32ControlFiledStr[Index], CpuIndex);
   }
 
   for (Index = 0; Index < sizeof(mVmcsNControlFiledStr)/sizeof(mVmcsNControlFiledStr[0]); Index++) {
-    DumpVmcsNFiled (&mVmcsNControlFiledStr[Index]);
+    DumpVmcsNFiled (&mVmcsNControlFiledStr[Index], CpuIndex);
   }
 }
 
@@ -243,21 +246,21 @@ DATA_STR mVmcsNReadOnlyFiledStr[] = {
 **/
 VOID
 DumpVmcsReadOnlyField (
-  VOID
+  UINT32 CpuIndex
   )
 {
   UINT32  Index;
 
   for (Index = 0; Index < sizeof(mVmcs64ReadOnlyFiledStr)/sizeof(mVmcs64ReadOnlyFiledStr[0]); Index++) {
-    DumpVmcs64Filed (&mVmcs64ReadOnlyFiledStr[Index]);
+    DumpVmcs64Filed (&mVmcs64ReadOnlyFiledStr[Index], CpuIndex);
   }
 
   for (Index = 0; Index < sizeof(mVmcs32ReadOnlyFiledStr)/sizeof(mVmcs32ReadOnlyFiledStr[0]); Index++) {
-    DumpVmcs32Filed (&mVmcs32ReadOnlyFiledStr[Index]);
+    DumpVmcs32Filed (&mVmcs32ReadOnlyFiledStr[Index], CpuIndex);
   }
 
   for (Index = 0; Index < sizeof(mVmcsNReadOnlyFiledStr)/sizeof(mVmcsNReadOnlyFiledStr[0]); Index++) {
-    DumpVmcsNFiled (&mVmcsNReadOnlyFiledStr[Index]);
+    DumpVmcsNFiled (&mVmcsNReadOnlyFiledStr[Index], CpuIndex);
   }
 }
 
@@ -344,25 +347,25 @@ DATA_STR mVmcsNGuestFiledStr[] = {
 **/
 VOID
 DumpVmcsGuestField (
-  VOID
+  UINT32 CpuIndex
   )
 {
   UINT32  Index;
 
   for (Index = 0; Index < sizeof(mVmcs16GuestFiledStr)/sizeof(mVmcs16GuestFiledStr[0]); Index++) {
-    DumpVmcs16Filed (&mVmcs16GuestFiledStr[Index]);
+    DumpVmcs16Filed (&mVmcs16GuestFiledStr[Index], CpuIndex);
   }
 
   for (Index = 0; Index < sizeof(mVmcs64GuestFiledStr)/sizeof(mVmcs64GuestFiledStr[0]); Index++) {
-    DumpVmcs64Filed (&mVmcs64GuestFiledStr[Index]);
+    DumpVmcs64Filed (&mVmcs64GuestFiledStr[Index], CpuIndex);
   }
 
   for (Index = 0; Index < sizeof(mVmcs32GuestFiledStr)/sizeof(mVmcs32GuestFiledStr[0]); Index++) {
-    DumpVmcs32Filed (&mVmcs32GuestFiledStr[Index]);
+    DumpVmcs32Filed (&mVmcs32GuestFiledStr[Index], CpuIndex);
   }
 
   for (Index = 0; Index < sizeof(mVmcsNGuestFiledStr)/sizeof(mVmcsNGuestFiledStr[0]); Index++) {
-    DumpVmcsNFiled (&mVmcsNGuestFiledStr[Index]);
+    DumpVmcsNFiled (&mVmcsNGuestFiledStr[Index], CpuIndex);
   }
 }
 
@@ -412,25 +415,25 @@ DATA_STR mVmcsNHostFiledStr[] = {
 **/
 VOID
 DumpVmcsHostField (
-  VOID
+  UINT32 CpuIndex
   )
 {
   UINT32  Index;
 
   for (Index = 0; Index < sizeof(mVmcs16HostFiledStr)/sizeof(mVmcs16HostFiledStr[0]); Index++) {
-    DumpVmcs16Filed (&mVmcs16HostFiledStr[Index]);
+    DumpVmcs16Filed (&mVmcs16HostFiledStr[Index], CpuIndex);
   }
 
   for (Index = 0; Index < sizeof(mVmcs64HostFiledStr)/sizeof(mVmcs64HostFiledStr[0]); Index++) {
-    DumpVmcs64Filed (&mVmcs64HostFiledStr[Index]);
+    DumpVmcs64Filed (&mVmcs64HostFiledStr[Index], CpuIndex);
   }
 
   for (Index = 0; Index < sizeof(mVmcs32HostFiledStr)/sizeof(mVmcs32HostFiledStr[0]); Index++) {
-    DumpVmcs32Filed (&mVmcs32HostFiledStr[Index]);
+    DumpVmcs32Filed (&mVmcs32HostFiledStr[Index], CpuIndex);
   }
 
   for (Index = 0; Index < sizeof(mVmcsNHostFiledStr)/sizeof(mVmcsNHostFiledStr[0]); Index++) {
-    DumpVmcsNFiled (&mVmcsNHostFiledStr[Index]);
+    DumpVmcsNFiled (&mVmcsNHostFiledStr[Index], CpuIndex);
   }
 }
 
@@ -441,13 +444,14 @@ DumpVmcsHostField (
 **/
 VOID
 DumpVmcsAllField (
-  VOID
+  UINT32 CpuIndex
   )
 {
-  DumpVmcsControlField ();
-  DumpVmcsReadOnlyField ();
-  DumpVmcsGuestField ();
-  DumpVmcsHostField ();
+  DumpVmcsControlField (CpuIndex);
+  DumpVmcsReadOnlyField (CpuIndex);
+  DumpVmcsGuestField (CpuIndex);
+  DumpVmcsHostField (CpuIndex);
+  DumpGuestStack (CpuIndex);
 }
 
 GLOBAL_REMOVE_IF_UNREFERENCED
@@ -481,16 +485,17 @@ DATA_STR mX86RegisterStr[] = {
 VOID
 DumpRegFiled (
   IN X86_REGISTER *Reg,
-  IN DATA_STR     *DataStr
+  IN DATA_STR     *DataStr,
+  IN UINT32 CpuIndex
   )
 {
   UINTN  *RegPtr;
 
   RegPtr = (UINTN *)Reg;
   if (sizeof(UINTN) == sizeof(UINT64)) {
-    DEBUG ((EFI_D_INFO, "%a: %016lx\n", DataStr->Str, RegPtr[DataStr->Index]));
+    DEBUG ((EFI_D_INFO, "%ld %a: %016lx\n", CpuIndex, DataStr->Str, RegPtr[DataStr->Index]));
   } else {
-    DEBUG ((EFI_D_INFO, "%a: %08x\n", DataStr->Str, RegPtr[DataStr->Index]));
+    DEBUG ((EFI_D_INFO, "%ld %a: %08x\n", CpuIndex, DataStr->Str, RegPtr[DataStr->Index]));
   }
 }
 
@@ -499,16 +504,17 @@ DumpRegFiled (
   This function dump X86 register context.
 
   @param Reg X86 register context
-
+Core/Runtime/PeEptHandler.c:	DEBUG((EFI_D_ERROR, "%ld PeEPTViolationHand
 **/
 VOID
 DumpRegContext (
-  IN X86_REGISTER *Reg
+  IN X86_REGISTER *Reg,
+  IN UINT32 CpuIndex
   )
 {
   UINT32  Index;
   for (Index = 0; Index < sizeof(mX86RegisterStr)/sizeof(mX86RegisterStr[0]) / (sizeof(UINT64)/sizeof(UINTN)); Index++) {
-    DumpRegFiled (Reg, &mX86RegisterStr[Index]);
+    DumpRegFiled (Reg, &mX86RegisterStr[Index], CpuIndex);
   }
 }
 
@@ -572,4 +578,38 @@ VOID DumpGuestStack(IN UINT32 Index)
 		Location += 8;
 	}
 	DEBUG((EFI_D_ERROR, "%ld End Stacktrace\n", Index));
+}
+
+VOID DumpGuestMem(IN UINT32 Index, UINT64 GuestAddress, UINT32 GuestLength)
+{
+	UINT32 VmType = mHostContextCommon.HostContextPerCpu[Index].GuestVmType;
+
+	// print in multiples of eight bytes
+
+	UINT64 Pointer = TranslateEPTGuestToHost(mGuestContextCommonSmm[VmType].EptPointer.Uint64, GuestAddress, 0L);
+
+	DumpMemory(Index, Pointer, GuestLength);
+}
+
+VOID DumpMemory(IN UINT32 Index, UINT64 Address, UINT32 Length)
+{
+	UINT32 i, Words;
+	UINT64 Value;
+	UINT64 Pointer = Address;
+
+	Length = (Length + 7) & ~0xF;
+	Words = Length / 8;
+
+	for(i=0; i < Words; i ++)
+	{
+
+		UINT64 * APointer = (UINT64 *) Pointer;
+		Value = *APointer;
+		Address = Pointer;
+	
+		DEBUG((EFI_D_INFO, "%ld: %016llx %016llx\n", Index, Address, Value));
+		Pointer += 8;
+
+	}
+
 }

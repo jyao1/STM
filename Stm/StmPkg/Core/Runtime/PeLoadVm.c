@@ -252,8 +252,8 @@ void LaunchPeVm(UINT32 PeType, UINT32 CpuIndex)
 	DEBUG ((EFI_D_ERROR, "%ld LaunchPeVm - !!!ResumeGuestSmm fail for PeVm!!! - %d\n", (UINTN)CpuIndex));
 	DEBUG ((EFI_D_ERROR, "%ld LaunchPeVm - Rflags: %08llx\n", Rflags));
 	DEBUG ((EFI_D_ERROR, "%ld LaunchPeVm - VMCS_32_RO_VM_INSTRUCTION_ERROR: %08x\n", (UINTN)VmRead32 (VMCS_32_RO_VM_INSTRUCTION_ERROR_INDEX)));
-	DumpVmcsAllField ();
-	DumpRegContext (&mGuestContextCommonSmm[PeType].GuestContextPerCpu[0].Register);
+	DumpVmcsAllField (CpuIndex);
+	DumpRegContext (&mGuestContextCommonSmm[PeType].GuestContextPerCpu[0].Register, CpuIndex);
 	DumpGuestStack(CpuIndex);
 	ReleaseSpinLock (&mHostContextCommon.DebugLock);
 }
@@ -362,9 +362,9 @@ UINT32  PostPeVmProc(UINT32 rc, UINT32 CpuIndex, UINT32 mode)
 	case PE_VM_BAD_ACCESS:
 	case PE_VM_TRIPLE_FAULT:
 	case PE_VM_EXCEPTION:
-		DumpVmcsAllField();   //  temp debug
-		DumpVmxCapabillityMsr();
-		DumpRegContext(&mGuestContextCommonSmm[PeType].GuestContextPerCpu[0].Register);
+		DumpVmcsAllField(CpuIndex);   //  temp debug
+		DumpVmxCapabillityMsr(CpuIndex);
+		DumpRegContext(&mGuestContextCommonSmm[PeType].GuestContextPerCpu[0].Register, CpuIndex);
 		DumpGuestStack(CpuIndex);
 		print_region_list(PeType, CpuIndex);
 
@@ -572,8 +572,8 @@ UINT32  PostPeVmProc(UINT32 rc, UINT32 CpuIndex, UINT32 mode)
 	DEBUG ((EFI_D_ERROR, "%ld PostPeVmProc - Rflags: %08x\n", CpuIndex, Rflags));
 	DEBUG ((EFI_D_ERROR, "%ld PostPeVmProc - VMCS_32_RO_VM_INSTRUCTION_ERROR: %08x\n", CpuIndex, (UINTN)VmRead32 (VMCS_32_RO_VM_INSTRUCTION_ERROR_INDEX)));
 
-	DumpVmcsAllField ();
-	DumpRegContext (&mGuestContextCommonSmi.GuestContextPerCpu[CpuIndex].Register);
+	DumpVmcsAllField (CpuIndex);
+	DumpRegContext (&mGuestContextCommonSmi.GuestContextPerCpu[CpuIndex].Register, CpuIndex);
 	ReleaseSpinLock (&mHostContextCommon.DebugLock);
 	DEBUG((EFI_D_ERROR, "%ld PostPeVmProc - CpuDeadLoop\n"));
 	CpuDeadLoop ();  // crash here because we cannot get back to the MLE...

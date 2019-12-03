@@ -236,8 +236,8 @@ SmmTaskSwitchHandler (
     VmWrite32 (VMCS_32_GUEST_TR_ACCESS_RIGHT_INDEX, DESCRIPTOR_PRESENT | DESCRIPTOR_TSS_N_BUSY);
 
   } else {
-    DEBUG ((EFI_D_INFO, "!!!Other TSS\n"));
-    DumpVmcsAllField ();
+    DEBUG ((EFI_D_INFO, "%ld !!!Other TSS\n", Index));
+    DumpVmcsAllField (Index);
     CpuDeadLoop ();
   }
 

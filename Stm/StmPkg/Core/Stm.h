@@ -627,7 +627,7 @@ DumpEventLog (
 **/
 VOID
 DumpVmxCapabillityMsr (
-  VOID
+  UINT32 CpuIndex
   );
 
 /**
@@ -637,7 +637,7 @@ DumpVmxCapabillityMsr (
 **/
 VOID
 DumpVmcsAllField (
-  VOID
+  UINT32 CpuIndex
   );
 
 /**
@@ -649,7 +649,8 @@ DumpVmcsAllField (
 **/
 VOID
 DumpRegContext (
-  IN X86_REGISTER *Reg
+  IN X86_REGISTER *Reg,
+  IN UINT32 CpuIndex
   );
 
 /**
