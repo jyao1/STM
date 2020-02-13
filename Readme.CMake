@@ -46,7 +46,7 @@ Steps for building:
                           (2) Move the stm.bin file to that directory
                           (3) In coreboot (make menuconfig), 
 			      configure the STM and point the 
-                              "STM binary file" to that directory
+                              "STM binary file" to the stm.bin file
 			  (4) rebuild by doing "make clean && make"
 
 	Other files in the StmPkg/Core directory:
