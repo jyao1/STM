@@ -42,10 +42,14 @@ Steps for building:
     (2) Inside the build directory issue "cmake .. " then make
         --> For coreboot do "cmake .. -DBIOS=coreboot" then make
     (3) The StmPkg/Core directory will contain the results of the build
-	--> for coreboot move stm.bin to 3rdparty/blobs/cpu/intel/stm
-                         then configure the stm in the coreboot config menus
-			 rebuild by doing "make clean && make"
-	Other files in the StmPkg directory:
+	--> for coreboot: (1) Create a directory
+                          (2) Move the stm.bin file to that directory
+                          (3) In coreboot (make menuconfig), 
+			      configure the STM and point the 
+                              "STM binary file" to that directory
+			  (4) rebuild by doing "make clean && make"
+
+	Other files in the StmPkg/Core directory:
 			(1) Stm - an elf based load module, this is passed through
 			          objdump to produce stm.bin
                         (2) stm.map - loader map
