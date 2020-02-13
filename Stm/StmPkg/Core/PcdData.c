@@ -3,7 +3,13 @@
 
 #define _PCD_VALUE_PcdMaximumUnicodeStringLength  1000000U
 #define _PCD_VALUE_PcdMaximumAsciiStringLength  1000000U
+
+#ifdef RELEASE
+#define _PCD_VALUE_PcdDebugPrintErrorLevel  0x00000000U
+#else
 #define _PCD_VALUE_PcdDebugPrintErrorLevel  0x80000040U
+#endif
+
 #define _PCD_VALUE_PcdDebugPropertyMask  0x0fU
 #define _PCD_VALUE_PcdDebugClearMemoryValue  0xAFU
 #define _PCD_PATCHABLE_VALUE_PcdPciExpressBaseAddress  ((UINT64)0x00000000ULL)

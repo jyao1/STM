@@ -24,6 +24,16 @@ This is the CMake based build system for the STM.
 
 		Default: STM heap space is set at 0x246000
 
+	BUILD - suboptions: release, debug
+
+		This option currently defines the amount of console output the
+		STM generates.
+
+		debug - all console output
+		release - no console output
+
+		Default: debug
+
          
 
 Steps for building:
