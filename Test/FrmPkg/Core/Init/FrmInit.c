@@ -413,6 +413,47 @@ InitGuestVmcs (
   return ;
 }
 
+#define MSR_READ  1
+#define MSR_WRITE 2
+
+VOID 
+EnableMsrInterception (
+  UINT8 *bitmap, UINT32 msr_arg, UINT8 mode
+  )
+{
+  UINT8 *read_map;
+  UINT8 *write_map;
+  UINT32 msr = msr_arg;
+  UINT8 msr_bit;
+  UINT32 msr_index;
+  /* low MSR */
+  if (msr < 0x1FFFU) {
+    read_map = bitmap;
+    write_map = bitmap + 2048;
+  } else if ((msr >= 0xc0000000U) && (msr <= 0xc0001fffU)) {
+    read_map = bitmap + 1024;
+    write_map = bitmap + 3072;
+  } else {
+    return;
+  }
+
+  msr &= 0x1FFFU;
+  msr_bit = 1U << (msr & 0x7U);
+  msr_index = msr >> 3U;
+
+  if ((mode & MSR_READ) == MSR_READ) {
+    read_map[msr_index] |= msr_bit;
+  } else {
+    read_map[msr_index] &= ~msr_bit;
+  }
+
+  if ((mode & MSR_WRITE) == MSR_WRITE) {
+    write_map[msr_index] |= msr_bit;
+  } else {
+    write_map[msr_index] &= ~msr_bit;
+  }
+}
+
 /**
 
   This function initialize guest common context.
@@ -432,7 +473,14 @@ InitGuestContextCommon (
   mGuestContextCommon.CompatiblePageTablePae = CreateCompatiblePageTablePae ();
 
   mGuestContextCommon.MsrBitmap = (UINT64)(UINTN)AllocatePages (1);
-
+  EnableMsrInterception( (UINT8*)mGuestContextCommon.MsrBitmap, IA32_EFER_MSR_INDEX, MSR_WRITE|MSR_READ);
+  EnableMsrInterception( (UINT8*)mGuestContextCommon.MsrBitmap, IA32_SYSENTER_CS_MSR_INDEX, MSR_WRITE|MSR_READ);
+  EnableMsrInterception( (UINT8*)mGuestContextCommon.MsrBitmap, IA32_SYSENTER_ESP_MSR_INDEX, MSR_WRITE|MSR_READ);
+  EnableMsrInterception( (UINT8*)mGuestContextCommon.MsrBitmap, IA32_SYSENTER_EIP_MSR_INDEX, MSR_WRITE|MSR_READ);
+  EnableMsrInterception( (UINT8*)mGuestContextCommon.MsrBitmap, IA32_FS_BASE_MSR_INDEX, MSR_WRITE|MSR_READ);
+  EnableMsrInterception( (UINT8*)mGuestContextCommon.MsrBitmap, IA32_GS_BASE_MSR_INDEX, MSR_WRITE|MSR_READ);
+  EnableMsrInterception( (UINT8*)mGuestContextCommon.MsrBitmap, IA32_BIOS_UPDT_TRIG_MSR_INDEX, MSR_WRITE);
+  
   EptInit ();
 
   IoInit ();

@@ -29,8 +29,8 @@ ASM_PFX(AsmVmResume):
     movq   16(%rcx), %rdx
     movq   24(%rcx), %rbx
     movq   40(%rcx), %rbp
-    movq   48(%rcx), %rdi
-    movq   56(%rcx), %rsi
+    movq   48(%rcx), %rsi
+    movq   56(%rcx), %rdi
     movq   64(%rcx), %r8
     movq   72(%rcx), %r9
     movq   80(%rcx), %r10
