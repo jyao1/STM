@@ -39,7 +39,8 @@ AsmHostEntrypointSmmPe PROC PUBLIC
   push rdx
   push rcx
   push rax
-  mov  rcx, rsp ; parameter
+  mov  rcx, rsp ; parameter (MS)
+  mov  rdi, rsp : parameter (GCC)
   sub  rsp, 20h
   call PeStmHandlerSmm
   add  rsp, 20h

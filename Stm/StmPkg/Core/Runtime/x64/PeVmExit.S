@@ -38,7 +38,7 @@ ASM_PFX(AsmHostEntrypointSmmPe):
   push %rcx
   push %rax
   movq %rsp, %rcx # parameter for MS
-  movq %rdi, %rdi # parameter for GCC
+  movq %rsp, %rdi # parameter for GCC
   subq $0x30, %rsp
   call ASM_PFX(PeStmHandlerSmm)
   addq $0x30, %rsp
