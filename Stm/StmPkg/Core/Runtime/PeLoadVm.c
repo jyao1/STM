@@ -241,6 +241,11 @@ void LaunchPeVm(UINT32 PeType, UINT32 CpuIndex)
 
 	Rflags = AsmVmLaunch (&mGuestContextCommonSmm[PeType].GuestContextPerCpu[0].Register);
 	DEBUG ((EFI_D_ERROR, "%ld LaunchPeVm - (STM):o(\n", (UINTN)CpuIndex));
+	DEBUG ((EFI_D_ERROR, "%ld LaunchPeVm - !!!LaunchGuestSmm fail for PeVm!!!\n", (UINTN)CpuIndex));
+	DEBUG ((EFI_D_ERROR, "%ld LaunchPeVm - Rflags: (UINTN)CpuIndex, %08llx\n", (UINTN)CpuIndex, Rflags));
+	DEBUG ((EFI_D_ERROR, "%ld LaunchPeVm - VMCS_32_RO_VM_INSTRUCTION_ERROR: %08x\n",
+			(UINTN)CpuIndex,
+			(UINTN)VmRead32 (VMCS_32_RO_VM_INSTRUCTION_ERROR_INDEX)));
 	Rflags = AsmVmResume (&mGuestContextCommonSmm[PeType].GuestContextPerCpu[0].Register);
 	
 	// returing here means that the launch has failed...
@@ -249,9 +254,11 @@ void LaunchPeVm(UINT32 PeType, UINT32 CpuIndex)
 
 	AcquireSpinLock (&mHostContextCommon.DebugLock);
 
-	DEBUG ((EFI_D_ERROR, "%ld LaunchPeVm - !!!ResumeGuestSmm fail for PeVm!!! - %d\n", (UINTN)CpuIndex));
-	DEBUG ((EFI_D_ERROR, "%ld LaunchPeVm - Rflags: %08llx\n", Rflags));
-	DEBUG ((EFI_D_ERROR, "%ld LaunchPeVm - VMCS_32_RO_VM_INSTRUCTION_ERROR: %08x\n", (UINTN)VmRead32 (VMCS_32_RO_VM_INSTRUCTION_ERROR_INDEX)));
+	DEBUG ((EFI_D_ERROR, "%ld LaunchPeVm - !!!ResumeGuestSmm fail for PeVm!!!\n", (UINTN)CpuIndex));
+	DEBUG ((EFI_D_ERROR, "%ld LaunchPeVm - Rflags: (UINTN)CpuIndex, %08llx\n", (UINTN)CpuIndex, Rflags));
+	DEBUG ((EFI_D_ERROR, "%ld LaunchPeVm - VMCS_32_RO_VM_INSTRUCTION_ERROR: %08x\n",
+			(UINTN)CpuIndex,
+			(UINTN)VmRead32 (VMCS_32_RO_VM_INSTRUCTION_ERROR_INDEX)));
 	DumpVmcsAllField (CpuIndex);
 	DumpRegContext (&mGuestContextCommonSmm[PeType].GuestContextPerCpu[0].Register, CpuIndex);
 	DumpGuestStack(CpuIndex);
@@ -524,14 +531,14 @@ UINT32  PostPeVmProc(UINT32 rc, UINT32 CpuIndex, UINT32 mode)
 		//keep the old vmcs around - think about clearing...
 		//FreePages((UINTN *)mGuestContextCommonSmm[PeType].GuestContextPerCpu[0].Vmcs, 2);
 		//mGuestContextCommonSmm[PeType].GuestContextPerCpu[0].Vmcs = 0L; // not there any more
-		DEBUG((EFI_D_ERROR, "%ld PostPeVmProc - PE/VM Free (AVAIL) - PeType: %ld\n", CpuIndex, PeType));
+		DEBUG((EFI_D_INFO, "%ld PostPeVmProc - PE/VM Free (AVAIL) - PeType: %ld\n", CpuIndex, PeType));
 	}
 	else
 	{
 		// mark this VM as idle
 
 		PeVmData[PeType].PeVmState = PE_VM_IDLE;  // Waiting for more actio
-		DEBUG((EFI_D_ERROR, "%ld PostPeVmProc - PE/VM Idle - PeType: %ld\n", CpuIndex, PeType));
+		DEBUG((EFI_D_INFO, "%ld PostPeVmProc - PE/VM Idle - PeType: %ld\n", CpuIndex, PeType));
 	}
 
 	if(PeVmData[PeType].StartMode == PEVM_START_VMCALL)
@@ -553,7 +560,7 @@ UINT32  PostPeVmProc(UINT32 rc, UINT32 CpuIndex, UINT32 mode)
 	}
 
 	mHostContextCommon.HostContextPerCpu[CpuIndex].GuestVmType = SMI_HANDLER;
-	DEBUG((EFI_D_ERROR, "%ld PostPeVmProc - sucessfully completed - RC: 0x%x\n", CpuIndex, rc));
+	DEBUG((EFI_D_INFO, "%ld PostPeVmProc - sucessfully completed - RC: 0x%x\n", CpuIndex, rc));
 	//StopSwTimer();
 	CheckPendingMtf (CpuIndex);
 
@@ -563,6 +570,10 @@ UINT32  PostPeVmProc(UINT32 rc, UINT32 CpuIndex, UINT32 mode)
 	Rflags = AsmVmResume (&mGuestContextCommonSmi.GuestContextPerCpu[CpuIndex].Register);
 	// BUGBUG: - AsmVmLaunch if AsmVmResume fail
 	if (VmRead32 (VMCS_32_RO_VM_INSTRUCTION_ERROR_INDEX) == VmxFailErrorVmResumeWithNonLaunchedVmcs) {
+		DEBUG ((EFI_D_ERROR, "%ld PostPeVmProc - Rflags: %08x\n", CpuIndex, Rflags));
+		DEBUG ((EFI_D_ERROR, "%ld PostPeVmProc - VMCS_32_RO_VM_INSTRUCTION_ERROR: %08x\n",
+				CpuIndex,
+				(UINTN)VmRead32 (VMCS_32_RO_VM_INSTRUCTION_ERROR_INDEX)));
 		DEBUG ((EFI_D_ERROR, "%ld PostPeVmProc - (STM):o(\n", (UINTN)CpuIndex));
 		Rflags = AsmVmLaunch (&mGuestContextCommonSmi.GuestContextPerCpu[CpuIndex].Register);
 	}
@@ -570,7 +581,9 @@ UINT32  PostPeVmProc(UINT32 rc, UINT32 CpuIndex, UINT32 mode)
 	AcquireSpinLock (&mHostContextCommon.DebugLock);
 	DEBUG ((EFI_D_ERROR, "%ld PostPeVmProc - !!!PePostVmProcessing FAIL!!!\n", CpuIndex));
 	DEBUG ((EFI_D_ERROR, "%ld PostPeVmProc - Rflags: %08x\n", CpuIndex, Rflags));
-	DEBUG ((EFI_D_ERROR, "%ld PostPeVmProc - VMCS_32_RO_VM_INSTRUCTION_ERROR: %08x\n", CpuIndex, (UINTN)VmRead32 (VMCS_32_RO_VM_INSTRUCTION_ERROR_INDEX)));
+	DEBUG ((EFI_D_ERROR, "%ld PostPeVmProc - VMCS_32_RO_VM_INSTRUCTION_ERROR: %08x\n",
+				CpuIndex,
+				(UINTN)VmRead32 (VMCS_32_RO_VM_INSTRUCTION_ERROR_INDEX)));
 
 	DumpVmcsAllField (CpuIndex);
 	DumpRegContext (&mGuestContextCommonSmi.GuestContextPerCpu[CpuIndex].Register, CpuIndex);
