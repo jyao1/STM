@@ -124,12 +124,21 @@ InitPeGuestVmcs (
   if (ProcessorBasedCtrls.Bits.IoBitmap != 0) 
   {
 	 // Since we want to use IO Bitmaps, then point to the Bitmaps
-    VmWrite64 (VMCS_64_CONTROL_IO_BITMAP_A_INDEX,                    mGuestContextCommonSmm[VmType].IoBitmapA);
-    VmWrite64 (VMCS_64_CONTROL_IO_BITMAP_B_INDEX,                    mGuestContextCommonSmm[VmType].IoBitmapB);
+    VmWrite64 (VMCS_64_CONTROL_IO_BITMAP_A_INDEX, mGuestContextCommonSmm[VmType].IoBitmapA);
+    VmWrite64 (VMCS_64_CONTROL_IO_BITMAP_B_INDEX, mGuestContextCommonSmm[VmType].IoBitmapB);
+  }
+  else
+  {
+    VmWrite64 (VMCS_64_CONTROL_IO_BITMAP_A_INDEX, 0);
+    VmWrite64 (VMCS_64_CONTROL_IO_BITMAP_B_INDEX, 0);
   }
 
   if (ProcessorBasedCtrls.Bits.MsrBitmap != 0) {
-    VmWrite64 (VMCS_64_CONTROL_MSR_BITMAP_INDEX,                     mGuestContextCommonSmm[VmType].MsrBitmap);
+    VmWrite64 (VMCS_64_CONTROL_MSR_BITMAP_INDEX, mGuestContextCommonSmm[VmType].MsrBitmap);
+  }
+  else
+  {
+    VmWrite64 (VMCS_64_CONTROL_MSR_BITMAP_INDEX, 0);
   }
 
   //
