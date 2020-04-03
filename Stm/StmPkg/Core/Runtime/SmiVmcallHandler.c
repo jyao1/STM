@@ -175,8 +175,6 @@ SmiVmcallProtectResourceHandler (
 
   StmResource = (STM_RSC *)(UINTN)LocalBuffer;
 
-  DumpStmResource (StmResource);
-
   if (!IsResourceListValid (StmResource, TRUE)) {
     DEBUG ((EFI_D_ERROR, "IsResourceListValid fail!\n"));
     RawFreeResource (LocalBuffer);
@@ -252,8 +250,6 @@ SmiVmcallUnprotectResourceHandler (
     return ERROR_STM_MALFORMED_RESOURCE_LIST;
   }
   DEBUG ((EFI_D_INFO, "IsResourceListValid pass!\n"));
-
-  DumpStmResource (StmResource);
 
   DeleteProtectedResource (&mHostContextCommon.MleProtectedResource, StmResource);
 
