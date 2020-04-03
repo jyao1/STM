@@ -375,7 +375,7 @@ void MapVmcs ()
 	}
 
 	AsmVmPtrLoad(&CurrentVMCSSave);       // Put back the orignal Vmcs
-	AsmVmClear((UINT64 *)EvalVmcs);
+	AsmVmClear((UINT64 *)&EvalVmcs);
 
 	FreePages(EvalVmcs, VmcsSizeInPages);                  // free up the eval vmcs
 
