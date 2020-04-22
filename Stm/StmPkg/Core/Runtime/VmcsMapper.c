@@ -302,8 +302,8 @@ int strlen1(const char *str)
 {
 	const char * s;
 	int counter = 0;
-	for (s=str; (*s != 0) && (counter < 40); ++s, ++counter);
-	return counter;  // only try 40
+	for (s=str; (*s != 0) && (counter < 70); ++s, ++counter);
+	return counter;  // only try 70
 }
 
 static UINT32 VmcsMapInit = 0;  // used to trigger VmcsMap initialization
