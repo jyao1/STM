@@ -34,11 +34,13 @@ Setup VM/PE EPT tables.
 #define memcpy CopyMem
 
 extern UINT8 GetMemoryType (IN UINT64 BaseAddress);  // call to base EPT functionality - hope to eventually do more of this
+extern int strlen1(const char *str);
 extern UINT64 EndTimeStamp;
 
 static void PeEptFreeL2(IN UINT64 Level2);
 static void insertPhysAdd(EPT_ENTRY* L1PageTable, UINTN startAddress, UINTN StartIndex, UINTN size);
 extern UINT32 PostPeVmProc(UINT32 rc, UINT32 CpuIndex, UINT32 mode);
+extern UINT32 EventInjection (UINT32 Index, VM_EXIT_INFO_INTERRUPTION IntInfo, UINT32 IntErr);
 
 extern VOID
 EptCreatePageTable (
@@ -124,8 +126,8 @@ void PeEPTViolationHandler( IN UINT32 CpuIndex)
 
 	//Line[0] = '\0';
 #define Message1 "PeEPTViolationHandler - Access Allowed: "
-        int count = sizeof(Message1);
-        memcpy(Line, Message1, count - 1);
+        int count = strlen1(Message1);
+        memcpy(Line, Message1, count);
         memcpy(&Line[count], AccessAllowed, 3);
         count = count + 3;
         Line[count] = '\n';
@@ -153,9 +155,9 @@ void PeEPTViolationHandler( IN UINT32 CpuIndex)
 
 	///Line[0] = '\0';
 #define Message2 "PeEPTViolationHandler - Access Attempted causing Violation: "
-        count = sizeof(Message2);
+        count = strlen1(Message2);
 	//sprintf(Line, "%ld PeEPTViolationHandler - Access Attempted: %s\n", CpuIndex, AccessRequested);
-	memcpy(Line, Message2, count - 1 ); // account for null
+	memcpy(Line, Message2, count ); // account for null
 	memcpy(&Line[count], AccessRequested, 3);
         count = count + 3;
         Line[count] = '\n';
@@ -169,9 +171,9 @@ void PeEPTViolationHandler( IN UINT32 CpuIndex)
 		LinearAddressValid = "Invalid";
 	//Line[0] = '\0';
 #define Message3 "PeEPTViolationHandler - Linear address is "
-	count = sizeof(Message3);
+	count = strlen1(Message3);
         memcpy(Line, Message3, count);
-        memcpy(&Line[count], LinearAddressValid, 7);
+        memcpy(&Line[count], LinearAddressValid, strlen1(LinearAddressValid));
         count = count + 7;
         Line[count] = '\n';
         Line[count + 1] = '\0';
@@ -189,9 +191,9 @@ void PeEPTViolationHandler( IN UINT32 CpuIndex)
 
     //Line[0] = '\0';
 	//sprintf(Line, "%ld PeEPTViolationHandler - Linear address is %s\n", CpuIndex, AddressViolation);
-	count = sizeof(Message3);
+	count = strlen1(Message3);
         memcpy(Line, Message3, count);
-        memcpy(&Line[count], AddressViolation, 28);
+        memcpy(&Line[count], AddressViolation, strlen1(AddressViolation));
         count = count + 28;
         Line[count] = '\n';
         Line[count + 1] = '\0';
