@@ -261,7 +261,6 @@ void LaunchPeVm(UINT32 PeType, UINT32 CpuIndex)
 			(UINTN)VmRead32 (VMCS_32_RO_VM_INSTRUCTION_ERROR_INDEX)));
 	DumpVmcsAllField (CpuIndex);
 	DumpRegContext (&mGuestContextCommonSmm[PeType].GuestContextPerCpu[0].Register, CpuIndex);
-	DumpGuestStack(CpuIndex);
 	ReleaseSpinLock (&mHostContextCommon.DebugLock);
 }
 
@@ -372,7 +371,6 @@ UINT32  PostPeVmProc(UINT32 rc, UINT32 CpuIndex, UINT32 mode)
 		DumpVmcsAllField(CpuIndex);   //  temp debug
 		DumpVmxCapabillityMsr(CpuIndex);
 		DumpRegContext(&mGuestContextCommonSmm[PeType].GuestContextPerCpu[0].Register, CpuIndex);
-		DumpGuestStack(CpuIndex);
 		print_region_list(PeType, CpuIndex);
 
 		if((PERM_VM_CRASH_BREAKDOWN & PeVmData[PeType].UserModule.VmConfig) == PERM_VM_CRASH_BREAKDOWN)
