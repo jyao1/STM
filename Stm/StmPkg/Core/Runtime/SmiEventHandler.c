@@ -60,14 +60,16 @@ SmiEventHandler (
     WriteSyncSmmStateSaveArea (Index);
     STM_PERF_END (Index, "WriteSyncSmmStateSaveArea", "SmiEventHandler");
 
+    AsmVmPtrStore (&mGuestContextCommonSmi.GuestContextPerCpu[Index].Vmcs);
+
     if(PeSmiHandler(Index) == 1)
     {
+	AsmVmPtrLoad (&mGuestContextCommonSmi.GuestContextPerCpu[Index].Vmcs);
         return;
     }
 #if 0
 		DEBUG((EFI_D_ERROR, "%ld SmiEventHandler - Starting SMI handler\n", Index));
 #endif
-	AsmVmPtrStore (&mGuestContextCommonSmi.GuestContextPerCpu[Index].Vmcs);
     Rflags = AsmVmPtrLoad (&mGuestContextCommonSmm[SMI_HANDLER].GuestContextPerCpu[Index].Vmcs);
     if ((Rflags & (RFLAGS_CF | RFLAGS_ZF)) != 0) {
         DEBUG ((EFI_D_ERROR, "ERROR: AsmVmPtrLoad(%d) - %016lx : %08x\n", (UINTN)Index, mGuestContextCommonSmm[SMI_HANDLER].GuestContextPerCpu[Index].Vmcs, Rflags));
