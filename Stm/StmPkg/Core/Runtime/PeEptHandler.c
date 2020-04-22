@@ -36,6 +36,7 @@ Setup VM/PE EPT tables.
 extern UINT8 GetMemoryType (IN UINT64 BaseAddress);  // call to base EPT functionality - hope to eventually do more of this
 extern int strlen1(const char *str);
 extern UINT64 EndTimeStamp;
+extern PE_VM_DATA PeVmData[4];
 
 static void PeEptFreeL2(IN UINT64 Level2);
 static void insertPhysAdd(EPT_ENTRY* L1PageTable, UINTN startAddress, UINTN StartIndex, UINTN size);
@@ -199,6 +200,28 @@ void PeEPTViolationHandler( IN UINT32 CpuIndex)
         Line[count + 1] = '\0';
 	DEBUG((EFI_D_ERROR, Line));
 	}
+
+	UINT32 VmType = mHostContextCommon.HostContextPerCpu[CpuIndex].GuestVmType;
+	// Does the Perm PE/VM want a chance to request access
+	if ((VmType == PE_PERM) &&
+	   ((PERM_VM_INJECT_INT & PeVmData[VmType].UserModule.VmConfig) == PERM_VM_INJECT_INT))
+        {
+		VM_EXIT_INFO_INTERRUPTION IntInfo;
+		UINT32 IntErr;
+
+		IntInfo.Uint32 = 0;
+		IntInfo.Bits.Vector = 14;  // page fault
+		IntInfo.Bits.ErrorCodeValid = 1;
+		IntInfo.Bits.Valid = 1;
+		IntInfo.Bits.InterruptType = INTERRUPT_TYPE_EXTERNAL_HARDWARE_EXCEPTION;
+
+		AsmWriteCr2( VmRead64(VMCS_64_RO_GUEST_PHYSICAL_ADDR_INDEX));
+
+		IntErr = 1;   // set the page-level protection access
+
+		EventInjection(CpuIndex, IntInfo, IntErr);
+		return;
+        }
 	// take down the VM
 	//breakdownNonSmmVM(PE_VM_BAD_ACCESS, pStmVmm);
 	PostPeVmProc(PE_VM_BAD_ACCESS , CpuIndex, RELEASE_VM);
