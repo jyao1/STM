@@ -1922,4 +1922,37 @@ RegisterBiosResource (
     RegisterBiosResource ((STM_RSC *)(UINTN)Resource->End.ResourceListContinuation);
   }
 }
+/**^M
+^M
+  This function returns the first STM resource of resource type.^M
+^M
+  @param Resource STM resource list^M
+  @param RscType  resource type
+^M
+  @return STM resource^M
+^M
+**/
+
+STM_RSC *
+GetStmFirstResource (
+  IN STM_RSC   *Resource,
+  IN UINT16    RscType
+  )
+{
+  if (Resource == NULL) {
+    return NULL;
+  }
+  while (Resource->Header.RscType != END_OF_RESOURCES) {
+    if ((Resource->Header.IgnoreResource == 0) &&
+        (Resource->Header.RscType == RscType)) {
+      return Resource;
+	}
+    Resource = (STM_RSC *)((UINTN)Resource + Resource->Header.Length);
+  }
+  if (Resource->End.ResourceListContinuation != 0) {
+    return GetStmFirstResource ((STM_RSC *)(UINTN)Resource->End.ResourceListContinuation, RscType);
+  }
+
+  return NULL;
+}
 

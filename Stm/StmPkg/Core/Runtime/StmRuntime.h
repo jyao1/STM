@@ -570,6 +570,23 @@ RegisterBiosResource (
   IN STM_RSC   *Resource
   );
 
+/**^M
+^M
+  This function returns the first STM resource of resource type.^M
+^M
+  @param Resource STM resource list^M
+  @param RscType  resource type
+^M
+  @return STM resource^M
+^M
+**/
+
+STM_RSC *
+GetStmFirstResource (
+  IN STM_RSC   *Resource,
+  IN UINT16    RscType
+  );
+
 /**
 
   This function translate guest linear address to guest physical address.
@@ -616,6 +633,7 @@ LookupSmiGuestVirtualToGuestPhysical (
 
   @retval TRUE  HostPhysicalAddress is found
   @retval FALSE HostPhysicalAddress is not found
+
 **/
 BOOLEAN
 LookupSmiGuestPhysicalToHostPhysical (
