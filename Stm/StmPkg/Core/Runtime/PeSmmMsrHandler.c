@@ -36,16 +36,14 @@ PeReadMsrHandler (
   UINT64            Data64;
   UINT32            MsrIndex;
   X86_REGISTER      *Reg;
-  STM_SMM_CPU_STATE *SmmCpuState;
-  UINT32			VmType = PE_PERM;
+  UINT32	    VmType = mHostContextCommon.HostContextPerCpu[CpuIndex].GuestVmType;
 
   UINT32 Index = 0;   // PE/VM only has index as 0
 
-  SmmCpuState = mGuestContextCommonSmi.GuestContextPerCpu[Index].SmmCpuState;
   Reg = &mGuestContextCommonSmm[VmType].GuestContextPerCpu[Index].Register;
   MsrIndex = ReadUnaligned32 ((UINT32 *)&Reg->Rcx);
 
-  DEBUG ((EFI_D_INFO, "%ld ReadMsrHandler - 0x%llx\n", CpuIndex, MsrIndex));
+  DEBUG ((EFI_D_INFO, "%ld PeReadMsrHandler - 0x%llx\n", CpuIndex, MsrIndex));
 
   switch (MsrIndex) {
   case IA32_EFER_MSR_INDEX:
@@ -101,7 +99,7 @@ PeWriteMsrHandler (
   VM_ENTRY_CONTROLS VmEntryControls;
   X86_REGISTER      *Reg;
   STM_SMM_CPU_STATE *SmmCpuState;
-  UINT32			VmType = PE_PERM;
+  UINT32            VmType = mHostContextCommon.HostContextPerCpu[CpuIndex].GuestVmType;
   
   UINT32 Index = 0;        // PE VM only Index = 0
 
@@ -111,7 +109,7 @@ PeWriteMsrHandler (
   MsrIndex = ReadUnaligned32 ((UINT32 *)&Reg->Rcx);
 
   Data64 = LShiftU64 ((UINT64)ReadUnaligned32 ((UINT32 *)&Reg->Rdx), 32) | (UINT64)ReadUnaligned32 ((UINT32 *)&Reg->Rax);
-  DEBUG ((EFI_D_INFO, "%ld WriteMsrHandler - 0x%llx 0x%llx\n", CpuIndex, MsrIndex, Data64));
+  DEBUG ((EFI_D_INFO, "%ld PeWriteMsrHandler - 0x%llx 0x%llx\n", CpuIndex, MsrIndex, Data64));
 
   switch (MsrIndex) {
   case IA32_EFER_MSR_INDEX:

@@ -250,6 +250,7 @@ VmcsFlushStart:
 		// release the buffers
 		for(i = 0; i < FlushCount; i++)
 		{
+			AsmVmClear((UINT64 *) &DummyVmcs[i]);
 			FreePages(DummyVmcs[i], VmcsSizeInPages);
 		}
 	}

@@ -447,6 +447,9 @@ DumpVmcsAllField (
   UINT32 CpuIndex
   )
 {
+  UINT64 VMCS;
+  AsmVmPtrStore (&VMCS);
+  DEBUG((EFI_D_ERROR, "%d DumpVmcsAllField - VMCS: %016llx\n", CpuIndex, VMCS));
   DumpVmcsControlField (CpuIndex);
   DumpVmcsReadOnlyField (CpuIndex);
   DumpVmcsGuestField (CpuIndex);

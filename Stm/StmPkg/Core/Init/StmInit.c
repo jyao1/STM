@@ -1270,7 +1270,6 @@ LaunchBack (
 
 **/
 
-extern void PrintSmiEnRegister(UINT32 Index); // found in PcPciHandler.c
 VOID
 InitializeSmmMonitor (
   IN X86_REGISTER *Register
@@ -1289,13 +1288,11 @@ InitializeSmmMonitor (
     Index = GetIndexFromStack (Register);
     ApInit (Index, Register);
   }
-  //PrintSmiEnRegister(Index);    /* debug*/
 
   CommonInit (Index);
 
   VmcsInit (Index);
    //
-  PrintSmiEnRegister(Index);   /* DEBUG*/
   AsmWbinvd();  // flush caches
   LaunchBack (Index);
   return ;
